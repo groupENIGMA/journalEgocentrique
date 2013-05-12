@@ -1,14 +1,19 @@
 package journalEgocentrique.model;
 
-
+/**
+ * This class is used by {@link DataSourceInterface} to model a Note of
+ * an Entry of the diary.
+ * <p>
+ * You shouldn't create new instance of this object using directly its
+ * constructors: you should only use the instances returned by
+ * the {@link DataSourceInterface}
+ * 
+ * @version 0.1
+ * @author groupENIGMA
+ *
+ */
 public interface NoteInterface {
 
-/*
- * Anche qui, il costruttore non è definibile tramite interfaccia
-    // Costruttore di una nuova nota,
-    // associa un serial riferito alla entry(num di note presenti)
-    protected Note(String text, long id) {};
-*/    
     // Setta il testo
     public void setText(String new_text);
     
@@ -17,15 +22,25 @@ public interface NoteInterface {
     
     // Ottieni l'id della Nota
     public long getId();
-    
-    // Controlla se la nota passata per parametro è uguale alla nota attuale
-    // true se uguali, false altrimenti
-    public boolean equals(Note note); // NB due note sono uguali se hanno id e testo uguale
 
-    // Controlla se la nota è modificabile secondo i parametri impostati dall'utente
+    /**
+     * Checks if the Note can be updated.
+     * <p>
+     * A Note can be updated only during a grace period set by the final
+     * user in the SharedPreferences
+     * 
+     * @return true if the Note can be updated, false otherwise
+     */
     public boolean canBeUpdated();
     
-    // Controlla se la nota è cancellabile secondo i parametri impostati dall'utente
+    /**
+     * Checks if the Note can be deleted 
+     * <p>
+     * A Note can be deleted only during a grace period set by the final
+     * user in the SharedPreferences
+     * 
+     * @return true if the Note can be deleted, false otherwise
+     */
     public boolean canBeDeleted();
     
 }

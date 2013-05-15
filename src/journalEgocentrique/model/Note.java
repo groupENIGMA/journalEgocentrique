@@ -5,7 +5,6 @@ public class Note implements NoteInterface {
 	@Override
 	public void setText(String new_text) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -18,12 +17,6 @@ public class Note implements NoteInterface {
 	public long getId() {
 		// TODO Auto-generated method stub
 		return 0;
-	}
-
-	@Override
-	public boolean equals(Note note) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 	@Override

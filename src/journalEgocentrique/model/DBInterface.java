@@ -14,7 +14,7 @@ import android.database.SQLException;
  * @version 0.1 
  * @author groupENIGMA
  */
-public interface DataSourceInterface {
+public interface DBInterface {
 
     /**
      * Open the connection to the database. You MUST call this method

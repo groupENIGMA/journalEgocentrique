@@ -145,6 +145,14 @@ public interface DataSourceInterface {
     public Photo setPhoto(Entry entry, File photo) throws InvalidOperationException;
 
     /**
+     * Returns the Photo of the given Entry
+     * 
+     * @param entry the Entry 
+     * @return the Photo object if the entry has a Photo, otherwise null
+     */
+    public Photo getPhoto(Entry entry);
+    
+    /**
      * Deletes the given photo from the database
      * 
      * A Photo can be deleted only during the same day it was took.

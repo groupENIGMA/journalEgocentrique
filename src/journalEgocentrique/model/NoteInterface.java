@@ -13,14 +13,15 @@ package journalEgocentrique.model;
  *
  */
 public interface NoteInterface {
-
-    // Setta il testo
-    public void setText(String new_text);
     
-    // Ottieni il testo
+    /**
+     * @return the text of the Note 
+     */
     public String getText();
     
-    // Ottieni l'id della Nota
+    /**
+     * @return the unique id of the Note
+     */
     public long getId();
 
     /**

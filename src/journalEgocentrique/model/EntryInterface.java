@@ -4,12 +4,12 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * This class is used by {@link DataSourceInterface} to model a daily
+ * This class is used by {@link DBInterface} to model a daily
  * Entry of the diary.
  * <p>
  * You shouldn't create new instance of this object using directly its
  * constructors: you should only use the instances returned by
- * the {@link DataSourceInterface}
+ * the {@link DBInterface}
  * 
  * @version 0.1
  * @author groupENIGMA

@@ -1,12 +1,12 @@
 package journalEgocentrique.model;
 
 /**
- * This class is used by {@link DataSourceInterface} to model a Note of
+ * This class is used by {@link DBInterface} to model a Note of
  * an Entry of the diary.
  * <p>
  * You shouldn't create new instance of this object using directly its
  * constructors: you should only use the instances returned by
- * the {@link DataSourceInterface}
+ * the {@link DBInterface}
  * 
  * @version 0.1
  * @author groupENIGMA
@@ -14,12 +14,14 @@ package journalEgocentrique.model;
  */
 public interface NoteInterface {
     
-    /**
+    /** Returns the text comment of the Note.
+     *
      * @return the text of the Note 
      */
     public String getText();
     
-    /**
+    /** Returns the unique id of the Note
+     * 
      * @return the unique id of the Note
      */
     public long getId();

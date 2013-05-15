@@ -1,10 +1,7 @@
 package journalEgocentrique.model;
 
-public class InvalidOperationException extends Exception {
+public class InvalidOperationException extends RuntimeException {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public InvalidOperationException(){}

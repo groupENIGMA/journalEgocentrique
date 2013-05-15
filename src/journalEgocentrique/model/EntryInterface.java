@@ -1,6 +1,7 @@
 package journalEgocentrique.model;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * This class is used by {@link DataSourceInterface} to model a daily
@@ -29,6 +30,30 @@ public interface EntryInterface {
      * @return the id
      */
     public long getId();
+
+    /**
+     * Returns the Mood associated with the Entry
+     * 
+     * @return the Mood if the Entry has a Mood set,
+     *         otherwise return null
+     */
+    public Mood getMood();
+
+    /**
+     * Returns the Photo associated with the Entry
+     * 
+     * @return the Photo if the Entry has a Photo set
+     *         otherwise return null
+     */
+    public Mood getPhoto();
+    
+    /**
+     * Returns a List of all the notes associates with the Entry
+     * 
+     * @return the List of Notes if at least one note is set,
+     *         otherwise return an empty List
+     */
+    public List<Note> getNotes();
 
     /**
      * Checks if the Entry can be deleted 

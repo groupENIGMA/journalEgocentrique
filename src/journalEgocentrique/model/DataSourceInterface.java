@@ -54,11 +54,12 @@ public interface DataSourceInterface {
      */
     public Entry getEntryOfTheDay(Calendar day);
     
-    /** Returns the list of all the Entry saved in the database
+    /** Returns the list of days that have an Entry associated
      * <p>
-     * @return the list of Entry (can be empty if the database has no Entry)
+     * @return the list of days in the diary, can be empty on a brand new
+     *         database
      */
-    public List<Entry> getEntries();
+    public List<Calendar> getDays();
     
     /** Insert a new text Note to the given Entry.
      * <p>
@@ -67,28 +68,27 @@ public interface DataSourceInterface {
      * 
      * @param entry
      * @param note_text The text of the Note
+     * @return the newly created Note
      * @throws InvalidOperationException When adding a Note to an Entry that
      *         is wasn't created today
      */
-    public void insertNote(Entry entry, String note_text);
+    public Note insertNote(Entry entry, String note_text);
     
     /**
-     * Updates the copy saved in the database of the given Note.
+     * Updates the text note of the given Note
      * <p>
-     * If you are trying to change the text of a Note saved in the database
-     * and obtained via the {@link #getNotes(Entry)} method you should:
-     *     1) Update the Note text using {@link NoteInterface#setText(String)}
-     *     2) Update the copy of Note in the database with this method.
-     * 
      * Each Note has a "grace period" during which it can be updated: calling
      * this method on a Note after the end of the grace period will result
      * in an error.
      *
-     * @param note the updated version of the Note
+     * @param note, the Node you want to update
+     * @param new_note_text, the new text of the note
+     * @return the new version of the Note
      * @throws InvalidOperationException When note's grace period is already
      *         ended.
      */
-    public void updateNote(Note note) throws InvalidOperationException;
+    public Note updateNote(Note note, String new_note_text)
+    		throws InvalidOperationException;
     
     /**
      * Deletes the given Note from the database
@@ -97,14 +97,6 @@ public interface DataSourceInterface {
      * @throws InvalidOperationException If the given Note isn't in the database
      */
     public void deleteNote(Note note) throws InvalidOperationException;
-    
-    /**
-     * Returns the list of all the Note of the given Entry
-     * 
-     * @param entry
-     * @return a List with all the Note of the Entry, can be empty.
-     */
-    public List<Note> getNotes(Entry entry);
     
     /**
      * Sets the mood for the given Entry
@@ -119,19 +111,19 @@ public interface DataSourceInterface {
     public void setMood(Entry entry, Mood mood) throws InvalidOperationException;
     
     /**
-     * Returns the Mood of the given Entry
-     * 
-     * @param entry
-     * @return the mood if the Entry has a Mood, otherwise null
-     */
-    public Mood getMood(Entry entry);
-    
-    /**
      * Sets the Mood for given Entry to null
      * 
      * @param entry
      */
     public void removeMood(Entry entry);
+    
+    /** Returns the list of available Moods.
+     * <p>
+     * The user can choose to assign to the entries one of these Moods.
+     * 
+     * @return the list of available Moods
+     */
+    public List<Mood> getAvailableMoods();
     
     /**
      * Sets the Photo for the given Entry
@@ -143,14 +135,6 @@ public interface DataSourceInterface {
      * @throws InvalidOperationException
      */
     public Photo setPhoto(Entry entry, File photo) throws InvalidOperationException;
-
-    /**
-     * Returns the Photo of the given Entry
-     * 
-     * @param entry the Entry 
-     * @return the Photo object if the entry has a Photo, otherwise null
-     */
-    public Photo getPhoto(Entry entry);
     
     /**
      * Deletes the given photo from the database

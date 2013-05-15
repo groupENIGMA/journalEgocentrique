@@ -1,6 +1,6 @@
 package journalEgocentrique.model;
 
-public class ConnectionException extends Exception{
+public class ConnectionException extends IllegalStateException{
 
 	/**
 	 * 

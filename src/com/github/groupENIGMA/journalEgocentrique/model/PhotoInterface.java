@@ -1,4 +1,4 @@
-package journalEgocentrique.model;
+package com.github.groupENIGMA.journalEgocentrique.model;
 
 /**
  * This class is used by {@link DBInterface} to model the Photo

@@ -1,4 +1,4 @@
-package journalEgocentrique.model;
+package com.github.groupENIGMA.journalEgocentrique.model;
 
 public class Photo implements PhotoInterface {
 

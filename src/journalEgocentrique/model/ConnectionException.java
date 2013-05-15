@@ -2,9 +2,6 @@ package journalEgocentrique.model;
 
 public class ConnectionException extends IllegalStateException{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public ConnectionException(){}

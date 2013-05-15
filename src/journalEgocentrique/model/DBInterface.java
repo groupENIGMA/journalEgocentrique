@@ -71,7 +71,7 @@ public interface DBInterface {
      * @throws InvalidOperationException When adding a Note to an Entry that
      *         is wasn't created today
      */
-    public Note insertNote(Entry entry, String note_text);
+    public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
     
     /**
      * Updates the text note of the given Note
@@ -93,7 +93,8 @@ public interface DBInterface {
      * Deletes the given Note from the database
      * 
      * @param note the Note to be deleted
-     * @throws InvalidOperationException If the given Note isn't in the database
+     * @throws InvalidOperationException If the given Note isn't in the database or if 
+     * the operation is not permitted
      */
     public void deleteNote(Note note) throws InvalidOperationException;
     
@@ -113,8 +114,9 @@ public interface DBInterface {
      * Sets the Mood for given Entry to null
      * 
      * @param entry
+     * @throws InvalidOperationException if the Entry's mood can't be removed
      */
-    public void removeMood(Entry entry);
+    public void removeMood(Entry entry) throws InvalidOperationException;
     
     /** Returns the list of available Moods.
      * <p>
@@ -131,7 +133,7 @@ public interface DBInterface {
      * @param path the URI of the file containing the photo
      * @return the newly created Photo object
      * 
-     * @throws InvalidOperationException
+     * @throws InvalidOperationException if the Entry's photo can't be insered
      */
     public Photo setPhoto(Entry entry, String path) throws InvalidOperationException;
     

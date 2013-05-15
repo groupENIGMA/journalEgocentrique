@@ -1,6 +1,5 @@
 package journalEgocentrique.model;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
@@ -129,12 +128,12 @@ public interface DBInterface {
      * Sets the Photo for the given Entry
      * 
      * @param entry the Entry to be updated
-     * @param photo the File object containing the photo
+     * @param path the URI of the file containing the photo
      * @return the newly created Photo object
      * 
      * @throws InvalidOperationException
      */
-    public Photo setPhoto(Entry entry, File photo) throws InvalidOperationException;
+    public Photo setPhoto(Entry entry, String path) throws InvalidOperationException;
     
     /**
      * Deletes the given photo from the database

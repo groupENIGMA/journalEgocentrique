@@ -15,11 +15,14 @@ package journalEgocentrique.model;
 public interface PhotoInterface {
 
     /**
-     * Create the thumbnail of the Photo
-     * 
-     * @return
+     * @return the URI of the photo
      */
-    public Photo createThumb();
+    public String getPath();
+    
+    /**
+     * @return the URI of the thumbnail of this photo
+     */
+     public String getPathThumb();
     
     /**
      * Checks if a Photo can be modified.

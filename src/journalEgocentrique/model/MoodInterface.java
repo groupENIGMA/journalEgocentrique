@@ -1,21 +1,14 @@
 package journalEgocentrique.model;
 
-public class Mood {
-	
-	protected final String[] moods = {"FELICE", "TRISTE", "INDIFFERENTE", "ARRABBIATO", "SVOGLIATO", "ENTUSIASTA"};
-    private int id;
-    private int drawable;
-	
-    // Costruttore Mood
-    public Mood(int id, int drawable) {
-        this.id = id;
-        this.drawable = drawable;
-    }
+public interface MoodInterface{
     
-    // Ritorna l'id del Mood
-    public int getId() {return this.id;}
+    /**
+     * @return The unique id that identifies this Mood
+     */
+    public int getId();
     
-    // Ritorna drawable del Mood
-    public int getDrawable() {return this.drawable;}
-    
+    /**
+     * @return The path of the image associated to this Mood
+     */
+    public String getPathImage();
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
     tools:context=".ListActivity" >
 
     <ListView
@@ -13,52 +14,46 @@
     </ListView>
 
     <FrameLayout
+        android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/dailyPhoto"
             android:layout_width="471dp"
             android:layout_height="308dp"
-            android:src="@drawable/ic_launcher" />
+            android:contentDescription="@string/bigImage"/>
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/emoticon"
             android:layout_width="398dp"
             android:layout_height="212dp"
             android:layout_gravity="right"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/ic_launcher" android:contentDescription="@string/emoticon"/>
 
-        <LinearLayout
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView1"
             android:layout_width="match_parent"
-            android:layout_height="222dp"
+            android:layout_height="225dp"
             android:layout_gravity="bottom" >
 
-            <EditText
-                android:id="@+id/editText3"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_weight="0.98"
-                android:ems="10" />
+                android:orientation="horizontal" >
 
-            <EditText
-                android:id="@+id/editText2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.99"
-                android:ems="10" />
+                <EditText
+                    android:id="@+id/EditText02"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/editMessage"
+                    android:inputType="text"
+                    android:imeOptions="actionSend" />
 
-            <EditText
-                android:id="@+id/editText1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1.00"
-                android:ems="10" >
 
-                <requestFocus />
-            </EditText>
 
-        </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
 
     </FrameLayout>
 

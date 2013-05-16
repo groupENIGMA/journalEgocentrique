@@ -24,7 +24,7 @@ public class Entry implements EntryInterface {
 	}
 
 	@Override
-	public Mood getPhoto() {
+	public Photo getPhoto() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,5 +1,7 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.graphics.drawable.Drawable;
+
 public class Photo implements PhotoInterface {
 
     /**
@@ -27,6 +29,10 @@ public class Photo implements PhotoInterface {
 	@Override
 	public String getPath() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Drawable getDrawable(){
 		return null;
 	}
 

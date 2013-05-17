@@ -4,22 +4,31 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
 
 	private List<Calendar> menu;
 	private DB dataBase;
-	private Entry selectedEntry;
+	private Entry selectedEntry = null;
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -47,19 +56,56 @@ public class ListActivity extends Activity {
          * Aggiorna i dati sulla schermata d'inizio
          * manca notes
          */
-        if(selectedEntry == null){
-    	    ImageView i = (ImageView) findViewById(R.id.dailyPhoto); 
-    	    i.setImageResource(R.drawable.ic_launcher);
-    	    i = (ImageView)findViewById(R.id.emoticon);
-    	    i.setImageResource(R.drawable.ic_launcher);
+		setContentView(R.layout.main);
+	       if(selectedEntry == null){
+    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
+    	    img.setImageResource(R.drawable.ic_launcher);
+    	    img = (ImageView)findViewById(R.id.emoticon);
+    	    img.setImageResource(R.drawable.ic_launcher);
         }
+	    /*
+	     * Caso entry selezionata dall'utente:
+	     * vengono aggiornate la foto, il mood e le note.
+	     * Controllando se è possibile la modifica si permetta la stessa o meno
+	     */
         else{
-    	    ImageView i = (ImageView) findViewById(R.id.dailyPhoto); 
-    	    i.setImageDrawable(selectedEntry.getPhoto().getDrawable());
-    	    i = (ImageView)findViewById(R.id.emoticon);
-    	    i.setImageBitmap(selectedEntry.getMood().getPathImage());
+    	    boolean editable = selectedEntry.canBeUpdated();
+    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
+    	    img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
+    	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
+    	    mood.setImageURI(Uri.parse(selectedEntry.getMood().getPathImage()));
+    	    if(editable){
+    	    	 img.setOnTouchListener(new OnTouchListener()
+    	         {
+    	             @Override
+    	             public boolean onTouch(View v, MotionEvent event)
+    	             {
+    	            	 // qui carica la vista per la fotoCamera
+    	                 return false;
+    	             }
+    	        });
+    	    	 mood.setOnTouchListener(new OnTouchListener()
+    	    	 {
+    	    		@Override
+    	    		public boolean onTouch(View v, MotionEvent event)
+    	    		{
+    	    			// qui carica la vista per il moood
+    	    			return false;
+    	    		}
+    	    	 });
+    	    }
+    	    LinearLayout notes = (LinearLayout)findViewById(R.id.notes);
+    	    List<Note> myNotes = selectedEntry.getNotes();
+    	    for(int i = 0;i < myNotes.size();i++){
+    	    	EditText tmp = new EditText(this);
+    	    	tmp.append(myNotes.get(i).toString());
+    	    	tmp.setFocusable(editable);
+    	    	notes.addView(tmp);
+    	    }
         }
-        
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        TextView yourEditText = (TextView)findViewById(R.id.EditText02);
+		imm.showSoftInput(yourEditText, InputMethodManager.SHOW_FORCED);
 		setContentView(R.layout.main);
 	}
 

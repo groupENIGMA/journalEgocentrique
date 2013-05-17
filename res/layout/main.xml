@@ -22,6 +22,7 @@
             android:id="@+id/dailyPhoto"
             android:layout_width="471dp"
             android:layout_height="308dp"
+            android:src="@drawable/ic_launcher"
             android:contentDescription="@string/bigImage"/>
 
         <ImageView
@@ -29,7 +30,7 @@
             android:layout_width="398dp"
             android:layout_height="212dp"
             android:layout_gravity="right"
-            android:src="@drawable/ic_launcher" android:contentDescription="@string/emoticon"/>
+            android:contentDescription="@string/emoticon"/>
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView1"
@@ -38,6 +39,7 @@
             android:layout_gravity="bottom" >
 
             <LinearLayout
+                android:id="@+id/notes"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="horizontal" >

@@ -31,10 +31,6 @@ public class Photo implements PhotoInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public Drawable getDrawable(){
-		return null;
-	}
 
 	@Override
 	public String getPathThumb() {

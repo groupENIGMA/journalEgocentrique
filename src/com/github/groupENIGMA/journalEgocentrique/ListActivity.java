@@ -1,48 +1,98 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
-
+	
+	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
 	private List<Calendar> menu;
 	private DB dataBase;
 	private Entry selectedEntry = null;
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	
-	    /*
-	     * Popolazione della ListView con i dati forniti dal database
-	     * Viene inoltre creato un listener sulla lista che al click
-	     * di un certo giorno, visualizza i dettagli dello stesso
-	     */
+
+		setContentView(R.layout.main);
+	    dataBase = new DB();
 	    menu = dataBase.getDays();
-	    ListView entry = (ListView)findViewById(R.id.listView1);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList);
-        entry.setAdapter(arrayAdapter);
+
+	    ListView list = (ListView)findViewById(R.id.list);
+	    ListView notes = (ListView)findViewById(R.id.notes);
+	    
+	    setListView(list, menu);
+
+	    
+	   setImages(selectedEntry);
+	    
+	   setNotes(notes, selectedEntry);
+	    }
+	
+/**
+ * Displays the correct notes for the entry selected by the user.
+ * @param selected Entry. The entry selected by the user.
+ */
+	private void setNotes(ListView list, Entry selected) {
+        boolean editable = selected.canBeUpdated();
+        List<Note> tmp = selected.getNotes();
+        List<String> notes = new ArrayList<String>();
+        for(int i = 0;i < tmp.size();i++){
+        	notes.add(tmp.get(i).getText());
+        }
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, notes);
+        list.setAdapter(arrayAdapter);
+        if(editable){
+	        OnItemClickListener clickListener = new OnItemClickListener() {
+	
+	            @Override
+	            public void onItemClick(AdapterView<?> adapter, View view,
+	                int position, long id) {
+	                Note modify = (Note)adapter.getItemAtPosition(position);
+	                Intent intent = new Intent(getApplicationContext(), WriteNote.class);//ho messo WriteNote.class
+	                intent.putExtra(EXTRA_MESSAGE, modify.getText());
+	                startActivity(intent);
+	            }
+	        };
+	        list.setOnItemClickListener(clickListener);
+        }
+	}
+
+
+	/**
+	 * The ListView will be populated with the data given by the database.
+	 * It is also created a OnItemClickListener that at the click will display the details of the day.
+	 * @param list ListView. The list to populate.
+	 * @param entry List<Calendar> With this List we will populate the ListView 
+	 */
+	private void setListView(ListView list, List<Calendar> entry){
+		List<String> listEntry = new ArrayList<String>();
+		SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
+		for(int i = 0;i < entry.size();i++){
+			listEntry.add(i, sdf.format(entry.get(i).getTime()));
+		}
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listEntry);
+        list.setAdapter(arrayAdapter);
         OnItemClickListener clickListener = new OnItemClickListener() {
 
             @Override
@@ -51,13 +101,19 @@ public class ListActivity extends Activity {
                 selectedEntry = (Entry)adapter.getItemAtPosition(position);
             }
         };
-        entry.setOnItemClickListener(clickListener);
-        /*
-         * Aggiorna i dati sulla schermata d'inizio
-         * manca notes
-         */
-		setContentView(R.layout.main);
-	       if(selectedEntry == null){
+        list.setOnItemClickListener(clickListener);
+	}
+	
+	
+	/**
+	 * Sets the correct image for photo and mood selected by the user.
+	 * @param selected Entry. The entry selected by the user, its details will be displayed.
+	 */
+	private void setImages(Entry selected){
+	   /*
+	    * Caso iniziale:nessun entry selezionata 
+	    */
+		if(selected == null){
     	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
     	    img.setImageResource(R.drawable.ic_launcher);
     	    img = (ImageView)findViewById(R.id.emoticon);
@@ -69,11 +125,11 @@ public class ListActivity extends Activity {
 	     * Controllando se è possibile la modifica si permetta la stessa o meno
 	     */
         else{
-    	    boolean editable = selectedEntry.canBeUpdated();
+    	    boolean editable = selected.canBeUpdated();
     	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
-    	    img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
+    	    img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
     	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
-    	    mood.setImageURI(Uri.parse(selectedEntry.getMood().getPathImage()));
+    	    mood.setImageURI(Uri.parse(selected.getMood().getPathImage()));
     	    if(editable){
     	    	 img.setOnTouchListener(new OnTouchListener()
     	         {
@@ -81,6 +137,9 @@ public class ListActivity extends Activity {
     	             public boolean onTouch(View v, MotionEvent event)
     	             {
     	            	 // qui carica la vista per la fotoCamera
+    	            	 Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
+    	            	 intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+    	            	 startActivity(intent);
     	                 return false;
     	             }
     	        });
@@ -90,23 +149,14 @@ public class ListActivity extends Activity {
     	    		public boolean onTouch(View v, MotionEvent event)
     	    		{
     	    			// qui carica la vista per il moood
+    	    			Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
+    	    			intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+    	    			startActivity(intent);
     	    			return false;
     	    		}
     	    	 });
     	    }
-    	    LinearLayout notes = (LinearLayout)findViewById(R.id.notes);
-    	    List<Note> myNotes = selectedEntry.getNotes();
-    	    for(int i = 0;i < myNotes.size();i++){
-    	    	EditText tmp = new EditText(this);
-    	    	tmp.append(myNotes.get(i).toString());
-    	    	tmp.setFocusable(editable);
-    	    	notes.addView(tmp);
-    	    }
         }
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        TextView yourEditText = (TextView)findViewById(R.id.EditText02);
-		imm.showSoftInput(yourEditText, InputMethodManager.SHOW_FORCED);
-		setContentView(R.layout.main);
 	}
 
 

@@ -7,7 +7,7 @@
     tools:context=".ListActivity" >
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/list"
         android:layout_width="194dp"
         android:layout_height="match_parent" >
 
@@ -20,42 +20,26 @@
 
         <ImageView
             android:id="@+id/dailyPhoto"
-            android:layout_width="471dp"
-            android:layout_height="308dp"
-            android:src="@drawable/ic_launcher"
-            android:contentDescription="@string/bigImage"/>
+            android:layout_width="591dp"
+            android:layout_height="327dp"
+            android:contentDescription="@string/bigImage"
+            android:src="@drawable/ic_launcher" />
+
+        <ListView
+            android:id="@+id/notes"
+            android:layout_width="238dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
+
+        </ListView>
 
         <ImageView
             android:id="@+id/emoticon"
             android:layout_width="398dp"
             android:layout_height="212dp"
-            android:layout_gravity="right"
-            android:contentDescription="@string/emoticon"/>
-
-        <HorizontalScrollView
-            android:id="@+id/horizontalScrollView1"
-            android:layout_width="match_parent"
-            android:layout_height="225dp"
-            android:layout_gravity="bottom" >
-
-            <LinearLayout
-                android:id="@+id/notes"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal" >
-
-                <EditText
-                    android:id="@+id/EditText02"
-                    android:layout_width="fill_parent"
-                    android:layout_height="match_parent"
-                    android:hint="@string/editMessage"
-                    android:inputType="text"
-                    android:imeOptions="actionSend" />
-
-
-
-            </LinearLayout>
-        </HorizontalScrollView>
+            android:layout_gravity="bottom"
+            android:src="@drawable/ic_launcher"
+            android:contentDescription="@string/emoticon" />
 
     </FrameLayout>
 

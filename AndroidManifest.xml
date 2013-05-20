@@ -1,7 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.github.groupENIGMA.journalEgocentrique"
     android:versionCode="1"
     android:versionName="1.0" >
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -12,12 +15,28 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <activity android:name="ListActivity"
-            android:label="@string/app_name">
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.ListActivity"
+            android:label="@string/app_name" >
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"></action>
-                <category android:name="android.intent.category.LAUNCHER"></category>
+                <action android:name="android.intent.action.MAIN" >
+                </action>
+
+                <category android:name="android.intent.category.LAUNCHER" >
+                </category>
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.WriteNote"
+            android:label="@string/title_activity_write_note" >
+        </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.PhotoActivity"
+            android:label="@string/title_activity_photo" >
+        </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.MoodActivity"
+            android:label="@string/title_activity_mood" >
         </activity>
     </application>
 

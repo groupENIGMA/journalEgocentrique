@@ -7,7 +7,7 @@
     tools:context=".ListActivity" >
 
     <ListView
-        android:id="@+id/listView1"
+        android:id="@+id/list"
         android:layout_width="194dp"
         android:layout_height="match_parent" >
 
@@ -33,7 +33,7 @@
             android:contentDescription="@string/emoticon"/>
 
         <HorizontalScrollView
-            android:id="@+id/horizontalScrollView1"
+            android:id="@+id/horizontalScrollView"
             android:layout_width="match_parent"
             android:layout_height="225dp"
             android:layout_gravity="bottom" >
@@ -45,7 +45,7 @@
                 android:orientation="horizontal" >
 
                 <EditText
-                    android:id="@+id/EditText02"
+                    android:id="@+id/EditText"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     android:hint="@string/editMessage"

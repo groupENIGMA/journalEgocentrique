@@ -1,6 +1,5 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -40,18 +39,17 @@ public class ListActivity extends Activity {
 	    dataBase = new DB();
 	    menu = dataBase.getDays();
 
-
 	    ListView list = (ListView)findViewById(R.id.list);
 	    ListView notes = (ListView)findViewById(R.id.notes);
 	    
 	    setListView(list, menu);
 	    setImages(selectedEntry);
 	    setNotes(notes, selectedEntry);
-
 	    }
 	
 /**
  * Displays the correct notes for the entry selected by the user.
+<<<<<<< HEAD
  * @param selected Entry. The entry selected by the user.
  */
 	private void setNotes(ListView list, Entry selected) {
@@ -80,7 +78,6 @@ public class ListActivity extends Activity {
      }
 
 
-
 	/**
 	 * The ListView will be populated with the data given by the database.
 	 * It is also created a OnItemClickListener that at the click will display the details of the day.
@@ -88,12 +85,7 @@ public class ListActivity extends Activity {
 	 * @param entry List<Calendar> With this List we will populate the ListView 
 	 */
 	private void setListView(ListView list, List<Calendar> entry){
-		List<String> listEntry = new ArrayList<String>();
-		SimpleDateFormat sdf = new SimpleDateFormat("DD/MM/YYYY");
-		for(int i = 0;i < entry.size();i++){
-			listEntry.add(i, sdf.format(entry.get(i).getTime()));
-		}
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listEntry);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList);
         list.setAdapter(arrayAdapter);
         OnItemClickListener clickListener = new OnItemClickListener() {
 

@@ -41,22 +41,6 @@
             android:src="@drawable/ic_launcher"
             android:contentDescription="@string/emoticon" />
 
-        <HorizontalScrollView
-            android:id="@+id/horizontalScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="225dp"
-            android:layout_gravity="bottom" >
-
-            <LinearLayout
-                android:id="@+id/notes"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal" >
-
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
     </FrameLayout>
 
 </LinearLayout>

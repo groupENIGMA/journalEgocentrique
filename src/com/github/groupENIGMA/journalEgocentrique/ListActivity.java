@@ -15,7 +15,9 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
@@ -38,15 +40,14 @@ public class ListActivity extends Activity {
 	    dataBase = new DB();
 	    menu = dataBase.getDays();
 
+
 	    ListView list = (ListView)findViewById(R.id.list);
 	    ListView notes = (ListView)findViewById(R.id.notes);
 	    
 	    setListView(list, menu);
+	    setImages(selectedEntry);
+	    setNotes(notes, selectedEntry);
 
-	    
-	   setImages(selectedEntry);
-	    
-	   setNotes(notes, selectedEntry);
 	    }
 	
 /**
@@ -76,7 +77,8 @@ public class ListActivity extends Activity {
 	        };
 	        list.setOnItemClickListener(clickListener);
         }
-	}
+     }
+
 
 
 	/**

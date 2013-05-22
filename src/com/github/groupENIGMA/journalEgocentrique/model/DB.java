@@ -291,24 +291,23 @@ public class DB implements DBInterface {
         @Override
         public void onCreate(SQLiteDatabase db) {
 
-            // This string is used to define the command to create the databases tables.
-            String newEntryTable = " create table IF NOT EXISTS" +
-                    Entry_TABLE +
-                    " (" +
-                    ENTRY_ID + " INTEGER PRYMARY KEY autoincrement not null," +
-                    DATE + " text UNIQUE not null," +
-                    PHOTO + " text," +
-                    MOOD + " integer " +
+            // SQL statements used to create the tables
+            String newEntryTable = 
+                    "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
+                    ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    DATE + " TEXT UNIQUE NOT NULL," +
+                    PHOTO + " TEXT," +
+                    MOOD + " INTEGER " +
                     " );";
-            String newNotesTable = " create table " +
-                    Notes_TABLE +
-                    " (" +
-                    NOTE_ID + " INTEGER PRYMARY KEY autoincrement not null," +
-                    NOTE_TEXT + " text," +
-                    "FOREIGN KEY(" + NOTE_DATE + ") REFERENCES " +
+            String newNotesTable =
+                    "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
+                    NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    NOTE_TEXT + " TEXT," +
+                    
+                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_DATE + ") REFERENCES " +
                     Entry_TABLE + "(" + DATE + ") ON DELETE CASCADE" +
                     " );";
-            // execute the query string to the database.
+            // Run all the CREATE TABLE ...
             db.execSQL(newEntryTable);
             db.execSQL(newNotesTable);
         }

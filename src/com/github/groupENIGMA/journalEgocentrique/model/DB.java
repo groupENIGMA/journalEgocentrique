@@ -17,41 +17,41 @@ import java.util.List;
  * @author groupENIGMA
  */
 public class DB implements DBInterface {
-	
-	// Constants about the database
-	private static final String DB_NAME = "JournalEgocentrique.db"; 
-	private static final int DB_VERSION = 1; 
-	
-	// Constants specified for the Entry table and its fields
-	public static final String Entry_TABLE = "Entry"; 
-	public static final String ENTRY_ID = "_id";
-	public static final String DATE = "Date";
-	public static final String PHOTO = "Photo";
-	public static final String MOOD = "Mood";
-	
-	// Constants specified for the Notes table and its fields
-	public static final String Notes_TABLE = "Notes";
-	public static final String NOTE_ID = "_id";
-	public static final String NOTE_TEXT = "NoteText";
-	public static final String NOTE_DATE = "NoteDate";
-	
-	// A reference to the database used by the application
-	private SQLiteDatabase db;
-	
-	// the Activity or Application that is creating an object from this class.
-	Context context;
-	
-	openHelper helper;
-	
-	//The database manager constructor
-	public DB(Context context) {
-		
-		this.context = context;
-		// create or open the database
-		helper = new openHelper(context);	
-	}
-	
-	/**
+
+    // Constants about the database
+    private static final String DB_NAME = "JournalEgocentrique.db"; 
+    private static final int DB_VERSION = 1; 
+
+    // Constants specified for the Entry table and its fields
+    public static final String Entry_TABLE = "Entry"; 
+    public static final String ENTRY_ID = "_id";
+    public static final String DATE = "Date";
+    public static final String PHOTO = "Photo";
+    public static final String MOOD = "Mood";
+
+    // Constants specified for the Notes table and its fields
+    public static final String Notes_TABLE = "Notes";
+    public static final String NOTE_ID = "_id";
+    public static final String NOTE_TEXT = "NoteText";
+    public static final String NOTE_DATE = "NoteDate";
+
+    // A reference to the database used by the application
+    private SQLiteDatabase db;
+
+    // the Activity or Application that is creating an object from this class.
+    Context context;
+
+    openHelper helper;
+
+    //The database manager constructor
+    public DB(Context context) {
+
+        this.context = context;
+        // create or open the database
+        helper = new openHelper(context);	
+    }
+
+    /**
      * Open the connection to the database. You MUST call this method
      * before calling any other method that interacts with the database.
      * Should be called in the onResume() method of the Activity.
@@ -59,17 +59,17 @@ public class DB implements DBInterface {
      * @throws SQLException
      */
     public void open() throws SQLException {
-    	
-    	db = helper.getWritableDatabase();
+
+        db = helper.getWritableDatabase();
     }
-    
+
     /**
      * Closes all the remaining active connections to the database.
      * You should call this method in the onPause() method of the Activity
      */
     public void close() {
-    	
-    	db.close();
+
+        db.close();
     }
 
     /**
@@ -82,11 +82,11 @@ public class DB implements DBInterface {
      * @return The Entry for today.
      */
     public Entry getEntryOfTheDay() {
-    	
-    	Calendar cal = Calendar.getInstance();
-    	return this.getEntryOfTheDay(cal);
+
+        Calendar cal = Calendar.getInstance();
+        return this.getEntryOfTheDay(cal);
     }
-    
+
     /**
      * Returns the diary's Entry for a given day.
      * <p>
@@ -98,50 +98,50 @@ public class DB implements DBInterface {
      * @return The Entry for day.
      */
     public Entry getEntryOfTheDay(Calendar day) {
-    	
-    	this.open();
-    	
-    	String Date = day.get(Calendar.YEAR) + "_" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH);
-    	
-    	String daySelect = "SELECT * FROM " +
-    	                   Entry_TABLE + " WHERE" +
-    			           DATE + " = " + Date;
-    	String notesDaySelect = "SELECT * FROM " +
-    			           Notes_TABLE + " WHERE" +
-                           NOTE_DATE + " = " + Date;
-    			 			          
-    	Cursor curE = db.rawQuery( daySelect, new String [] {});
-    	Cursor curN = db.rawQuery( notesDaySelect, new String [] {});
-    	
-    	if(curE == null){
-    		db.close();
-    		return new Entry(day);
-    	}
-    		 	
-    	long id = curE.getLong(1);                  //First column is ID
-    	Photo ph = new Photo(curE.getString(3));    //Third column is Photo
-    	Mood mo = new Mood(curE.getInt(4));         //Fourth column is Mood
-    	curE.close();
-    	
-    	if(curN != null){
-    		// code that fills a list of notes and passes it to the Entry constructor
-    		// Note [] no      ... non array ma arrayList o List
-    	}
-    	db.close();
-    	return new Entry(id, day, ph, mo, no);
-    	    	
-    	
+
+        this.open();
+
+        String Date = day.get(Calendar.YEAR) + "_" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH);
+
+        String daySelect = "SELECT * FROM " +
+                Entry_TABLE + " WHERE" +
+                DATE + " = " + Date;
+        String notesDaySelect = "SELECT * FROM " +
+                Notes_TABLE + " WHERE" +
+                NOTE_DATE + " = " + Date;
+
+        Cursor curE = db.rawQuery( daySelect, new String [] {});
+        Cursor curN = db.rawQuery( notesDaySelect, new String [] {});
+
+        if(curE == null){
+            db.close();
+            return new Entry(day);
+        }
+
+        long id = curE.getLong(1);                  //First column is ID
+        Photo ph = new Photo(curE.getString(3));    //Third column is Photo
+        Mood mo = new Mood(curE.getInt(4));         //Fourth column is Mood
+        curE.close();
+
+        if(curN != null){
+            // code that fills a list of notes and passes it to the Entry constructor
+            // Note [] no      ... non array ma arrayList o List
+        }
+        db.close();
+        return new Entry(id, day, ph, mo, no);
+
+
     }
-    
+
     /** Returns the list of days that have an Entry associated
      * <p>
      * @return the list of days in the diary, can be empty on a brand new
      *         database
      */
     public List<Calendar> getDays() {
-    	
+
     }
-    
+
     /** Insert a new text Note to the given Entry.
      * <p>
      * It's possible to add a Note to an Entry only during the day of creation
@@ -154,9 +154,9 @@ public class DB implements DBInterface {
      *         is wasn't created today
      */
     public Note insertNote(Entry entry, String note_text) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Updates the text note of the given Note
      * <p>
@@ -171,9 +171,9 @@ public class DB implements DBInterface {
      *         ended.
      */
     public Note updateNote(Note note, String new_note_text) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Deletes the given Note from the database
      * 
@@ -182,9 +182,9 @@ public class DB implements DBInterface {
      * the operation is not permitted
      */
     public void deleteNote(Note note) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Sets the mood for the given Entry
      * <p>
@@ -196,9 +196,9 @@ public class DB implements DBInterface {
      * @throws InvalidOperationException If the Entry's mood can't be modified
      */
     public void setMood(Entry entry, Mood mood) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Sets the Mood for given Entry to null
      * 
@@ -206,9 +206,9 @@ public class DB implements DBInterface {
      * @throws InvalidOperationException if the Entry's mood can't be removed
      */
     public void removeMood(Entry entry) throws InvalidOperationException {
-    	
+
     }
-    
+
     /** Returns the list of available Moods.
      * <p>
      * The user can choose to assign to the entries one of these Moods.
@@ -216,9 +216,9 @@ public class DB implements DBInterface {
      * @return the list of available Moods
      */
     public List<Mood> getAvailableMoods() {
-    	
+
     }
-    
+
     /**
      * Sets the Photo for the given Entry
      * 
@@ -229,9 +229,9 @@ public class DB implements DBInterface {
      * @throws InvalidOperationException if the Entry's photo can't be insered
      */
     public Photo setPhoto(Entry entry, String path) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Deletes the given photo from the database
      * 
@@ -242,18 +242,18 @@ public class DB implements DBInterface {
      *         deleted.
      */
     public void deletePhoto(Photo photo) throws InvalidOperationException {
-    	
+
     }
-    
+
     /**
      * Returns the list of all the Photo saved in the database.
      * 
      * @return the List with all the Photo
      */
     public List<Photo> getPhotos() {
-    	
+
     }
-    
+
     /**
      * Return the list of all the Photo taken in the given time range
      * 
@@ -262,60 +262,60 @@ public class DB implements DBInterface {
      * @return the List (can be empty) of matching Photo
      */
     public List<Photo> getPhotos(Calendar from, Calendar to) {
-    	
+
     }
-    
-    
+
+
     /**
      * This class implements an open helper extending the SQLiteOpenHelper
      * 
      * It creates, if not existing, a new database or updates the existing one
      */
-	private class openHelper extends SQLiteOpenHelper {
-		
-		public openHelper(Context context) {
-			super(context, DB_NAME, null, DB_VERSION);
-		}
- 
-		@Override
-		public void onCreate(SQLiteDatabase db) {
-			
-			// This string is used to define the command to create the databases tables.
-			String newEntryTable = " create table IF NOT EXISTS" +
-					                    Entry_TABLE +
-										" (" +
-										ENTRY_ID + " INTEGER PRYMARY KEY autoincrement not null," +
-										DATE + " text UNIQUE not null," +
-										PHOTO + " text," +
-										MOOD + " integer " +
-										" );";
-			String newNotesTable = " create table " +
-                                        Notes_TABLE +
-					                    " (" +
-					                    NOTE_ID + " INTEGER PRYMARY KEY autoincrement not null," +
-					                    NOTE_TEXT + " text," +
-					                    "FOREIGN KEY(" + NOTE_DATE + ") REFERENCES " +
-					                    Entry_TABLE + "(" + DATE + ") ON DELETE CASCADE" +
-					                    " );";
-			// execute the query string to the database.
-			db.execSQL(newEntryTable);
-			db.execSQL(newNotesTable);
-		}
- 
-		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			//
-		}
-		
-		@Override
-		public void onOpen(SQLiteDatabase db) {
-			
-		    super.onOpen(db);
-		    if (!db.isReadOnly()) {
-		        // Enable foreign key constraints
-		        db.execSQL("PRAGMA foreign_keys=ON;");
-		    }
-		}
-	}
+    private class openHelper extends SQLiteOpenHelper {
+
+        public openHelper(Context context) {
+            super(context, DB_NAME, null, DB_VERSION);
+        }
+
+        @Override
+        public void onCreate(SQLiteDatabase db) {
+
+            // This string is used to define the command to create the databases tables.
+            String newEntryTable = " create table IF NOT EXISTS" +
+                    Entry_TABLE +
+                    " (" +
+                    ENTRY_ID + " INTEGER PRYMARY KEY autoincrement not null," +
+                    DATE + " text UNIQUE not null," +
+                    PHOTO + " text," +
+                    MOOD + " integer " +
+                    " );";
+            String newNotesTable = " create table " +
+                    Notes_TABLE +
+                    " (" +
+                    NOTE_ID + " INTEGER PRYMARY KEY autoincrement not null," +
+                    NOTE_TEXT + " text," +
+                    "FOREIGN KEY(" + NOTE_DATE + ") REFERENCES " +
+                    Entry_TABLE + "(" + DATE + ") ON DELETE CASCADE" +
+                    " );";
+            // execute the query string to the database.
+            db.execSQL(newEntryTable);
+            db.execSQL(newNotesTable);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+            //
+        }
+
+        @Override
+        public void onOpen(SQLiteDatabase db) {
+
+            super.onOpen(db);
+            if (!db.isReadOnly()) {
+                // Enable foreign key constraints
+                db.execSQL("PRAGMA foreign_keys=ON;");
+            }
+        }
+    }
 }
 

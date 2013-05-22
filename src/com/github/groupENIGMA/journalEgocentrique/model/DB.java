@@ -18,6 +18,10 @@ public class DB implements DBInterface {
 		// TODO Auto-generated method stub
 
 	}
+	
+	public Entry getEntryById(long id){
+		return null;
+	}
 
 	@Override
 	public Entry getEntryOfTheDay() {

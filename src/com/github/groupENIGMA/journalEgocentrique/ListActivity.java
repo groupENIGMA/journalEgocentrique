@@ -38,6 +38,10 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.main);
 	    dataBase = new DB();
 	    menu = dataBase.getDays();
+	    if (savedInstanceState != null){
+	    	long idValue = savedInstanceState.getLong("ID");
+	    	selectedEntry = dataBase.getEntryById(idValue);
+	    }
 
 	    ListView list = (ListView)findViewById(R.id.list);
 	    ListView notes = (ListView)findViewById(R.id.notes);
@@ -46,6 +50,12 @@ public class ListActivity extends Activity {
 	    setImages(selectedEntry);
 	    setNotes(notes, selectedEntry);
 	    }
+	
+	public void onSaveInstanceState(Bundle savedInstanceState){
+		long entryId = selectedEntry.getId();
+		savedInstanceState.putLong("ID", entryId);
+		super.onSaveInstanceState(savedInstanceState);
+	}
 	
 /**
  * Displays the correct notes for the entry selected by the user.

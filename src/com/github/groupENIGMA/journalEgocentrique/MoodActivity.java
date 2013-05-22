@@ -1,22 +1,39 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.GridView;
+
+import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Mood;
 
 public class MoodActivity extends Activity {
 
+	private DB database;
+	private Entry myEntry;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mood);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.mood, menu);
-		return true;
+		Intent intent = getIntent();
+		long entryId = intent.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
+		database = new DB();
+		myEntry = database.getEntryById(entryId);
+		GridView grid = (GridView)findViewById(R.id.moodGrid);
+		final ImageAdapter imgAdapter = new ImageAdapter(this);
+		grid.setAdapter(imgAdapter);
+		grid.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	            database.setMood(myEntry, (Mood)imgAdapter.getItem(position));
+	            Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+	            startActivity(intent);
+	        }
+	    });
 	}
 
 }

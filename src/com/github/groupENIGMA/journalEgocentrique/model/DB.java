@@ -109,17 +109,20 @@ public class DB implements DBInterface {
 
         this.open();
 
-        String Date = date_format.format(day.getTime());
+        String date_string = date_format.format(day.getTime());
 
-        String daySelect = "SELECT * FROM " +
-                Entry_TABLE + " WHERE" +
-                DATE + " = " + Date;
-        String notesDaySelect = "SELECT * FROM " +
-                Notes_TABLE + " WHERE" +
-                NOTE_DATE + " = " + Date;
-
-        Cursor curE = db.rawQuery( daySelect, new String [] {});
-        Cursor curN = db.rawQuery( notesDaySelect, new String [] {});
+        Cursor curE = db.rawQuery(
+                "SELECT * " +
+                " FROM " + Entry_TABLE +
+                " WHERE " + DATE + "=?",
+                new String[] {date_string}
+        );
+        Cursor curN = db.rawQuery(
+                "SELECT *" +
+                " FROM " + Notes_TABLE +
+                " WHERE " + NOTE_DATE + "=?", 
+                new String [] {date_string}
+        );
 
         if(curE == null){
             db.close();

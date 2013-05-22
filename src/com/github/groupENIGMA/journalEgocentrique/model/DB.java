@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.SQLException;
 import android.database.Cursor;
+
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -35,20 +37,26 @@ public class DB implements DBInterface {
     public static final String NOTE_TEXT = "NoteText";
     public static final String NOTE_DATE = "NoteDate";
 
+    // Format used by the dates saved in the database
+    public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
+
     // A reference to the database used by the application
     private SQLiteDatabase db;
 
     // the Activity or Application that is creating an object from this class.
     Context context;
-
     openHelper helper;
+    
+    // Used to convert Calendar to String and String to Calendar
+    SimpleDateFormat date_format;
 
     //The database manager constructor
     public DB(Context context) {
 
         this.context = context;
         // create or open the database
-        helper = new openHelper(context);	
+        helper = new openHelper(context);
+        date_format = new SimpleDateFormat(DB_DATE_FORMAT);
     }
 
     /**
@@ -101,7 +109,7 @@ public class DB implements DBInterface {
 
         this.open();
 
-        String Date = day.get(Calendar.YEAR) + "_" + day.get(Calendar.MONTH) + "-" + day.get(Calendar.DAY_OF_MONTH);
+        String Date = date_format.format(day.getTime());
 
         String daySelect = "SELECT * FROM " +
                 Entry_TABLE + " WHERE" +

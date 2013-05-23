@@ -106,10 +106,22 @@ public class DB implements DBInterface {
                 e.printStackTrace();
                 return null;  // This maybe should be changed with an exception
             }
-            // Get the Entry Photo
-            Photo entry_photo = new Photo(cur.getString(2));
-            // Get the Entry Mood
-            Mood entry_mood = new Mood(cur.getLong(3));
+            // Get the Entry Photo (if exists)
+            Photo entry_photo;
+            if (cur.isNull(2)) {
+                entry_photo = null;
+            }
+            else {
+                entry_photo= new Photo(cur.getString(2));
+            }
+            // Get the Entry Mood (if exists)
+            Mood entry_mood;
+            if (cur.isNull(3)) {
+                entry_mood = null;
+            }
+            else {
+                entry_mood = new Mood(cur.getLong(3));
+            }
             // Get all the Notes
             ArrayList<Note> note_list = new ArrayList<Note>();
             if (!cur.isNull(4)) {  // Notes are available only if NOTE_ID!=NULL

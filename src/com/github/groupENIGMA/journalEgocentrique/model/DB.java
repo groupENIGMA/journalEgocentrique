@@ -37,7 +37,7 @@ public class DB implements DBInterface {
     public static final String Notes_TABLE = "Notes";
     public static final String NOTE_ID = "_id";
     public static final String NOTE_TEXT = "NoteText";
-    public static final String NOTE_DATE = "NoteDate";
+    public static final String NOTE_ENTRYID = "EntryID";
 
     // Format used by the dates saved in the database
     public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
@@ -141,7 +141,6 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Entry getEntryOfTheDay(Calendar day) {
-
         // Convert the Calendar object to a String in the same format
         // used in the database
         String date_string = date_format.format(day.getTime());
@@ -153,7 +152,9 @@ public class DB implements DBInterface {
                             Entry_TABLE + "." + MOOD        + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
                             Notes_TABLE + "." + NOTE_TEXT   +
-                " FROM " + Entry_TABLE + " NATURAL LEFT OUTER JOIN " + Notes_TABLE +
+                " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
+                            " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
+                                     Notes_TABLE + "." + NOTE_ENTRYID +
                 " WHERE " + DATE + "=?",
                 new String[] {date_string}
         );
@@ -172,7 +173,9 @@ public class DB implements DBInterface {
                             Entry_TABLE + "." + MOOD        + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
                             Notes_TABLE + "." + NOTE_TEXT   +
-                " FROM " + Entry_TABLE + " NATURAL LEFT OUTER JOIN " + Notes_TABLE +
+                " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
+                            " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
+                                     Notes_TABLE + "." + NOTE_ENTRYID +
                 " WHERE " + ENTRY_ID + "=?",
                 new String[] {Long.toString(id)}
         );
@@ -274,18 +277,18 @@ public class DB implements DBInterface {
             // SQL statements used to create the tables
             String newEntryTable = 
                     "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
-                    ENTRY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    DATE + " TEXT UNIQUE NOT NULL," +
-                    PHOTO + " TEXT," +
-                    MOOD + " INTEGER " +
+                    ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    DATE        + " TEXT UNIQUE NOT NULL," +
+                    PHOTO       + " TEXT," +
+                    MOOD        + " INTEGER " +
                     " );";
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
-                    NOTE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    NOTE_TEXT + " TEXT," +
-                    
-                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_DATE + ") REFERENCES " +
-                    Entry_TABLE + "(" + DATE + ") ON DELETE CASCADE" +
+                    NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    NOTE_TEXT       + " TEXT," +
+                    NOTE_ENTRYID    + " INTEGER," +
+                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRYID + ") " +
+                    "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";
             // Run all the CREATE TABLE ...
             db.execSQL(newEntryTable);

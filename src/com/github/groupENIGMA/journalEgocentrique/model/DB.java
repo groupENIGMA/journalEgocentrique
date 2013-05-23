@@ -112,8 +112,8 @@ public class DB implements DBInterface {
             Mood entry_mood = new Mood(cur.getLong(3));
             // Get all the Notes
             ArrayList<Note> note_list = new ArrayList<Note>();
-            if (!cur.isNull(4)) {  // if NOTE_ID is NULL the Entry doesn't
-                do {               // have any Note
+            if (!cur.isNull(4)) {  // Notes are available only if NOTE_ID!=NULL
+                do {
                     Note note = new Note(
                             cur.getLong(4),     // NOTE_ID
                             cur.getString(5)    // NOTE_TEXT

@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.SQLException;
 import android.database.Cursor;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -75,6 +77,57 @@ public class DB implements DBInterface {
         db.close();
     }
 
+    /** Reads the rows available in the given Cursor to create and return
+     * an Entry object with its related Notes
+     * <p>
+     * This works correctly only if the rows available in the cursor have the
+     * following columns in this exact order:
+     *      ENTRY_ID, DATE, PHOTO, MOOD, NOTE_ID, NOTE_TEXT
+     * (it's basically the Entry table joined with the Note one)
+     * 
+     * @param cur The Cursor containing the rows with the Entry data
+     * @returns an Entry or, if the cur is "empty", null
+     */
+    private Entry createEntryWithNotesFromCursor(Cursor cur) {
+        // Check if the Cursor has at least one row
+        if (cur.getCount() == 0) {
+            return null;
+        }
+        else {
+            // Move to the first row
+            cur.moveToFirst();
+            // Get the Entry id
+            long entry_id = cur.getLong(0);
+            // Get the Entry date
+            Calendar entry_date = Calendar.getInstance();
+            try {
+                entry_date.setTime(date_format.parse(cur.getString(1)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;  // This maybe should be changed with an exception
+            }
+            // Get the Entry Photo
+            Photo entry_photo = new Photo(cur.getString(2));
+            // Get the Entry Mood
+            Mood entry_mood = new Mood(cur.getLong(3));
+            // Get all the Notes
+            ArrayList<Note> note_list = new ArrayList<Note>();
+            if (!cur.isNull(4)) {  // if NOTE_ID is NULL the Entry doesn't
+                do {               // have any Note
+                    Note note = new Note(
+                            cur.getLong(4),     // NOTE_ID
+                            cur.getString(5)    // NOTE_TEXT
+                            );
+                    note_list.add(note);
+                }
+                while (cur.moveToNext());
+            }
+            // Create and return the Entry
+            return new Entry(entry_id, entry_date, entry_photo, entry_mood,
+                    note_list);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -84,46 +137,46 @@ public class DB implements DBInterface {
         return this.getEntryOfTheDay(cal);
     }
 
-    /**
+    /** 
      * {@inheritDoc}
      */
     public Entry getEntryOfTheDay(Calendar day) {
 
-        this.open();
-
+        // Convert the Calendar object to a String in the same format
+        // used in the database
         String date_string = date_format.format(day.getTime());
-
-        Cursor curE = db.rawQuery(
-                "SELECT * " +
-                " FROM " + Entry_TABLE +
+        // Query the database
+        Cursor cur = db.rawQuery(
+                "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
+                            Entry_TABLE + "." + DATE        + ", " +
+                            Entry_TABLE + "." + PHOTO       + ", " +
+                            Entry_TABLE + "." + MOOD        + ", " +
+                            Notes_TABLE + "." + NOTE_ID     + ", " +
+                            Notes_TABLE + "." + NOTE_TEXT   +
+                " FROM " + Entry_TABLE + " NATURAL LEFT OUTER JOIN " + Notes_TABLE +
                 " WHERE " + DATE + "=?",
                 new String[] {date_string}
         );
-        Cursor curN = db.rawQuery(
-                "SELECT *" +
-                " FROM " + Notes_TABLE +
-                " WHERE " + NOTE_DATE + "=?", 
-                new String [] {date_string}
+        return createEntryWithNotesFromCursor(cur);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public Entry getEntry(long id) {
+        // Query the database
+        Cursor cur = db.rawQuery(
+                "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
+                            Entry_TABLE + "." + DATE        + ", " +
+                            Entry_TABLE + "." + PHOTO       + ", " +
+                            Entry_TABLE + "." + MOOD        + ", " +
+                            Notes_TABLE + "." + NOTE_ID     + ", " +
+                            Notes_TABLE + "." + NOTE_TEXT   +
+                " FROM " + Entry_TABLE + " NATURAL LEFT OUTER JOIN " + Notes_TABLE +
+                " WHERE " + ENTRY_ID + "=?",
+                new String[] {Long.toString(id)}
         );
-
-        if(curE == null){
-            db.close();
-            return new Entry(day);
-        }
-
-        long id = curE.getLong(1);                  //First column is ID
-        Photo ph = new Photo(curE.getString(3));    //Third column is Photo
-        Mood mo = new Mood(curE.getInt(4));         //Fourth column is Mood
-        curE.close();
-
-        if(curN != null){
-            // code that fills a list of notes and passes it to the Entry constructor
-            // Note [] no      ... non array ma arrayList o List
-        }
-        db.close();
-        return new Entry(id, day, ph, mo, no);
-
-
+        return createEntryWithNotesFromCursor(cur);
     }
 
     /**
@@ -254,5 +307,6 @@ public class DB implements DBInterface {
             }
         }
     }
+
 }
 

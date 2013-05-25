@@ -172,7 +172,10 @@ public class DB implements DBInterface {
                 " WHERE " + DATE + "=?",
                 new String[] {date_string}
         );
-        return createEntryWithNotesFromCursor(cur);
+
+        Entry e = createEntryWithNotesFromCursor(cur);
+        cur.close();
+        return e;
     }
 
     /**
@@ -193,13 +196,17 @@ public class DB implements DBInterface {
                 " WHERE " + ENTRY_ID + "=?",
                 new String[] {Long.toString(id)}
         );
-        return createEntryWithNotesFromCursor(cur);
+
+        Entry e = createEntryWithNotesFromCursor(cur);
+        cur.close();
+        return e;
     }
 
     /**
      * {@inheritDoc}
      */
     public List<Calendar> getDays() {
+
     	//select all the days stored in the database (they are UNIQUE)
     	Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + DATE,

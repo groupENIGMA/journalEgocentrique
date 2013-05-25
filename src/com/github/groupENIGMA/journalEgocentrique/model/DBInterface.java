@@ -52,6 +52,15 @@ public interface DBInterface {
      * @return The Entry for day.
      */
     public Entry getEntryOfTheDay(Calendar day);
+
+    /**
+     * Returns the diary's Entry with the given id.
+     * 
+     * @param id The searched id.
+     * @return the Entry with the given id or null (if the an Entry with the
+     * given id doesn't exists).
+     */
+    public Entry getEntry(long id);
     
     /** Returns the list of days that have an Entry associated
      * <p>

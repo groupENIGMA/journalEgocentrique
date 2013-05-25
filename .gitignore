@@ -17,3 +17,7 @@ local.properties
 
 # OSX useless files
 .DS_Store
+
+# Android Studio files
+.idea/
+journalEgocentrique.iml

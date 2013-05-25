@@ -45,7 +45,7 @@ public interface EntryInterface {
      * @return the Photo if the Entry has a Photo set
      *         otherwise return null
      */
-    public Mood getPhoto();
+    public Photo getPhoto();
     
     /**
      * Returns a List of all the notes associates with the Entry

@@ -1,20 +1,26 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import java.util.Calendar;
+
 public class Note implements NoteInterface {
 
     private long id;
     private String text;
+    private Calendar time;
 
     /**
      * Create a new Note with the given id and text
      *
      * @param id the Note id
      * @param text the text of the Note
+     * @param time the Calendar with date and time of Note creation
      */
-    protected Note(long id, String text) {
+    protected Note(long id, String text, Calendar time) {
         this.id = id;
         this.text = text;
+        this.time = time;
     }
+
     @Override
     public String getText() {
         return this.text;
@@ -23,6 +29,11 @@ public class Note implements NoteInterface {
     @Override
     public long getId() {
         return this.id;
+    }
+
+    @Override
+    public Calendar getTime() {
+        return this.time;
     }
 
     @Override

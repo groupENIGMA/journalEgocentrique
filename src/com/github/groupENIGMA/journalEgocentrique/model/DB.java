@@ -39,35 +39,38 @@ public class DB implements DBInterface {
     public static final String Notes_TABLE = "Note";
     public static final String NOTE_ID = "_id";
     public static final String NOTE_TEXT = "Text";
+    public static final String NOTE_TIME = "Time";
     public static final String NOTE_ENTRY_ID = "Entry_id";
 
     // Format used by the dates and times saved in the database
-    public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
+    public static final String DB_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DB_TIME_FORMAT = "HH:mm:ss.SSS";
 
     // A reference to the database used by the application
     private SQLiteDatabase db;
-
     // the Activity or Application that is creating an object from this class.
-    Context context;
-    openHelper helper;
-    
+    private Context context;
+    private openHelper helper;
     // Used to convert Calendar to String and String to Calendar
-    SimpleDateFormat date_format;
+    private SimpleDateFormat date_format;
+    private SimpleDateFormat time_format;
 
-    //The database manager constructor
+    /**
+     * Creates a DB object
+     *
+     * @param context The application context
+     */
     public DB(Context context) {
-
         this.context = context;
-        // create or open the database
-        helper = new openHelper(context);
-        date_format = new SimpleDateFormat(DB_DATE_FORMAT);
+        this.helper = new openHelper(context);  // Creates or open the db
+        this.date_format = new SimpleDateFormat(DB_DATE_FORMAT);
+        this.time_format = new SimpleDateFormat(DB_TIME_FORMAT);
     }
 
     /**
      * {@inheritDoc}
      */
     public void open() throws SQLException {
-
         db = helper.getWritableDatabase();
     }
 
@@ -75,7 +78,6 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public void close() {
-
         db.close();
     }
 
@@ -84,11 +86,12 @@ public class DB implements DBInterface {
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
-     *      ENTRY_ID, ENTRY_DATE, ENTRY_PHOTO, ENTRY_MOOD, NOTE_ID, NOTE_TEXT
+     *      ENTRY_ID, ENTRY_DATE, ENTRY_PHOTO, ENTRY_MOOD, NOTE_ID, NOTE_TEXT,
+     *      NOTE_TIME
      * (it's basically the Entry table joined with the Note one)
      * 
      * @param cur The Cursor containing the rows with the Entry data
-     * @returns an Entry or, if the cur is "empty", null
+     * @return an Entry or, if the cur is "empty", null
      */
     private Entry createEntryWithNotesFromCursor(Cursor cur) {
         // Check if the Cursor has at least one row
@@ -106,7 +109,6 @@ public class DB implements DBInterface {
                 entry_date.setTime(date_format.parse(cur.getString(1)));
             } catch (ParseException e) {
                 e.printStackTrace();
-                return null;  // This maybe should be changed with an exception
             }
             // Get the Entry Photo (if exists)
             Photo entry_photo;
@@ -124,13 +126,26 @@ public class DB implements DBInterface {
             else {
                 entry_mood = new Mood(cur.getLong(3));
             }
-            // Get all the Notes
+            // Get all the Notes (if any)
             ArrayList<Note> note_list = new ArrayList<Note>();
             if (!cur.isNull(4)) {  // Notes are available only if NOTE_ID!=NULL
                 do {
+                    // Parse the time from the database string
+                    Calendar note_time = Calendar.getInstance();
+                    try {
+                        note_time.setTime(time_format.parse(cur.getString(6)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    // Set the year, month and day using the entry_date
+                    note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
+                    note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
+                    note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
+                    // Create the Note and add it to the list
                     Note note = new Note(
                             cur.getLong(4),     // NOTE_ID
-                            cur.getString(5)    // NOTE_TEXT
+                            cur.getString(5),   // NOTE_TEXT
+                            note_time
                             );
                     note_list.add(note);
                 }
@@ -165,7 +180,8 @@ public class DB implements DBInterface {
                             Entry_TABLE + "." + ENTRY_PHOTO + ", " +
                             Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   +
+                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
+                            Notes_TABLE + "." + NOTE_TIME   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
                                      Notes_TABLE + "." + NOTE_ENTRY_ID +
@@ -189,7 +205,8 @@ public class DB implements DBInterface {
                             Entry_TABLE + "." + ENTRY_PHOTO + ", " +
                             Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   +
+                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
+                            Notes_TABLE + "." + NOTE_TIME   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
                                      Notes_TABLE + "." + NOTE_ENTRY_ID +
@@ -379,6 +396,7 @@ public class DB implements DBInterface {
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
                     NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     NOTE_TEXT       + " TEXT," +
+                    NOTE_TIME       + " TEXT," +
                     NOTE_ENTRY_ID   + " INTEGER," +
                     "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRY_ID + ") " +
                         "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +

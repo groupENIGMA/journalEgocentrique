@@ -28,20 +28,20 @@ public class DB implements DBInterface {
     private static final String DB_NAME = "JournalEgocentrique.db"; 
     private static final int DB_VERSION = 1; 
 
-    // Constants specified for the Entry table and its fields
+    // ENTRY table
     public static final String Entry_TABLE = "Entry"; 
     public static final String ENTRY_ID = "_id";
-    public static final String DATE = "Date";
-    public static final String PHOTO = "Photo";
-    public static final String MOOD = "Mood";
+    public static final String ENTRY_DATE = "Date";
+    public static final String ENTRY_PHOTO = "Photo";
+    public static final String ENTRY_MOOD = "Mood";
 
-    // Constants specified for the Notes table and its fields
-    public static final String Notes_TABLE = "Notes";
+    // NOTE table
+    public static final String Notes_TABLE = "Note";
     public static final String NOTE_ID = "_id";
-    public static final String NOTE_TEXT = "NoteText";
-    public static final String NOTE_ENTRYID = "EntryID";
+    public static final String NOTE_TEXT = "Text";
+    public static final String NOTE_ENTRY_ID = "Entry_id";
 
-    // Format used by the dates saved in the database
+    // Format used by the dates and times saved in the database
     public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
 
     // A reference to the database used by the application
@@ -84,7 +84,7 @@ public class DB implements DBInterface {
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
-     *      ENTRY_ID, DATE, PHOTO, MOOD, NOTE_ID, NOTE_TEXT
+     *      ENTRY_ID, ENTRY_DATE, ENTRY_PHOTO, ENTRY_MOOD, NOTE_ID, NOTE_TEXT
      * (it's basically the Entry table joined with the Note one)
      * 
      * @param cur The Cursor containing the rows with the Entry data
@@ -161,15 +161,15 @@ public class DB implements DBInterface {
         // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + DATE        + ", " +
-                            Entry_TABLE + "." + PHOTO       + ", " +
-                            Entry_TABLE + "." + MOOD        + ", " +
+                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
+                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
                             Notes_TABLE + "." + NOTE_TEXT   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRYID +
-                " WHERE " + Entry_TABLE + "." + DATE + "=?",
+                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
+                " WHERE " + Entry_TABLE + "." + ENTRY_DATE + "=?",
                 new String[] {date_string}
         );
 
@@ -185,14 +185,14 @@ public class DB implements DBInterface {
         // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + DATE        + ", " +
-                            Entry_TABLE + "." + PHOTO       + ", " +
-                            Entry_TABLE + "." + MOOD        + ", " +
+                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
+                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
                             Notes_TABLE + "." + NOTE_TEXT   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRYID +
+                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
                 " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?",
                 new String[] {Long.toString(id)}
         );
@@ -209,7 +209,7 @@ public class DB implements DBInterface {
 
     	//select all the days stored in the database (they are UNIQUE)
     	Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + DATE,
+                "SELECT " + Entry_TABLE + "." + ENTRY_DATE,
                 new String[] {}
                 );
     	//processes the query result with the cursor
@@ -250,7 +250,7 @@ public class DB implements DBInterface {
     	
     	//Insert the note text referred to the entry id
     	cv.put(NOTE_TEXT, note_text);
-    	cv.put(NOTE_ENTRYID, entryId);
+    	cv.put(NOTE_ENTRY_ID, entryId);
     	long id = db.insert(Notes_TABLE, NOTE_ID, cv);                     
     	
     	Cursor cur = db.rawQuery(
@@ -294,7 +294,7 @@ public class DB implements DBInterface {
         ContentValues cv=new ContentValues();
     	
     	//Put the new path String in the mood column
-    	cv.put(MOOD, mood.getPathImage());
+    	cv.put(ENTRY_MOOD, mood.getPathImage());
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
     }
 
@@ -306,7 +306,7 @@ public class DB implements DBInterface {
     	ContentValues cv=new ContentValues();
     	
     	//Removes the image path from the mood column
-    	cv.putNull(MOOD);
+    	cv.putNull(ENTRY_MOOD);
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
     }
 
@@ -325,7 +325,7 @@ public class DB implements DBInterface {
         ContentValues cv=new ContentValues();
     	
     	//Put the new path String in the Photo column
-    	cv.put(PHOTO, path);
+    	cv.put(ENTRY_PHOTO, path);
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});  
     	
     	return new Photo(path);
@@ -371,17 +371,17 @@ public class DB implements DBInterface {
             String newEntryTable = 
                     "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
                     ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    DATE        + " TEXT UNIQUE NOT NULL," +
-                    PHOTO       + " TEXT," +
-                    MOOD        + " INTEGER " +
+                    ENTRY_DATE  + " TEXT UNIQUE NOT NULL," +
+                    ENTRY_PHOTO + " TEXT," +
+                    ENTRY_MOOD  + " INTEGER " +
                     " );";
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
                     NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     NOTE_TEXT       + " TEXT," +
-                    NOTE_ENTRYID    + " INTEGER," +
-                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRYID + ") " +
-                    "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
+                    NOTE_ENTRY_ID   + " INTEGER," +
+                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRY_ID + ") " +
+                        "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";
             // Run all the CREATE TABLE ...
             db.execSQL(newEntryTable);

@@ -29,6 +29,7 @@ public class Note implements NoteInterface {
     public boolean canBeUpdated() {
         // TODO Auto-generated method stub
         return false;
+
     }
 
     @Override
@@ -37,4 +38,23 @@ public class Note implements NoteInterface {
         return false;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Note note = (Note) o;
+
+        if (id != note.id) return false;
+        if (!text.equals(note.text)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + text.hashCode();
+        return result;
+    }
 }

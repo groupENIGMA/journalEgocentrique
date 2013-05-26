@@ -185,7 +185,8 @@ public class DB implements DBInterface {
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
                                      Notes_TABLE + "." + NOTE_ENTRY_ID +
-                " WHERE " + Entry_TABLE + "." + ENTRY_DATE + "=?",
+                " WHERE " + Entry_TABLE + "." + ENTRY_DATE + "=?" +
+                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
                 new String[] {date_string}
         );
 
@@ -210,7 +211,8 @@ public class DB implements DBInterface {
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
                                      Notes_TABLE + "." + NOTE_ENTRY_ID +
-                " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?",
+                " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?"+
+                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
                 new String[] {Long.toString(id)}
         );
 

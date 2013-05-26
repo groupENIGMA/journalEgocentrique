@@ -42,6 +42,19 @@ public class DB implements DBInterface {
     public static final String NOTE_TIME = "Time";
     public static final String NOTE_ENTRY_ID = "Entry_id";
 
+    // MOOD table
+    public static final String Mood_TABLE = "Mood";
+    public static final String MOOD_ID = "_id";
+    public static final String MOOD_NAME = "name";
+
+    // The Moods available in the first version of the database
+    public static final String[][] MOODS_DB_VERSION_1 =  {
+            {"0", "Happy"},
+            {"1", "Sad"},
+            {"2", "Angry"},
+            // More in the future
+    };
+
     // Format used by the dates and times saved in the database
     public static final String DB_DATE_FORMAT = "yyyy-MM-dd";
     public static final String DB_TIME_FORMAT = "HH:mm:ss.SSS";
@@ -161,7 +174,6 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Entry getEntryOfTheDay() {
-
         Calendar cal = Calendar.getInstance();
         return this.getEntryOfTheDay(cal);
     }
@@ -385,14 +397,20 @@ public class DB implements DBInterface {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
             // SQL statements used to create the tables
+            String newMoodTable =
+                    "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
+                    MOOD_ID     + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    MOOD_NAME   + " TEXT" +
+                    " );";
             String newEntryTable = 
                     "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
                     ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     ENTRY_DATE  + " TEXT UNIQUE NOT NULL," +
                     ENTRY_PHOTO + " TEXT," +
                     ENTRY_MOOD  + " INTEGER " +
+                    "CONSTRAINT fk_Mood FOREIGN KEY(" + ENTRY_MOOD + ") " +
+                    "REFERENCES " + Mood_TABLE + "(" + MOOD_ID + ")" +
                     " );";
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
@@ -404,8 +422,16 @@ public class DB implements DBInterface {
                         "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";
             // Run all the CREATE TABLE ...
+            db.execSQL(newMoodTable);
             db.execSQL(newEntryTable);
             db.execSQL(newNotesTable);
+            // Insert all the basic Moods
+            for (String[] mood : MOODS_DB_VERSION_1) {
+                ContentValues cv = new ContentValues();
+                cv.put(MOOD_ID, mood[0]);
+                cv.put(MOOD_NAME, mood[1]);
+                db.insert(Mood_TABLE, null, cv);
+            }
         }
 
         @Override

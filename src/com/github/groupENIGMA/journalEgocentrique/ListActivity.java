@@ -59,7 +59,6 @@ public class ListActivity extends Activity {
 	
 /**
  * Displays the correct notes for the entry selected by the user.
-<<<<<<< HEAD
  * @param selected Entry. The entry selected by the user.
  */
 	private void setNotes(ListView list, Entry selected) {

@@ -40,9 +40,22 @@ public class DB implements DBInterface {
     public static final String NOTE_ID = "_id";
     public static final String NOTE_TEXT = "NoteText";
     public static final String NOTE_ENTRYID = "EntryID";
+    
+    // Constants specified for the Mood table and its fields
+    public static final String Mood_TABLE = "Mood";
+    public static final String MOOD_NAME = "Mood Name";
+    public static final String MOOD_IMAGE_PATH = "Image Path";
 
     // Format used by the dates saved in the database
     public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
+    
+    //Mood image paths
+    public static final String HAPPY_IMAGE_PATH = ;
+    public static final String SAD_IMAGE_PATH = ;
+    public static final String ANGRY_IMAGE_PATH = ;
+    public static final String BORED_IMAGE_PATH = ;
+    public static final String APATHETIC_IMAGE_PATH = ;
+    public static final String DEPRESSED_IMAGE_PATH = ;
 
     // A reference to the database used by the application
     private SQLiteDatabase db;
@@ -236,6 +249,7 @@ public class DB implements DBInterface {
             }
             while (cur.moveToNext());
             
+            cur.close();
             return days;
         }
     }
@@ -252,12 +266,6 @@ public class DB implements DBInterface {
     	cv.put(NOTE_TEXT, note_text);
     	cv.put(NOTE_ENTRYID, entryId);
     	long id = db.insert(Notes_TABLE, NOTE_ID, cv);                     
-    	
-    	Cursor cur = db.rawQuery(
-                "SELECT " + Notes_TABLE + "." + NOTE_ID,          // DA VERIFICARE STA PARTE !! MANCA INSERIRE ID
-                new String[] {}
-                );
-    	cur.moveToFirst();
     	
     	//Create the note to return
     	return new Note(id, note_text);
@@ -315,6 +323,27 @@ public class DB implements DBInterface {
      */
     public List<Mood> getAvailableMoods() {
 
+    	ArrayList<Mood> moods = new ArrayList<Mood>();
+    	// Query the database
+        Cursor cur = db.rawQuery(
+                "SELECT " + Mood_TABLE + "." + MOOD_NAME        + ", " +
+                            Mood_TABLE + "." + MOOD_IMAGE_PATH  +
+                " FROM " + Mood_TABLE,
+                new String[] {}
+        );
+        
+        cur.moveToFirst();
+        do {
+            Mood md = new Mood(
+                    cur.getString(1),     // MOOD_NAME
+                    cur.getString(2)    // MOOD_IMAGE_PATH
+                    );
+            moods.add(md);
+        }
+        while (cur.moveToNext());
+
+        cur.close();
+        return moods;
     }
 
     /**
@@ -336,6 +365,7 @@ public class DB implements DBInterface {
      */
     public void deletePhoto(Photo photo) throws InvalidOperationException {
 
+    	
     }
 
     /**
@@ -343,6 +373,14 @@ public class DB implements DBInterface {
      */
     public List<Photo> getPhotos() {
 
+    	//Sets the "to" day on tomorrow to get all the Entries
+    	Calendar to = Calendar.getInstance();  
+    	to.add(Calendar.DAY_OF_YEAR, 1);
+    	//sets the "from" day on 01-01-1970 to get all the Entries
+    	Calendar from = Calendar.getInstance();
+    	from.set(1970, 01, 01);
+    	
+        return getPhotos(from, to);
     }
 
     /**
@@ -350,6 +388,19 @@ public class DB implements DBInterface {
      */
     public List<Photo> getPhotos(Calendar from, Calendar to) {
 
+    	ArrayList<Photo> photos = new ArrayList<Photo>();
+    	// Query the database  	
+        Cursor cur = db.query(Entry_TABLE, new String[] {PHOTO}, DATE + " BETWEEN ? AND ?", new String[] {
+        		from.toString(), to.toString() }, null, null, null, null);
+        
+        cur.moveToFirst();
+        do {
+            photos.add(new Photo(cur.getString(1)));
+        }
+        while (cur.moveToNext());
+
+        cur.close();
+        return photos;
     }
 
 
@@ -375,6 +426,7 @@ public class DB implements DBInterface {
                     PHOTO       + " TEXT," +
                     MOOD        + " INTEGER " +
                     " );";
+            
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
                     NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
@@ -383,9 +435,44 @@ public class DB implements DBInterface {
                     "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRYID + ") " +
                     "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";
+            //All available moods table
+            String newMoodTable =
+                    "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
+                    MOOD_NAME        + " TEXT PRIMARY KEY NOT NULL," +
+                    MOOD_IMAGE_PATH  + " TEXT," +
+                    " );";
+            
             // Run all the CREATE TABLE ...
             db.execSQL(newEntryTable);
             db.execSQL(newNotesTable);
+            db.execSQL(newMoodTable);
+            
+            //Inserts the default values of the Mood image paths
+            ContentValues cv=new ContentValues();
+        	// HAPPY
+        	cv.put(MOOD_NAME, "Happy");
+        	cv.put(MOOD_IMAGE_PATH, HAPPY_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv); 
+        	// SAD
+        	cv.put(MOOD_NAME, "Sad");
+        	cv.put(MOOD_IMAGE_PATH, SAD_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv);
+        	// ANGRY
+        	cv.put(MOOD_NAME, "Angry");
+        	cv.put(MOOD_IMAGE_PATH, ANGRY_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv);
+        	// BORED
+        	cv.put(MOOD_NAME, "Bored");
+        	cv.put(MOOD_IMAGE_PATH, BORED_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv);
+        	// APATHETIC
+        	cv.put(MOOD_NAME, "Apathetic");
+        	cv.put(MOOD_IMAGE_PATH, APATHETIC_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv);
+        	// DEPRESSED
+        	cv.put(MOOD_NAME, "Depressed");
+        	cv.put(MOOD_IMAGE_PATH, DEPRESSED_IMAGE_PATH);
+        	db.insert(Mood_TABLE, MOOD_NAME, cv);
         }
 
         @Override

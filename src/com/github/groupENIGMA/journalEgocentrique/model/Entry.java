@@ -78,4 +78,31 @@ public class Entry implements EntryInterface {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entry entry = (Entry) o;
+
+        if (id != entry.id) return false;
+        if (!date.equals(entry.date)) return false;
+        if (mood != null ? !mood.equals(entry.mood) : entry.mood != null)
+            return false;
+        if (!notes.equals(entry.notes)) return false;
+        if (photo != null ? !photo.equals(entry.photo) : entry.photo != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + date.hashCode();
+        result = 31 * result + (photo != null ? photo.hashCode() : 0);
+        result = 31 * result + (mood != null ? mood.hashCode() : 0);
+        result = 31 * result + notes.hashCode();
+        return result;
+    }
 }

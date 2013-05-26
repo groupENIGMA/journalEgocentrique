@@ -9,7 +9,7 @@ public class Mood implements MoodInterface {
 	}
 
 	@Override
-	public String getPathImage() {
+	public String getEmoteId() {
 		// TODO Auto-generated method stub
 		return null;
 	}

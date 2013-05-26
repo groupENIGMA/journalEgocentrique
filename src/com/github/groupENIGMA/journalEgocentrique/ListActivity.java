@@ -40,7 +40,7 @@ public class ListActivity extends Activity {
 	    menu = dataBase.getDays();
 	    if (savedInstanceState != null){
 	    	long idValue = savedInstanceState.getLong("ID");
-	    	selectedEntry = dataBase.getEntryById(idValue);
+	    	selectedEntry = dataBase.getEntry(idValue);
 	    }
 
 	    ListView list = (ListView)findViewById(R.id.list);
@@ -133,7 +133,7 @@ public class ListActivity extends Activity {
     	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
     	    img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
     	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
-    	    mood.setImageURI(Uri.parse(selected.getMood().getPathImage()));
+    	    mood.setImageURI(Uri.parse(selected.getMood().getEmoteId()));
     	    if(editable){
     	    	 img.setOnTouchListener(new OnTouchListener()
     	         {

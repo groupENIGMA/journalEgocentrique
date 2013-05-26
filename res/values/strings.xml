@@ -11,5 +11,8 @@
     <string name="title_activity_photo">PhotoActivity</string>
     <string name="title_activity_mood">MoodActivity</string>
     <string name="done">Done</string>
-
+    <string name="take_picture">Take another picture</string>
+    <string name="accept">Accept</string>
+    <string name="delete">Delete</string>
+	<string name="album_name">Daily</string>
 </resources>

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.database.SQLException;
+import android.graphics.Bitmap;
 
 /**
  * This class acts as the Model for the Application.
@@ -135,7 +136,7 @@ public interface DBInterface {
      * 
      * @throws InvalidOperationException if the Entry's photo can't be insered
      */
-    public Photo setPhoto(Entry entry, String path) throws InvalidOperationException;
+    public Photo setPhoto(Entry entry, Bitmap image) throws InvalidOperationException;
     
     /**
      * Deletes the given photo from the database

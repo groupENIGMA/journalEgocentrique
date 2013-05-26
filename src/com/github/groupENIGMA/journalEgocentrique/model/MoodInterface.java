@@ -24,5 +24,5 @@ public interface MoodInterface{
      *
      * @return The path of the image associated to this Mood
      */
-    public String getPathImage();
+    public String getEmoteId();
 }

@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.database.SQLException;
+import android.graphics.Bitmap;
 
 public class DB implements DBInterface {
 
@@ -19,7 +20,7 @@ public class DB implements DBInterface {
 
 	}
 	
-	public Entry getEntryById(long id){
+	public Entry getEntry(long id){
 		return null;
 	}
 
@@ -81,7 +82,7 @@ public class DB implements DBInterface {
 	}
 
 	@Override
-	public Photo setPhoto(Entry entry, String path)
+	public Photo setPhoto(Entry entry, Bitmap image)
 			throws InvalidOperationException {
 		// TODO Auto-generated method stub
 		return null;

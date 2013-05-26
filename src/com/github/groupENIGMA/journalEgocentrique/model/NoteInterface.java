@@ -1,5 +1,7 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.content.SharedPreferences;
+
 import java.util.Calendar;
 
 /**
@@ -42,7 +44,7 @@ public interface NoteInterface {
      * 
      * @return true if the Note can be updated, false otherwise
      */
-    public boolean canBeUpdated();
+    public boolean canBeUpdated(SharedPreferences preferences);
     
     /**
      * Checks if the Note can be deleted 
@@ -52,6 +54,6 @@ public interface NoteInterface {
      * 
      * @return true if the Note can be deleted, false otherwise
      */
-    public boolean canBeDeleted();
+    public boolean canBeDeleted(SharedPreferences preferences);
     
 }

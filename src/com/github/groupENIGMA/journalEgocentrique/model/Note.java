@@ -1,5 +1,8 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.content.SharedPreferences;
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
+
 import java.util.Calendar;
 
 public class Note implements NoteInterface {
@@ -37,16 +40,28 @@ public class Note implements NoteInterface {
     }
 
     @Override
-    public boolean canBeUpdated() {
-        // TODO Auto-generated method stub
-        return false;
-
+    public boolean canBeUpdated(SharedPreferences preferences) {
+        // Get the timeout from the shared preferences
+        int hours_timeout = preferences.getInt(
+                AppConstants.PREFERENCES_KEY_NOTE_TIMEOUT,
+                AppConstants.DEFAULT_NOTE_TIMEOUT
+        );
+        // Prepare a Calendar set to when the timeout for this Note expires
+        Calendar timeout = (Calendar) getTime().clone();
+        timeout.roll(Calendar.HOUR, hours_timeout);
+        // Is the timeout expired?
+        Calendar rightNow = Calendar.getInstance();
+        if (rightNow.compareTo(timeout) >= 0) {
+            return false;  // An expired Note can't be updated
+        }
+        else {
+            return true;
+        }
     }
 
     @Override
-    public boolean canBeDeleted() {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean canBeDeleted(SharedPreferences preferences) {
+        return canBeUpdated(preferences);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
 import android.content.Context;
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 public class Mood implements MoodInterface {
 
@@ -23,7 +24,7 @@ public class Mood implements MoodInterface {
     @Override
     public int getEmoteId(Context context) {
         return context.getResources().getIdentifier(
-                "mood_emote_" + String.valueOf(this.id),
+                AppConstants.MOOD_EMOTE_PREFIX + String.valueOf(this.id),
                 "drawable",
                 context.getPackageName()
         );

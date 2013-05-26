@@ -12,12 +12,12 @@ import android.widget.ImageView;
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Mood;
 
-public class ImageAdapter extends BaseAdapter {
+public class MoodAdapter extends BaseAdapter {
     private Context mContext;
     private List<Mood> moods;
     private DB database;
 
-    public ImageAdapter(Context c) {
+    public MoodAdapter(Context c) {
         mContext = c;
         database = new DB();
         moods = database.getAvailableMoods();

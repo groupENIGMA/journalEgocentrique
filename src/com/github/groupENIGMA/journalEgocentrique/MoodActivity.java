@@ -25,7 +25,7 @@ public class MoodActivity extends Activity {
 		database = new DB();
 		myEntry = database.getEntry(entryId);
 		GridView grid = (GridView)findViewById(R.id.moodGrid);
-		final ImageAdapter imgAdapter = new ImageAdapter(this);
+		final MoodAdapter imgAdapter = new MoodAdapter(this);
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {

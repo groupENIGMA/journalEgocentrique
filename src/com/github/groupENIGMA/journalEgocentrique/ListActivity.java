@@ -8,15 +8,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
@@ -25,7 +24,7 @@ import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
 	
-	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
+	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
 	private List<Calendar> menu;
 	private DB dataBase;
 	private Entry selectedEntry = null;
@@ -162,5 +161,15 @@ public class ListActivity extends Activity {
         }
 	}
 
+	@Override
+	public boolean onKeyDown(int keycode, KeyEvent e) {
+	    switch(keycode) {
+	        case KeyEvent.KEYCODE_MENU:
+	            Intent intent = new Intent(getApplicationContext(), GalleryActivity.class);
+	            startActivity(intent);
+	            return true;
+	    }
 
+	    return super.onKeyDown(keycode, e);
+	}
 }

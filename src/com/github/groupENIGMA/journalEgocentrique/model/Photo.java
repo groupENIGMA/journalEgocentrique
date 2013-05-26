@@ -37,5 +37,5 @@ public class Photo implements PhotoInterface {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 }

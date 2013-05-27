@@ -1,5 +1,7 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.content.Context;
+
 /**
  * This class is used by {@link DBInterface} to model the moods that can
  * be associated with an Entry.
@@ -13,16 +15,21 @@ package com.github.groupENIGMA.journalEgocentrique.model;
  *
  */
 public interface MoodInterface{
-    
-    /** Returns the unique String id name of the Mood
+
+    /** Returns the unique id of the Mood
      * 
      * @return The unique name that identifies this Mood
      */
-    public String getName();
-    
-    /** Returns the path to the image associated to this Mood
+
+    public long getId();
+
+    /** Returns the Resource ID for the emote associated with this mood
+     * <p>
+     * The value returned by this function can be used instead of using
+     * the values of R properties (e.g. R.drawable.myImageID)
      *
-     * @return The path of the image associated to this Mood
+     * @param context The application context
+     * @return The resource ID of the emote of this Mood
      */
-    public String getPathImage();
+    public int getEmoteId(Context context);
 }

@@ -1,5 +1,9 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.content.SharedPreferences;
+
+import java.util.Calendar;
+
 /**
  * This class is used by {@link DBInterface} to model a Note of
  * an Entry of the diary.
@@ -26,6 +30,12 @@ public interface NoteInterface {
      */
     public long getId();
 
+    /** Returns the date and time of when the Note was created
+     *
+     * @return the Calendar of when the Note was created
+     */
+    public Calendar getTime();
+
     /**
      * Checks if the Note can be updated.
      * <p>
@@ -34,7 +44,7 @@ public interface NoteInterface {
      * 
      * @return true if the Note can be updated, false otherwise
      */
-    public boolean canBeUpdated();
+    public boolean canBeUpdated(SharedPreferences preferences);
     
     /**
      * Checks if the Note can be deleted 
@@ -44,6 +54,6 @@ public interface NoteInterface {
      * 
      * @return true if the Note can be deleted, false otherwise
      */
-    public boolean canBeDeleted();
+    public boolean canBeDeleted(SharedPreferences preferences);
     
 }

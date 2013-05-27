@@ -28,51 +28,65 @@ public class DB implements DBInterface {
     private static final String DB_NAME = "JournalEgocentrique.db"; 
     private static final int DB_VERSION = 1; 
 
-    // Constants specified for the Entry table and its fields
+    // ENTRY table
     public static final String Entry_TABLE = "Entry"; 
     public static final String ENTRY_ID = "_id";
-    public static final String DATE = "Date";
-    public static final String PHOTO = "Photo";
-    public static final String MOOD = "Mood";
+    public static final String ENTRY_DATE = "Date";
+    public static final String ENTRY_PHOTO = "Photo";
+    public static final String ENTRY_MOOD = "Mood";
 
-    // Constants specified for the Notes table and its fields
-    public static final String Notes_TABLE = "Notes";
+    // NOTE table
+    public static final String Notes_TABLE = "Note";
     public static final String NOTE_ID = "_id";
-    public static final String NOTE_TEXT = "NoteText";
-    public static final String NOTE_ENTRYID = "EntryID";
-    
-    // Constants specified for the Mood table and its fields
-    public static final String Mood_TABLE = "Mood";
-    public static final String MOOD_NAME = "Mood Name";
-    public static final String MOOD_IMAGE_PATH = "Image Path";
 
-    // Format used by the dates saved in the database
-    public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
+    public static final String NOTE_TEXT = "Text";
+    public static final String NOTE_TIME = "Time";
+    public static final String NOTE_ENTRY_ID = "Entry_id";
+
+    // MOOD table
+    public static final String Mood_TABLE = "Mood";
+    public static final String MOOD_ID = "_id";
+    public static final String MOOD_NAME = "name";
+
+    // The Moods available in the first version of the database
+    public static final String[][] MOODS_DB_VERSION_1 =  {
+            {"0", "Happy"},
+            {"1", "Sad"},
+            {"2", "Angry"},
+            {"3", "Bored"},
+            {"4", "Depressed"},
+            {"5", "Apathetic"}
+    };
+
+    // Format used by the dates and times saved in the database
+    public static final String DB_DATE_FORMAT = "yyyy-MM-dd";
+    public static final String DB_TIME_FORMAT = "HH:mm:ss.SSS";
 
     // A reference to the database used by the application
     private SQLiteDatabase db;
-
     // the Activity or Application that is creating an object from this class.
-    Context context;
-    openHelper helper;
-    
+    private Context context;
+    private openHelper helper;
     // Used to convert Calendar to String and String to Calendar
-    SimpleDateFormat date_format;
+    private SimpleDateFormat date_format;
+    private SimpleDateFormat time_format;
 
-    //The database manager constructor
+    /**
+     * Creates a DB object
+     *
+     * @param context The application context
+     */
     public DB(Context context) {
-
         this.context = context;
-        // create or open the database
-        helper = new openHelper(context);
-        date_format = new SimpleDateFormat(DB_DATE_FORMAT);
+        this.helper = new openHelper(context);  // Creates or open the db
+        this.date_format = new SimpleDateFormat(DB_DATE_FORMAT);
+        this.time_format = new SimpleDateFormat(DB_TIME_FORMAT);
     }
 
     /**
      * {@inheritDoc}
      */
     public void open() throws SQLException {
-
         db = helper.getWritableDatabase();
     }
 
@@ -80,7 +94,6 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public void close() {
-
         db.close();
     }
 
@@ -89,11 +102,12 @@ public class DB implements DBInterface {
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
-     *      ENTRY_ID, DATE, PHOTO, MOOD, NOTE_ID, NOTE_TEXT
+     *      ENTRY_ID, ENTRY_DATE, ENTRY_PHOTO, ENTRY_MOOD, NOTE_ID, NOTE_TEXT,
+     *      NOTE_TIME
      * (it's basically the Entry table joined with the Note one)
      * 
      * @param cur The Cursor containing the rows with the Entry data
-     * @returns an Entry or, if the cur is "empty", null
+     * @return an Entry or, if the cur is "empty", null
      */
     private Entry createEntryWithNotesFromCursor(Cursor cur) {
         // Check if the Cursor has at least one row
@@ -111,7 +125,6 @@ public class DB implements DBInterface {
                 entry_date.setTime(date_format.parse(cur.getString(1)));
             } catch (ParseException e) {
                 e.printStackTrace();
-                return null;  // This maybe should be changed with an exception
             }
             // Get the Entry Photo (if exists)
             Photo entry_photo;
@@ -127,15 +140,28 @@ public class DB implements DBInterface {
                 entry_mood = null;
             }
             else {
-                entry_mood = new Mood(cur.getString(3));
+                entry_mood = new Mood(cur.getLong(3));
             }
-            // Get all the Notes
+            // Get all the Notes (if any)
             ArrayList<Note> note_list = new ArrayList<Note>();
             if (!cur.isNull(4)) {  // Notes are available only if NOTE_ID!=NULL
                 do {
+                    // Parse the time from the database string
+                    Calendar note_time = Calendar.getInstance();
+                    try {
+                        note_time.setTime(time_format.parse(cur.getString(6)));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    // Set the year, month and day using the entry_date
+                    note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
+                    note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
+                    note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
+                    // Create the Note and add it to the list
                     Note note = new Note(
                             cur.getLong(4),     // NOTE_ID
-                            cur.getString(5)    // NOTE_TEXT
+                            cur.getString(5),   // NOTE_TEXT
+                            note_time
                             );
                     note_list.add(note);
                 }
@@ -151,7 +177,6 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Entry getEntryOfTheDay() {
-
         Calendar cal = Calendar.getInstance();
         return this.getEntryOfTheDay(cal);
     }
@@ -166,15 +191,17 @@ public class DB implements DBInterface {
         // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + DATE        + ", " +
-                            Entry_TABLE + "." + PHOTO       + ", " +
-                            Entry_TABLE + "." + MOOD        + ", " +
+                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
+                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   +
+                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
+                            Notes_TABLE + "." + NOTE_TIME   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRYID +
-                " WHERE " + DATE + "=?",
+                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
+                " WHERE " + Entry_TABLE + "." + ENTRY_DATE + "=?" +
+                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
                 new String[] {date_string}
         );
 
@@ -190,15 +217,17 @@ public class DB implements DBInterface {
         // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + DATE        + ", " +
-                            Entry_TABLE + "." + PHOTO       + ", " +
-                            Entry_TABLE + "." + MOOD        + ", " +
+                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
+                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
                             Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   +
+                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
+                            Notes_TABLE + "." + NOTE_TIME   +
                 " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
                             " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRYID +
-                " WHERE " + ENTRY_ID + "=?",
+                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
+                " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?"+
+                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
                 new String[] {Long.toString(id)}
         );
 
@@ -214,7 +243,7 @@ public class DB implements DBInterface {
 
     	//select all the days stored in the database (they are UNIQUE)
     	Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + DATE,
+                "SELECT " + Entry_TABLE + "." + ENTRY_DATE,
                 new String[] {}
                 );
     	//processes the query result with the cursor
@@ -256,11 +285,13 @@ public class DB implements DBInterface {
     	
     	//Insert the note text referred to the entry id
     	cv.put(NOTE_TEXT, note_text);
-    	cv.put(NOTE_ENTRYID, entryId);
+    	cv.put(NOTE_ENTRY_ID, entryId);
     	long id = db.insert(Notes_TABLE, NOTE_ID, cv);                     
     	
+    	Calendar cal = Calendar.getInstance();
+    	
     	//Create the note to return
-    	return new Note(id, note_text);
+    	return new Note(id, note_text, cal);
     }
 
     /**
@@ -274,7 +305,8 @@ public class DB implements DBInterface {
     	cv.put(NOTE_TEXT, new_note_text);
     	long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?", new String []{String.valueOf(note.getId())});   
     	
-    	return new Note(id, new_note_text);
+    	
+    	return new Note(id, new_note_text, note.getTime());
     }
 
     /**
@@ -294,7 +326,7 @@ public class DB implements DBInterface {
         ContentValues cv=new ContentValues();
     	
     	//Put the new path String in the mood column
-    	cv.put(MOOD, mood.getPathImage());
+    	cv.put(ENTRY_MOOD, mood.getId());
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
     }
 
@@ -306,7 +338,7 @@ public class DB implements DBInterface {
     	ContentValues cv=new ContentValues();
     	
     	//Removes the image path from the mood column
-    	cv.putNull(MOOD);
+    	cv.putNull(ENTRY_MOOD);
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
     }
 
@@ -318,14 +350,14 @@ public class DB implements DBInterface {
     	ArrayList<Mood> moods = new ArrayList<Mood>();
     	// Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Mood_TABLE + "." + MOOD_NAME +
+                "SELECT " + Mood_TABLE + "." + MOOD_ID +
                 " FROM " + Mood_TABLE,
                 new String[] {}
         );
         
         cur.moveToFirst();
         do {
-            Mood md = new Mood(cur.getString(1));
+            Mood md = new Mood(cur.getLong(1));
             moods.add(md);
         }
         while (cur.moveToNext());
@@ -342,7 +374,7 @@ public class DB implements DBInterface {
         ContentValues cv=new ContentValues();
     	
     	//Put the new path String in the Photo column
-    	cv.put(PHOTO, path);
+    	cv.put(ENTRY_PHOTO, path);
     	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});  
     	
     	return new Photo(path);
@@ -378,7 +410,7 @@ public class DB implements DBInterface {
 
     	ArrayList<Photo> photos = new ArrayList<Photo>();
     	// Query the database  	
-        Cursor cur = db.query(Entry_TABLE, new String[] {PHOTO}, DATE + " BETWEEN ? AND ?", new String[] {
+        Cursor cur = db.query(Entry_TABLE, new String[] {ENTRY_PHOTO}, ENTRY_DATE + " BETWEEN ? AND ?", new String[] {
         		from.toString(), to.toString() }, null, null, null, null);
         
         cur.moveToFirst();
@@ -405,55 +437,44 @@ public class DB implements DBInterface {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
             // SQL statements used to create the tables
+            String newMoodTable =
+                    "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
+                    MOOD_ID     + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    MOOD_NAME   + " TEXT" +
+                    " );";
             String newEntryTable = 
                     "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
                     ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    DATE        + " TEXT UNIQUE NOT NULL," +
-                    PHOTO       + " TEXT," +
-                    MOOD        + " TEXT " +
+                    ENTRY_DATE  + " TEXT UNIQUE NOT NULL," +
+                    ENTRY_PHOTO + " TEXT," +
+                    ENTRY_MOOD  + " INTEGER " +
+                    "CONSTRAINT fk_Mood FOREIGN KEY(" + ENTRY_MOOD + ") " +
+                    "REFERENCES " + Mood_TABLE + "(" + MOOD_ID + ")" +
                     " );";
             
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
                     NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     NOTE_TEXT       + " TEXT," +
-                    NOTE_ENTRYID    + " INTEGER," +
-                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRYID + ") " +
-                    "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
-                    " );";
-            //All available moods table
-            String newMoodTable =
-                    "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
-                    MOOD_NAME        + " TEXT PRIMARY KEY NOT NULL" +
+                    NOTE_TIME       + " TEXT," +
+                    NOTE_ENTRY_ID   + " INTEGER," +
+                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRY_ID + ") " +
+                        "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";
             
             // Run all the CREATE TABLE ...
+            db.execSQL(newMoodTable);
             db.execSQL(newEntryTable);
             db.execSQL(newNotesTable);
-            db.execSQL(newMoodTable);
             
-            //Inserts the default values of the Mood image paths
-            ContentValues cv=new ContentValues();
-        	// HAPPY
-        	cv.put(MOOD_NAME, "Happy");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv); 
-        	// SAD
-        	cv.put(MOOD_NAME, "Sad");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv);
-        	// ANGRY
-        	cv.put(MOOD_NAME, "Angry");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv);
-        	// BORED
-        	cv.put(MOOD_NAME, "Bored");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv);
-        	// APATHETIC
-        	cv.put(MOOD_NAME, "Apathetic");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv);
-        	// DEPRESSED
-        	cv.put(MOOD_NAME, "Depressed");
-        	db.insert(Mood_TABLE, MOOD_NAME, cv);
+            // Insert all the basic Moods
+            for (String[] mood : MOODS_DB_VERSION_1) {
+                ContentValues cv = new ContentValues();
+                cv.put(MOOD_ID, mood[0]);
+                cv.put(MOOD_NAME, mood[1]);
+                db.insert(Mood_TABLE, null, cv);
+            }
         }
 
         @Override

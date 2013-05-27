@@ -48,14 +48,6 @@ public class DB implements DBInterface {
 
     // Format used by the dates saved in the database
     public static final String DB_DATE_FORMAT= "yyyy-MM-dd";
-    
-    //Mood image paths
-    public static final String HAPPY_IMAGE_PATH = ;
-    public static final String SAD_IMAGE_PATH = ;
-    public static final String ANGRY_IMAGE_PATH = ;
-    public static final String BORED_IMAGE_PATH = ;
-    public static final String APATHETIC_IMAGE_PATH = ;
-    public static final String DEPRESSED_IMAGE_PATH = ;
 
     // A reference to the database used by the application
     private SQLiteDatabase db;
@@ -135,7 +127,7 @@ public class DB implements DBInterface {
                 entry_mood = null;
             }
             else {
-                entry_mood = new Mood(cur.getLong(3));
+                entry_mood = new Mood(cur.getString(3));
             }
             // Get all the Notes
             ArrayList<Note> note_list = new ArrayList<Note>();
@@ -326,18 +318,14 @@ public class DB implements DBInterface {
     	ArrayList<Mood> moods = new ArrayList<Mood>();
     	// Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Mood_TABLE + "." + MOOD_NAME        + ", " +
-                            Mood_TABLE + "." + MOOD_IMAGE_PATH  +
+                "SELECT " + Mood_TABLE + "." + MOOD_NAME +
                 " FROM " + Mood_TABLE,
                 new String[] {}
         );
         
         cur.moveToFirst();
         do {
-            Mood md = new Mood(
-                    cur.getString(1),     // MOOD_NAME
-                    cur.getString(2)    // MOOD_IMAGE_PATH
-                    );
+            Mood md = new Mood(cur.getString(1));
             moods.add(md);
         }
         while (cur.moveToNext());
@@ -424,7 +412,7 @@ public class DB implements DBInterface {
                     ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     DATE        + " TEXT UNIQUE NOT NULL," +
                     PHOTO       + " TEXT," +
-                    MOOD        + " INTEGER " +
+                    MOOD        + " TEXT " +
                     " );";
             
             String newNotesTable =
@@ -438,8 +426,7 @@ public class DB implements DBInterface {
             //All available moods table
             String newMoodTable =
                     "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
-                    MOOD_NAME        + " TEXT PRIMARY KEY NOT NULL," +
-                    MOOD_IMAGE_PATH  + " TEXT," +
+                    MOOD_NAME        + " TEXT PRIMARY KEY NOT NULL" +
                     " );";
             
             // Run all the CREATE TABLE ...
@@ -451,27 +438,21 @@ public class DB implements DBInterface {
             ContentValues cv=new ContentValues();
         	// HAPPY
         	cv.put(MOOD_NAME, "Happy");
-        	cv.put(MOOD_IMAGE_PATH, HAPPY_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv); 
         	// SAD
         	cv.put(MOOD_NAME, "Sad");
-        	cv.put(MOOD_IMAGE_PATH, SAD_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv);
         	// ANGRY
         	cv.put(MOOD_NAME, "Angry");
-        	cv.put(MOOD_IMAGE_PATH, ANGRY_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv);
         	// BORED
         	cv.put(MOOD_NAME, "Bored");
-        	cv.put(MOOD_IMAGE_PATH, BORED_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv);
         	// APATHETIC
         	cv.put(MOOD_NAME, "Apathetic");
-        	cv.put(MOOD_IMAGE_PATH, APATHETIC_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv);
         	// DEPRESSED
         	cv.put(MOOD_NAME, "Depressed");
-        	cv.put(MOOD_IMAGE_PATH, DEPRESSED_IMAGE_PATH);
         	db.insert(Mood_TABLE, MOOD_NAME, cv);
         }
 

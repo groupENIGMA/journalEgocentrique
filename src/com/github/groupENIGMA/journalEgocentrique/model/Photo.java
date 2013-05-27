@@ -1,6 +1,12 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
 public class Photo implements PhotoInterface {
+	
+	private String Path;
+	
+	public Photo(String path){
+		Path = path;
+	}
 
     /**
      * Create the thumbnail of the Photo
@@ -26,8 +32,8 @@ public class Photo implements PhotoInterface {
 
 	@Override
 	public String getPath() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return Path;
 	}
 
 	@Override

@@ -1,17 +1,25 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
 public class Note implements NoteInterface {
+	
+	private long Id;
+	private String Text;
+	
+	public Note(long id, String text){
+		Id = id;
+		Text = text;
+	}
 
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+
+		return Text;
 	}
 
 	@Override
 	public long getId() {
-		// TODO Auto-generated method stub
-		return 0;
+
+		return Id;
 	}
 
 	@Override

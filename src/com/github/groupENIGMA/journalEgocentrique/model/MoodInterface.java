@@ -14,11 +14,11 @@ package com.github.groupENIGMA.journalEgocentrique.model;
  */
 public interface MoodInterface{
     
-    /** Returns the unique id of the Mood
+    /** Returns the unique String id name of the Mood
      * 
-     * @return The unique id that identifies this Mood
+     * @return The unique name that identifies this Mood
      */
-    public int getId();
+    public String getName();
     
     /** Returns the path to the image associated to this Mood
      *

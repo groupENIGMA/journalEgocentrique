@@ -20,7 +20,7 @@ public class GalleryAdapter extends BaseAdapter{
 
     public GalleryAdapter(Context c) {
         mContext = c;
-        database = new DB();
+        database = new DB(c);
         photos = database.getPhotos();
     }
 

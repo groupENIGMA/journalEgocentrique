@@ -57,9 +57,9 @@ public class PhotoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				DB data = new DB();
+				DB data = new DB(getApplicationContext());
 				Entry entry = data.getEntry(entryId); 
-				data.setPhoto(entry, mImageBitmap);
+				data.setPhoto(entry, mImageBitmap.);
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 				startActivity(intent);
 			}

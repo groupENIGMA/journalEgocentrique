@@ -35,7 +35,7 @@ public class ListActivity extends Activity {
 	    super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
-	    dataBase = new DB();
+	    dataBase = new DB(getApplicationContext());
 	    menu = dataBase.getDays();
 	    if (savedInstanceState != null){
 	    	long idValue = savedInstanceState.getLong("ID");
@@ -131,7 +131,7 @@ public class ListActivity extends Activity {
     	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
     	    img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
     	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
-    	    mood.setImageURI(Uri.parse(selected.getMood().getEmoteId()));
+    	    mood.setImageResource((selected.getMood().getEmoteId(getApplicationContext())));
     	    if(editable){
     	    	 img.setOnTouchListener(new OnTouchListener()
     	         {

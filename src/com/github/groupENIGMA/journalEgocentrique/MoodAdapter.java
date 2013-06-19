@@ -19,7 +19,7 @@ public class MoodAdapter extends BaseAdapter {
 
     public MoodAdapter(Context c) {
         mContext = c;
-        database = new DB();
+        database = new DB(c);
         moods = database.getAvailableMoods();
     }
 
@@ -43,7 +43,7 @@ public class MoodAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageResource(moods.get(position).getId());
+        imageView.setImageResource(moods.get(position).getEmoteId(mContext));
         return imageView;
     }
 

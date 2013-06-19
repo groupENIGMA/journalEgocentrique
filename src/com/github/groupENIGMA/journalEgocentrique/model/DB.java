@@ -243,7 +243,9 @@ public class DB implements DBInterface {
 
         // Select all the days stored in the database (they are UNIQUE)
         Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + ENTRY_DATE,
+                "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
+                " FROM " + Entry_TABLE +
+                " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
                 new String[] {}
         );
 

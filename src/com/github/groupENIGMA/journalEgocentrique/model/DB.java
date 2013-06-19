@@ -241,6 +241,7 @@ public class DB implements DBInterface {
      */
     public List<Calendar> getDays() {
 
+    	if(db != null){
         // Select all the days stored in the database (they are UNIQUE)
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
@@ -266,7 +267,10 @@ public class DB implements DBInterface {
             }
         }
         cur.close();
-        return days;
+        return days;}
+    	else{
+    		return new ArrayList<Calendar>();
+    	}
     }
 
     /**

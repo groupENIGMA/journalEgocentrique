@@ -36,6 +36,7 @@ public class ListActivity extends Activity {
 
 		setContentView(R.layout.main);
 	    dataBase = new DB(getApplicationContext());
+	    dataBase.open();
 	    menu = dataBase.getDays();
 	    if(menu == null){
 	    	menu = new ArrayList<Calendar>();

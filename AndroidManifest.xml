@@ -38,6 +38,14 @@
             android:name="com.github.groupENIGMA.journalEgocentrique.MoodActivity"
             android:label="@string/title_activity_mood" >
         </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.GalleryActivity"
+            android:label="@string/title_activity_gallery" >
+        </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.ImageActivity"
+            android:label="@string/title_activity_image" >
+        </activity>
     </application>
 
 </manifest>

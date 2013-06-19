@@ -14,5 +14,8 @@
     <string name="take_picture">Take another picture</string>
     <string name="accept">Accept</string>
     <string name="delete">Delete</string>
-	<string name="album_name">Daily</string>
+    <string name="album_name">Daily</string>
+    <string name="title_activity_gallery">GalleryActivity</string>
+    <string name="title_activity_image">ImageActivity</string>
+
 </resources>

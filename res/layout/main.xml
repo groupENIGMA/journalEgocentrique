@@ -9,19 +9,21 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="194dp"
-        android:layout_height="match_parent" >
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom" >
 
     </ListView>
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom" >
 
         <ImageView
             android:id="@+id/dailyPhoto"
-            android:layout_width="591dp"
-            android:layout_height="327dp"
+            android:layout_width="557dp"
+            android:layout_height="308dp"
             android:contentDescription="@string/bigImage"
             android:src="@drawable/ic_launcher" />
 
@@ -35,11 +37,11 @@
 
         <ImageView
             android:id="@+id/emoticon"
-            android:layout_width="398dp"
-            android:layout_height="212dp"
+            android:layout_width="490dp"
+            android:layout_height="162dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/ic_launcher"
-            android:contentDescription="@string/emoticon" />
+            android:contentDescription="@string/emoticon"
+            android:src="@drawable/ic_launcher" />
 
     </FrameLayout>
 

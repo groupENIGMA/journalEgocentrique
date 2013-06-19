@@ -37,6 +37,9 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.main);
 	    dataBase = new DB(getApplicationContext());
 	    menu = dataBase.getDays();
+	    if(menu == null){
+	    	menu = new ArrayList<Calendar>();
+	    }
 	    if (savedInstanceState != null){
 	    	long idValue = savedInstanceState.getLong("ID");
 	    	selectedEntry = dataBase.getEntry(idValue);
@@ -47,7 +50,9 @@ public class ListActivity extends Activity {
 	    
 	    setListView(list, menu);
 	    setImages(selectedEntry);
-	    setNotes(notes, selectedEntry);
+	    if(selectedEntry != null){
+	    	setNotes(notes, selectedEntry);
+	    }
 	    }
 	
 	public void onSaveInstanceState(Bundle savedInstanceState){
@@ -124,7 +129,7 @@ public class ListActivity extends Activity {
 	    /*
 	     * Caso entry selezionata dall'utente:
 	     * vengono aggiornate la foto, il mood e le note.
-	     * Controllando se è possibile la modifica si permetta la stessa o meno
+	     * Controllando se ï¿½ possibile la modifica si permetta la stessa o meno
 	     */
         else{
     	    boolean editable = selected.canBeUpdated();

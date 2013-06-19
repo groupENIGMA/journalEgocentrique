@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".ListActivity" >
+
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="194dp"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom" >
+
+    </ListView>
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom" >
+
+        <ImageView
+            android:id="@+id/dailyPhoto"
+            android:layout_width="557dp"
+            android:layout_height="308dp"
+            android:contentDescription="@string/bigImage"
+            android:src="@drawable/ic_launcher" />
+
+        <ListView
+            android:id="@+id/notes"
+            android:layout_width="238dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right" >
+
+        </ListView>
+
+        <ImageView
+            android:id="@+id/emoticon"
+            android:layout_width="490dp"
+            android:layout_height="162dp"
+            android:layout_gravity="bottom"
+            android:contentDescription="@string/emoticon"
+            android:src="@drawable/ic_launcher" />
+
+    </FrameLayout>
+
+</LinearLayout>

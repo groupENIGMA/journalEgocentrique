@@ -1,7 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
 import android.content.SharedPreferences;
-
 import java.util.Calendar;
 
 /**

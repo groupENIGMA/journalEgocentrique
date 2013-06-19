@@ -1,5 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <string name="app_name">journalEgocentrique</string>
+    <string name="bigImage">Photo</string>
+    <string name="emoticon">Emoticon</string>
+    <string name="editMessage">Insert your note here</string>
+    <string name="title_activity_write_note">WriteNote</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_mood">MoodActivity</string>
+    <string name="done">Done</string>
+    <string name="take_picture">Take another picture</string>
+    <string name="accept">Accept</string>
+    <string name="delete">Delete</string>
+    <string name="album_name">Daily</string>
+    <string name="title_activity_gallery">GalleryActivity</string>
+    <string name="title_activity_image">ImageActivity</string>
 
 </resources>

@@ -241,38 +241,30 @@ public class DB implements DBInterface {
      */
     public List<Calendar> getDays() {
 
-    	//select all the days stored in the database (they are UNIQUE)
-    	Cursor cur = db.rawQuery(
+        // Select all the days stored in the database (they are UNIQUE)
+        Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_DATE,
                 new String[] {}
-                );
-    	//processes the query result with the cursor
-    	if (cur.getCount() == 0) {
-    		//no entries in the Entry table
-            return null;
-        }
-        else {
-        	//Create the list to return
-        	List<Calendar> days = new ArrayList<Calendar>();
-        	//Create a calendar instance
-        	Calendar date = Calendar.getInstance();
-            // Move to the first row
-            cur.moveToFirst();
-            do{
-                try {
-                	//Fill the list with the dates
-                    date.setTime(date_format.parse(cur.getString(1)));
-                    days.add(date);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    return null; 
-                }
+        );
+
+        //Create the list to return
+        List<Calendar> days = new ArrayList<Calendar>();
+        //Create a calendar instance
+        Calendar date = Calendar.getInstance();
+        // Processes the query result with the cursor
+        cur.moveToFirst();
+        while (cur.moveToNext()) {
+            try {
+                // Fill the list with the dates
+                date.setTime(date_format.parse(cur.getString(1)));
+                days.add(date);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
             }
-            while (cur.moveToNext());
-            
-            cur.close();
-            return days;
         }
+        cur.close();
+        return days;
     }
 
     /**

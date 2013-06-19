@@ -442,12 +442,12 @@ public class DB implements DBInterface {
                     MOOD_NAME   + " TEXT" +
                     " );";
             String newEntryTable = 
-                    "CREATE TABLE IF NOT EXISTS" + Entry_TABLE + " ( " +
+                    "CREATE TABLE IF NOT EXISTS " + Entry_TABLE + " ( " +
                     ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     ENTRY_DATE  + " TEXT UNIQUE NOT NULL," +
                     ENTRY_PHOTO + " TEXT," +
-                    ENTRY_MOOD  + " INTEGER " +
-                    "CONSTRAINT fk_Mood FOREIGN KEY(" + ENTRY_MOOD + ") " +
+                    ENTRY_MOOD  + " INTEGER, " +
+                    "CONSTRAINT fk_Mood FOREIGN KEY(" + ENTRY_MOOD + ")" +
                     "REFERENCES " + Mood_TABLE + "(" + MOOD_ID + ")" +
                     " );";
             

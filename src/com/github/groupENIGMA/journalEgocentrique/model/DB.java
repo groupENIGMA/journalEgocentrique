@@ -257,7 +257,7 @@ public class DB implements DBInterface {
         raiseConnectionExceptionIfNotConnected();
 
         // Throw InvalidOperationException if an Entry for day already exists
-        if (getEntry(day) != null) {
+        if (existsEntry(day)) {
             throw new InvalidOperationException();
         }
         // Insert the new Entry
@@ -267,6 +267,25 @@ public class DB implements DBInterface {
             long newEntryId = db.insert(Entry_TABLE, null, cv);
             return getEntry(newEntryId);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsEntry() {
+        Calendar day = Calendar.getInstance();
+        return existsEntry(day);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsEntry(Calendar day) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        return (getEntry(day) == null) ? false : true;
     }
 
     /**

@@ -80,7 +80,25 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public Entry createEntry(Calendar day);
-    
+
+    /**
+     * Checks if there's already an Entry for the today in the database
+     *
+     * @return true if an Entry for today already exists, false otherwise
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public boolean existsEntry();
+
+    /**
+     * Checks if there's already an Entry for the day in the database
+     *
+     * @return true if an Entry for today already exists, false otherwise
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public boolean existsEntry(Calendar day);
+
     /** Returns the list of days that have an Entry associated
      * <p>
      * @return the list of days in the diary, can be empty on a brand new

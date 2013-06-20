@@ -33,30 +33,22 @@ public interface DBInterface {
 
     /**
      * Returns the diary's Entry for today.
-     * <p>
-     * Only one Entry per day can exists so, if the database already has the
-     * Entry for today, the existing one will be returned. Otherwise a new
-     * Entry will be created, inserted in the database and then returned.
      * 
-     * @return The Entry for today.
+     * @return The Entry for today or null if an Entry for today doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntryOfTheDay();
+    public Entry getEntry();
     
     /**
      * Returns the diary's Entry for a given day.
-     * <p>
-     * Only one Entry per day can exists so, if the database already has the
-     * Entry for day, the existing one will be returned. Otherwise a new
-     * Entry will be created, inserted in the database and then returned.
      * 
      * @param day
-     * @return The Entry for day
+     * @return The Entry for day or null if an Entry for day doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntryOfTheDay(Calendar day);
+    public Entry getEntry(Calendar day);
 
     /**
      * Returns the diary's Entry with the given id.
@@ -68,7 +60,45 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public Entry getEntry(long id);
-    
+
+    /**
+     * Creates the Entry for today and inserts it into the database
+     *
+     * @return the newly created Entry
+     * @throws InvalidOperationException if an Entry for today already exists.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public Entry createEntry();
+
+    /**
+     * Creates the Entry for the given day and inserts it into the database
+     *
+     * @return the newly created Entry
+     * @throws InvalidOperationException if an Entry for day already exists.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public Entry createEntry(Calendar day);
+
+    /**
+     * Checks if there's already an Entry for the today in the database
+     *
+     * @return true if an Entry for today already exists, false otherwise
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public boolean existsEntry();
+
+    /**
+     * Checks if there's already an Entry for the day in the database
+     *
+     * @return true if an Entry for today already exists, false otherwise
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public boolean existsEntry(Calendar day);
+
     /** Returns the list of days that have an Entry associated
      * <p>
      * @return the list of days in the diary, can be empty on a brand new

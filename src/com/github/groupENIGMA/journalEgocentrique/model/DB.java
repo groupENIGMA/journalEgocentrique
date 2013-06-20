@@ -175,15 +175,15 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry getEntryOfTheDay() {
+    public Entry getEntry() {
         Calendar cal = Calendar.getInstance();
-        return this.getEntryOfTheDay(cal);
+        return this.getEntry(cal);
     }
 
     /** 
      * {@inheritDoc}
      */
-    public Entry getEntryOfTheDay(Calendar day) {
+    public Entry getEntry(Calendar day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Convert the Calendar object to a String in the same format
@@ -242,6 +242,55 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Entry createEntry() {
+        Calendar day = Calendar.getInstance();
+        return createEntry(day);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entry createEntry(Calendar day) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        // Throw InvalidOperationException if an Entry for day already exists
+        if (existsEntry(day)) {
+            throw new InvalidOperationException();
+        }
+        // Insert the new Entry
+        else {
+            ContentValues cv = new ContentValues();
+            cv.put(ENTRY_DATE, date_format.format(day.getTime()));
+            long newEntryId = db.insert(Entry_TABLE, null, cv);
+            return getEntry(newEntryId);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsEntry() {
+        Calendar day = Calendar.getInstance();
+        return existsEntry(day);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean existsEntry(Calendar day) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        return (getEntry(day) == null) ? false : true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List<Calendar> getDays() {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
@@ -251,7 +300,7 @@ public class DB implements DBInterface {
                 "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
                 " FROM " + Entry_TABLE +
                 " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
-                new String[] {}
+                null
         );
 
         // Create the list to return

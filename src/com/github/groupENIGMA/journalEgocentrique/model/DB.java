@@ -242,6 +242,36 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public Entry createEntry() {
+        Calendar day = Calendar.getInstance();
+        return createEntry(day);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entry createEntry(Calendar day) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        // Throw InvalidOperationException if an Entry for day already exists
+        if (getEntry(day) != null) {
+            throw new InvalidOperationException();
+        }
+        // Insert the new Entry
+        else {
+            ContentValues cv = new ContentValues();
+            cv.put(ENTRY_DATE, date_format.format(day.getTime()));
+            long newEntryId = db.insert(Entry_TABLE, null, cv);
+            return getEntry(newEntryId);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public List<Calendar> getDays() {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();

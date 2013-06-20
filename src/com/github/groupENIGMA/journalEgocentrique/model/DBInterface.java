@@ -60,6 +60,26 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public Entry getEntry(long id);
+
+    /**
+     * Creates the Entry for today and inserts it into the database
+     *
+     * @return the newly created Entry
+     * @throws InvalidOperationException if an Entry for today already exists.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public Entry createEntry();
+
+    /**
+     * Creates the Entry for the given day and inserts it into the database
+     *
+     * @return the newly created Entry
+     * @throws InvalidOperationException if an Entry for day already exists.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public Entry createEntry(Calendar day);
     
     /** Returns the list of days that have an Entry associated
      * <p>

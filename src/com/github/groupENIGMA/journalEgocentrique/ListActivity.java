@@ -75,10 +75,10 @@ public class ListActivity extends Activity {
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	
-/**
- * Displays the correct notes for the entry selected by the user.
- * @param selected Entry. The entry selected by the user.
- */
+    /**
+     * Displays the correct notes for the entry selected by the user.
+     * @param selected Entry. The entry selected by the user.
+     */
 	private void setNotes(ListView list, Entry selected) {
         boolean editable = selected.canBeUpdated();
         List<Note> tmp = selected.getNotes();
@@ -106,27 +106,33 @@ public class ListActivity extends Activity {
      }
 
 
-	/**
-	 * The ListView will be populated with the data given by the database.
-	 * It is also created a OnItemClickListener that at the click will display the details of the day.
-	 * @param list ListView. The list to populate.
-	 * @param entry List<Calendar> With this List we will populate the ListView 
-	 */
-	private void setListView(ListView list, List<Calendar> entry){
-        ArrayAdapter<Calendar> arrayAdapter = new ArrayAdapter<Calendar>(this, R.layout.row, R.id.textViewList, entry);
+    /**
+     * The ListView will be populated with the data given by the database.
+     * It is also created a OnItemClickListener that at the click will display
+     * the details of the day.
+     * @param list ListView. The list to populate.
+     * @param entry List<Calendar> With this List we will populate the ListView
+     */
+    private void setListView(ListView list, List<Calendar> entry){
+        // Create and set the custom ArrayAdapter DaysArrayAdapter
+        DaysArrayAdapter arrayAdapter = new DaysArrayAdapter(
+                this, R.layout.row, entry
+        );
         list.setAdapter(arrayAdapter);
-        OnItemClickListener clickListener = new OnItemClickListener() {
 
+        // Set the listener
+        OnItemClickListener clickListener = new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {
-                selectedEntry = dataBase.getEntry((Calendar)adapter.getItemAtPosition(position));
+                selectedEntry = dataBase.getEntry(
+                        (Calendar)adapter.getItemAtPosition(position)
+                );
             }
         };
         list.setOnItemClickListener(clickListener);
-	}
-	
-	
+    }
+
 	/**
 	 * Sets the correct image for photo and mood selected by the user.
 	 * @param selected Entry. The entry selected by the user, its details will be displayed.

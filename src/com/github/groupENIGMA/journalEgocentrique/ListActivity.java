@@ -96,7 +96,7 @@ public class ListActivity extends Activity {
      * @param selected Entry. The entry selected by the user.
      */
 	private void setNotes(ListView list, Entry selected) {
-        boolean editable = selected.canBeUpdated();
+        boolean editable = selected.canBeUpdated();Log.d("Editable", " " + editable);
         List<Note> tmp = selected.getNotes();
         List<String> notes = new ArrayList<String>();
         for(int i = 0;i < tmp.size();i++){
@@ -112,9 +112,10 @@ public class ListActivity extends Activity {
 	            @Override
 	            public boolean onItemLongClick(AdapterView<?> adapter, View view,
 	                int position, long id) {
-	                Note modify = (Note)adapter.getItemAtPosition(position);
+	                String modify = (String)adapter.getItemAtPosition(position);
+	                Log.d("Invio", modify);
 	                Intent intent = new Intent(getApplicationContext(), WriteNote.class);//ho messo WriteNote.class
-	                intent.putExtra(EXTRA_MESSAGE, modify.getText());
+	                intent.putExtra("OldMsg", modify.toString());
 	                startActivity(intent);
 	                return true;
 	            }
@@ -232,8 +233,6 @@ public class ListActivity extends Activity {
 	            return true;
 	        case R.id.newNote:
 	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);
-	            if(selectedEntry != null)
-	            	intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
 	            startActivity(intent);
 	            return true;
 	        case R.id.settings:

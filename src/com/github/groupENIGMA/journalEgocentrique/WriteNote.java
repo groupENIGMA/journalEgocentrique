@@ -14,6 +14,16 @@ public class WriteNote extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_write_note);
+		//Intent intent = getIntent();
+		Bundle intent = getIntent().getExtras();
+		if(intent != null){
+			String oldMsg = intent.getString("OldMsg");
+			Log.d("Da List", oldMsg+"");
+			if(oldMsg != null){
+				EditText txt = (EditText)findViewById(R.id.editNote);
+				txt.append(oldMsg);
+			}
+		}
 	}
 	
 	public void sendNote(View view){

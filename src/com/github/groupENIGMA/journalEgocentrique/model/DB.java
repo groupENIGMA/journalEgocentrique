@@ -38,7 +38,6 @@ public class DB implements DBInterface {
     // NOTE table
     public static final String Notes_TABLE = "Note";
     public static final String NOTE_ID = "_id";
-
     public static final String NOTE_TEXT = "Text";
     public static final String NOTE_TIME = "Time";
     public static final String NOTE_ENTRY_ID = "Entry_id";
@@ -185,6 +184,8 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Entry getEntryOfTheDay(Calendar day) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
         // Convert the Calendar object to a String in the same format
         // used in the database
         String date_string = date_format.format(day.getTime());
@@ -214,6 +215,8 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Entry getEntry(long id) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
         // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
@@ -240,8 +243,9 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public List<Calendar> getDays() {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	if(db != null){
         // Select all the days stored in the database (they are UNIQUE)
         Cursor cur = db.rawQuery(
                 "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
@@ -250,7 +254,7 @@ public class DB implements DBInterface {
                 new String[] {}
         );
 
-        //Create the list to return
+        // Create the list to return
         List<Calendar> days = new ArrayList<Calendar>();
         //Create a calendar instance
         Calendar date = Calendar.getInstance();
@@ -267,86 +271,96 @@ public class DB implements DBInterface {
             }
         }
         cur.close();
-        return days;}
-    	else{
-    		return new ArrayList<Calendar>();
-    	}
+        return days;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Note insertNote(Entry entry, String note_text) throws InvalidOperationException {
-    	
-    	long entryId = entry.getId();
-    	ContentValues cv=new ContentValues();
-    	
-    	//Insert the note text referred to the entry id
-    	cv.put(NOTE_TEXT, note_text);
-    	cv.put(NOTE_ENTRY_ID, entryId);
-    	long id = db.insert(Notes_TABLE, NOTE_ID, cv);                     
-    	
-    	Calendar cal = Calendar.getInstance();
-    	
-    	//Create the note to return
-    	return new Note(id, note_text, cal);
+    public Note insertNote(Entry entry, String note_text)  throws InvalidOperationException {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        long entryId = entry.getId();
+        ContentValues cv=new ContentValues();
+
+        //Insert the note text referred to the entry id
+        cv.put(NOTE_TEXT, note_text);
+        cv.put(NOTE_ENTRY_ID, entryId);
+        long id = db.insert(Notes_TABLE, NOTE_ID, cv);
+
+        Calendar cal = Calendar.getInstance();
+
+        //Create the note to return
+        return new Note(id, note_text, cal);
     }
 
     /**
      * {@inheritDoc}
      */
     public Note updateNote(Note note, String new_note_text) throws InvalidOperationException {
-    	
-    	ContentValues cv=new ContentValues();
-    	
-    	//Put the new text into the database at the chosen id
-    	cv.put(NOTE_TEXT, new_note_text);
-    	long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?", new String []{String.valueOf(note.getId())});   
-    	
-    	
-    	return new Note(id, new_note_text, note.getTime());
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        ContentValues cv=new ContentValues();
+
+        //Put the new text into the database at the chosen id
+        cv.put(NOTE_TEXT, new_note_text);
+        long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
+                new String []{String.valueOf(note.getId())}
+        );
+
+        return new Note(id, new_note_text, note.getTime());
     }
 
     /**
      * {@inheritDoc}
      */
-    public void deleteNote(Note note) throws InvalidOperationException {
-    	
-    	//Deletes the selected row from the Notes table in the database
-    	db.delete(Notes_TABLE, NOTE_ID + "=?", new String [] {String.valueOf(note.getId())});
+    public void deleteNote(Note note) throws InvalidOperationException{
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        //Deletes the selected row from the Notes table in the database
+        db.delete(Notes_TABLE, NOTE_ID + "=?",
+                new String [] {String.valueOf(note.getId())});
     }
 
     /**
      * {@inheritDoc}
      */
     public void setMood(Entry entry, Mood mood) throws InvalidOperationException {
-    	
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
         ContentValues cv=new ContentValues();
-    	
-    	//Put the new path String in the mood column
-    	cv.put(ENTRY_MOOD, mood.getId());
-    	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
+
+        //Put the new path String in the mood column
+        cv.put(ENTRY_MOOD, mood.getId());
+        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
     }
 
     /**
      * {@inheritDoc}
      */
     public void removeMood(Entry entry) throws InvalidOperationException {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	ContentValues cv=new ContentValues();
-    	
-    	//Removes the image path from the mood column
-    	cv.putNull(ENTRY_MOOD);
-    	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});   
+        ContentValues cv=new ContentValues();
+
+        //Removes the image path from the mood column
+        cv.putNull(ENTRY_MOOD);
+        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
     }
 
     /**
      * {@inheritDoc}
      */
     public List<Mood> getAvailableMoods() {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	ArrayList<Mood> moods = new ArrayList<Mood>();
-    	// Query the database
+        ArrayList<Mood> moods = new ArrayList<Mood>();
+        // Query the database
         Cursor cur = db.rawQuery(
                 "SELECT " + Mood_TABLE + "." + MOOD_ID +
                 " FROM " + Mood_TABLE,
@@ -368,36 +382,40 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public Photo setPhoto(Entry entry, String path) throws InvalidOperationException {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
         ContentValues cv=new ContentValues();
-    	
-    	//Put the new path String in the Photo column
-    	cv.put(ENTRY_PHOTO, path);
-    	db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});  
-    	
-    	return new Photo(path);
+
+        //Put the new path String in the Photo column
+        cv.put(ENTRY_PHOTO, path);
+        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
+
+        return new Photo(path);
     }
 
     /**
      * {@inheritDoc}
      */
     public void deletePhoto(Photo photo) throws InvalidOperationException {
-
-    	
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        // TODO
     }
 
     /**
      * {@inheritDoc}
      */
     public List<Photo> getPhotos() {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        //Sets the "to" day on tomorrow to get all the Entries
+        Calendar to = Calendar.getInstance();
+        to.add(Calendar.DAY_OF_YEAR, 1);
+        //sets the "from" day on 01-01-1970 to get all the Entries
+        Calendar from = Calendar.getInstance();
+        from.set(1970, 01, 01);
 
-    	//Sets the "to" day on tomorrow to get all the Entries
-    	Calendar to = Calendar.getInstance();  
-    	to.add(Calendar.DAY_OF_YEAR, 1);
-    	//sets the "from" day on 01-01-1970 to get all the Entries
-    	Calendar from = Calendar.getInstance();
-    	from.set(1970, 01, 01);
-    	
         return getPhotos(from, to);
     }
 
@@ -405,11 +423,13 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     public List<Photo> getPhotos(Calendar from, Calendar to) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	ArrayList<Photo> photos = new ArrayList<Photo>();
-    	// Query the database  	
+        ArrayList<Photo> photos = new ArrayList<Photo>();
+        // Query the database
         Cursor cur = db.query(Entry_TABLE, new String[] {ENTRY_PHOTO}, ENTRY_DATE + " BETWEEN ? AND ?", new String[] {
-        		from.toString(), to.toString() }, null, null, null, null);
+                from.toString(), to.toString() }, null, null, null, null);
         
         cur.moveToFirst();
         do {
@@ -419,6 +439,20 @@ public class DB implements DBInterface {
 
         cur.close();
         return photos;
+    }
+
+
+    /**
+     * Raises a ConnectionException if DB is not connected to a Database.
+     * <p>
+     * This private method should by the methods that performs database
+     * queries at least once.
+     * </p>
+     */
+    private void raiseConnectionExceptionIfNotConnected() {
+        if (db == null || !db.isOpen()) {
+            throw new ConnectionException();
+        }
     }
 
 

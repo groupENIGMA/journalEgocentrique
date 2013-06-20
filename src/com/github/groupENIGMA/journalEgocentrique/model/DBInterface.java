@@ -39,6 +39,8 @@ public interface DBInterface {
      * Entry will be created, inserted in the database and then returned.
      * 
      * @return The Entry for today.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Entry getEntryOfTheDay();
     
@@ -50,7 +52,9 @@ public interface DBInterface {
      * Entry will be created, inserted in the database and then returned.
      * 
      * @param day
-     * @return The Entry for day.
+     * @return The Entry for day
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Entry getEntryOfTheDay(Calendar day);
 
@@ -60,6 +64,8 @@ public interface DBInterface {
      * @param id The searched id.
      * @return the Entry with the given id or null (if the an Entry with the
      * given id doesn't exists).
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Entry getEntry(long id);
     
@@ -67,6 +73,8 @@ public interface DBInterface {
      * <p>
      * @return the list of days in the diary, can be empty on a brand new
      *         database
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public List<Calendar> getDays();
     
@@ -80,6 +88,8 @@ public interface DBInterface {
      * @return the newly created Note
      * @throws InvalidOperationException When adding a Note to an Entry that
      *         is wasn't created today
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
     
@@ -90,14 +100,16 @@ public interface DBInterface {
      * this method on a Note after the end of the grace period will result
      * in an error.
      *
-     * @param note, the Node you want to update
-     * @param new_note_text, the new text of the note
+     * @param note the Node you want to update
+     * @param new_note_text the new text of the note
      * @return the new version of the Note
      * @throws InvalidOperationException When note's grace period is already
-     *         ended.
+     *         ended
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Note updateNote(Note note, String new_note_text)
-    		throws InvalidOperationException;
+            throws InvalidOperationException;
     
     /**
      * Deletes the given Note from the database
@@ -105,6 +117,8 @@ public interface DBInterface {
      * @param note the Note to be deleted
      * @throws InvalidOperationException If the given Note isn't in the database or if 
      * the operation is not permitted
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public void deleteNote(Note note) throws InvalidOperationException;
     
@@ -117,6 +131,8 @@ public interface DBInterface {
      * @param entry the Entry to update
      * @param mood the new Mood
      * @throws InvalidOperationException If the Entry's mood can't be modified
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public void setMood(Entry entry, Mood mood) throws InvalidOperationException;
     
@@ -125,6 +141,8 @@ public interface DBInterface {
      * 
      * @param entry
      * @throws InvalidOperationException if the Entry's mood can't be removed
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public void removeMood(Entry entry) throws InvalidOperationException;
     
@@ -133,6 +151,8 @@ public interface DBInterface {
      * The user can choose to assign to the entries one of these Moods.
      * 
      * @return the list of available Moods
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public List<Mood> getAvailableMoods();
     
@@ -143,7 +163,9 @@ public interface DBInterface {
      * @param path the URI of the file containing the photo
      * @return the newly created Photo object
      * 
-     * @throws InvalidOperationException if the Entry's photo can't be insered
+     * @throws InvalidOperationException if the Entry's photo can't be inserted
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public Photo setPhoto(Entry entry, String path) throws InvalidOperationException;
     
@@ -155,6 +177,8 @@ public interface DBInterface {
      * @param photo the Photo to be deleted
      * @throws InvalidOperationException When deleting a Photo that can't be
      *         deleted.
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public void deletePhoto(Photo photo) throws InvalidOperationException;
     
@@ -162,6 +186,8 @@ public interface DBInterface {
      * Returns the list of all the Photo saved in the database.
      * 
      * @return the List with all the Photo
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public List<Photo> getPhotos();
     
@@ -171,7 +197,9 @@ public interface DBInterface {
      * @param from the starting time of the range
      * @param to the ending time of the range
      * @return the List (can be empty) of matching Photo
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
      */
     public List<Photo> getPhotos(Calendar from, Calendar to);
-    
+
 }

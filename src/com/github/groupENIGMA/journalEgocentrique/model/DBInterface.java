@@ -33,30 +33,22 @@ public interface DBInterface {
 
     /**
      * Returns the diary's Entry for today.
-     * <p>
-     * Only one Entry per day can exists so, if the database already has the
-     * Entry for today, the existing one will be returned. Otherwise a new
-     * Entry will be created, inserted in the database and then returned.
      * 
-     * @return The Entry for today.
+     * @return The Entry for today or null if an Entry for today doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntryOfTheDay();
+    public Entry getEntry();
     
     /**
      * Returns the diary's Entry for a given day.
-     * <p>
-     * Only one Entry per day can exists so, if the database already has the
-     * Entry for day, the existing one will be returned. Otherwise a new
-     * Entry will be created, inserted in the database and then returned.
      * 
      * @param day
-     * @return The Entry for day
+     * @return The Entry for day or null if an Entry for day doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntryOfTheDay(Calendar day);
+    public Entry getEntry(Calendar day);
 
     /**
      * Returns the diary's Entry with the given id.

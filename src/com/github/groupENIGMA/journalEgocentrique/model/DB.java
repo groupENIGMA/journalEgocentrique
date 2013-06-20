@@ -175,15 +175,15 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry getEntryOfTheDay() {
+    public Entry getEntry() {
         Calendar cal = Calendar.getInstance();
-        return this.getEntryOfTheDay(cal);
+        return this.getEntry(cal);
     }
 
     /** 
      * {@inheritDoc}
      */
-    public Entry getEntryOfTheDay(Calendar day) {
+    public Entry getEntry(Calendar day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Convert the Calendar object to a String in the same format
@@ -251,7 +251,7 @@ public class DB implements DBInterface {
                 "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
                 " FROM " + Entry_TABLE +
                 " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
-                new String[] {}
+                null
         );
 
         // Create the list to return

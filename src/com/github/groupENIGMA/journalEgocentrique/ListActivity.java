@@ -184,7 +184,7 @@ public class ListActivity extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
-	            dataBase.getEntryOfTheDay();
+	            dataBase.getEntry();
 	            menu = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    setListView(list, menu);

@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -59,6 +60,8 @@ public class ListActivity extends Activity {
 	    	if((received = getIntent()) != null){
 	    		final String msg = received.getStringExtra(WriteNote.EXTRA_MESSAGE);
 				dataBase.insertNote(selectedEntry, msg);
+				Log.e("Entry id", selectedEntry.getId()+"");//debug
+				Log.e("Msg", msg);//debug
 	    	}
 	    	setNotes(notes, selectedEntry);
 	    }
@@ -117,7 +120,7 @@ public class ListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {
-                selectedEntry = (Entry)adapter.getItemAtPosition(position);
+                selectedEntry = dataBase.getEntry((Calendar)adapter.getItemAtPosition(position));
             }
         };
         list.setOnItemClickListener(clickListener);
@@ -145,8 +148,11 @@ public class ListActivity extends Activity {
 	     */
         else{
     	    boolean editable = selected.canBeUpdated();
-    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
-    	    img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
+    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
+    	    if(selected.getPhoto().getPath() != null)
+    	    	img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
+    	    else
+    	    	img.setImageResource(R.drawable.ic_launcher);
     	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
     	    mood.setImageResource((selected.getMood().getEmoteId(getApplicationContext())));
     	    if(editable){
@@ -192,6 +198,7 @@ public class ListActivity extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
 	            selectedEntry = dataBase.createEntry();
+	            Log.e("Entry", selectedEntry.getId()+"");//debug
 	            menu = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    setListView(list, menu);

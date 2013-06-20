@@ -17,5 +17,9 @@
     <string name="album_name">Daily</string>
     <string name="title_activity_gallery">GalleryActivity</string>
     <string name="title_activity_image">ImageActivity</string>
+    <string name="newEntry">New entry</string>
+    <string name="newNote">New note</string>
+    <string name="settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

@@ -8,12 +8,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -76,18 +79,19 @@ public class ListActivity extends Activity {
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, notes);
         list.setAdapter(arrayAdapter);
         if(editable){
-	        OnItemClickListener clickListener = new OnItemClickListener() {
+	        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
 	
 	            @Override
-	            public void onItemClick(AdapterView<?> adapter, View view,
+	            public boolean onItemLongClick(AdapterView<?> adapter, View view,
 	                int position, long id) {
 	                Note modify = (Note)adapter.getItemAtPosition(position);
 	                Intent intent = new Intent(getApplicationContext(), WriteNote.class);//ho messo WriteNote.class
 	                intent.putExtra(EXTRA_MESSAGE, modify.getText());
 	                startActivity(intent);
+	                return true;
 	            }
 	        };
-	        list.setOnItemClickListener(clickListener);
+	        list.setOnItemLongClickListener(clickListener);
         }
      }
 
@@ -130,7 +134,7 @@ public class ListActivity extends Activity {
 	    /*
 	     * Caso entry selezionata dall'utente:
 	     * vengono aggiornate la foto, il mood e le note.
-	     * Controllando se � possibile la modifica si permetta la stessa o meno
+	     * Controllando se e' possibile la modifica si permetta la stessa o meno
 	     */
         else{
     	    boolean editable = selected.canBeUpdated();
@@ -168,14 +172,33 @@ public class ListActivity extends Activity {
 	}
 
 	@Override
-	public boolean onKeyDown(int keycode, KeyEvent e) {
-	    switch(keycode) {
-	        case KeyEvent.KEYCODE_MENU:
-	            Intent intent = new Intent(getApplicationContext(), GalleryActivity.class);
+	public boolean onCreateOptionsMenu(Menu menu){
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.option, menu);
+		return true;
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.newEntry:
+	            dataBase.getEntryOfTheDay();
+	            menu = dataBase.getDays();
+	    	    ListView list = (ListView)findViewById(R.id.list);
+	    	    setListView(list, menu);
+	            return true;
+	        case R.id.newNote:
+	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);
+	            intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
 	            startActivity(intent);
 	            return true;
+	        case R.id.settings:
+	        	Intent settings = new Intent(getApplicationContext(), Settings.class);
+	        	startActivity(settings);
+	        	return true;
 	    }
-
-	    return super.onKeyDown(keycode, e);
+		return false;
 	}
 }

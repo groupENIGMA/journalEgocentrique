@@ -46,6 +46,10 @@
             android:name="com.github.groupENIGMA.journalEgocentrique.ImageActivity"
             android:label="@string/title_activity_image" >
         </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.Settings"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>

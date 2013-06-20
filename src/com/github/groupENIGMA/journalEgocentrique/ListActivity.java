@@ -6,6 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.github.groupENIGMA.journalEgocentrique.model.Note;
 public class ListActivity extends Activity {
 	
 	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+	private String msg;
 	private List<Calendar> menu;
 	private DB dataBase;
 	private Entry selectedEntry = null;
@@ -45,27 +47,41 @@ public class ListActivity extends Activity {
 	    if(menu == null){
 	    	menu = new ArrayList<Calendar>();
 	    }
-	    if (savedInstanceState != null){
+	/*    if (savedInstanceState != null){
 	    	long idValue = savedInstanceState.getLong("ID");
 	    	selectedEntry = dataBase.getEntry(idValue);
-	    }
+	    }*/
+	    SharedPreferences pref = getPreferences(MODE_PRIVATE);
+	    long id = pref.getLong("Id", 0);
+	    selectedEntry = dataBase.getEntry(id);
+	    
 
 	    ListView list = (ListView)findViewById(R.id.list);
 	    ListView notes = (ListView)findViewById(R.id.notes);
-	    
 	    setListView(list, menu);
 	    setImages(selectedEntry);
 	    Intent received;
 	    if(selectedEntry != null){
 	    	if((received = getIntent()) != null){
-	    		final String msg = received.getStringExtra(WriteNote.EXTRA_MESSAGE);
+	    		msg = received.getStringExtra(WriteNote.EXTRA_MESSAGE);
 				dataBase.insertNote(selectedEntry, msg);
-				Log.e("Entry id", selectedEntry.getId()+"");//debug
-				Log.e("Msg", msg);//debug
+				Log.e("Entry id restored", selectedEntry.getId()+"");//debug
+				Log.e("Stringa arrivata da write note", msg+"");//debug
+				Log.d("Debus", (selectedEntry.getNotes().size() == 0)+"");
 	    	}
 	    	setNotes(notes, selectedEntry);
 	    }
 	    }
+	
+	@Override
+	protected void onPause(){
+		super.onPause();
+		SharedPreferences pref = getPreferences(MODE_PRIVATE);
+		SharedPreferences.Editor edit = pref.edit();
+		
+		edit.putLong("Id", selectedEntry.getId());
+		edit.commit();
+	}
 	
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		if(selectedEntry != null){
@@ -86,7 +102,9 @@ public class ListActivity extends Activity {
         for(int i = 0;i < tmp.size();i++){
         	notes.add(tmp.get(i).getText());
         }
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, notes);
+        if(msg != "")
+        	notes.add(msg);
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList, notes);
         list.setAdapter(arrayAdapter);
         if(editable){
 	        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
@@ -149,12 +167,15 @@ public class ListActivity extends Activity {
         else{
     	    boolean editable = selected.canBeUpdated();
     	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
-    	    if(selected.getPhoto().getPath() != null)
+    	    if(selected.getPhoto() != null)
     	    	img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
     	    else
     	    	img.setImageResource(R.drawable.ic_launcher);
     	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
-    	    mood.setImageResource((selected.getMood().getEmoteId(getApplicationContext())));
+    	    if(selected.getMood() == null)
+    	    	mood.setImageResource(R.drawable.ic_launcher);
+    	    else
+    	    	mood.setImageResource((selected.getMood().getEmoteId(getApplicationContext())));
     	    if(editable){
     	    	 img.setOnTouchListener(new OnTouchListener()
     	         {
@@ -198,7 +219,7 @@ public class ListActivity extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
 	            selectedEntry = dataBase.createEntry();
-	            Log.e("Entry", selectedEntry.getId()+"");//debug
+	            Log.e("New Entry", selectedEntry.getId()+"");//debug
 	            menu = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    setListView(list, menu);

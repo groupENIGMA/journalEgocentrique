@@ -9,8 +9,7 @@ import android.widget.EditText;
 
 public class WriteNote extends Activity {
 	
-	public final static String EXTRA_MESSAGE = "com.example.myfirstapp.MESSAGE";
-	
+	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

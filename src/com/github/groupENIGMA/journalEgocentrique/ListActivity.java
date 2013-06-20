@@ -54,14 +54,21 @@ public class ListActivity extends Activity {
 	    
 	    setListView(list, menu);
 	    setImages(selectedEntry);
+	    Intent received;
 	    if(selectedEntry != null){
+	    	if((received = getIntent()) != null){
+	    		final String msg = received.getStringExtra(WriteNote.EXTRA_MESSAGE);
+				dataBase.insertNote(selectedEntry, msg);
+	    	}
 	    	setNotes(notes, selectedEntry);
 	    }
 	    }
 	
 	public void onSaveInstanceState(Bundle savedInstanceState){
-		long entryId = selectedEntry.getId();
-		savedInstanceState.putLong("ID", entryId);
+		if(selectedEntry != null){
+			long entryId = selectedEntry.getId();
+			savedInstanceState.putLong("ID", entryId);
+		}
 		super.onSaveInstanceState(savedInstanceState);
 	}
 	
@@ -103,7 +110,7 @@ public class ListActivity extends Activity {
 	 * @param entry List<Calendar> With this List we will populate the ListView 
 	 */
 	private void setListView(ListView list, List<Calendar> entry){
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList);
+        ArrayAdapter<Calendar> arrayAdapter = new ArrayAdapter<Calendar>(this, R.layout.row, R.id.textViewList, entry);
         list.setAdapter(arrayAdapter);
         OnItemClickListener clickListener = new OnItemClickListener() {
 
@@ -191,7 +198,8 @@ public class ListActivity extends Activity {
 	            return true;
 	        case R.id.newNote:
 	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);
-	            intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+	            if(selectedEntry != null)
+	            	intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
 	            startActivity(intent);
 	            return true;
 	        case R.id.settings:

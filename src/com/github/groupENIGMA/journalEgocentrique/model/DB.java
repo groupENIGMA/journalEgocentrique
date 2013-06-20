@@ -312,7 +312,7 @@ public class DB implements DBInterface {
             do {
                 try {
                     // Fill the list with the dates
-                    date.setTime(date_format.parse(cur.getString(1)));
+                    date.setTime(date_format.parse(cur.getString(0)));
                     days.add(date);
                 } catch (ParseException e) {
                     e.printStackTrace();

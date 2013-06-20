@@ -259,16 +259,18 @@ public class DB implements DBInterface {
         //Create a calendar instance
         Calendar date = Calendar.getInstance();
         // Processes the query result with the cursor
-        cur.moveToFirst();
-        while (cur.moveToNext()) {
-            try {
-                // Fill the list with the dates
-                date.setTime(date_format.parse(cur.getString(1)));
-                days.add(date);
-            } catch (ParseException e) {
-                e.printStackTrace();
-                return null;
+        if (cur.moveToFirst()) {
+            do {
+                try {
+                    // Fill the list with the dates
+                    date.setTime(date_format.parse(cur.getString(1)));
+                    days.add(date);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return null;
+                }
             }
+            while (cur.moveToNext());
         }
         cur.close();
         return days;
@@ -366,14 +368,15 @@ public class DB implements DBInterface {
                 " FROM " + Mood_TABLE,
                 new String[] {}
         );
-        
-        cur.moveToFirst();
-        do {
-            Mood md = new Mood(cur.getLong(1));
-            moods.add(md);
-        }
-        while (cur.moveToNext());
 
+        // Read the mood information from the cursor
+        if (cur.moveToFirst()) {
+            do {
+                Mood md = new Mood(cur.getLong(1));
+                moods.add(md);
+            }
+            while (cur.moveToNext());
+        }
         cur.close();
         return moods;
     }
@@ -431,11 +434,12 @@ public class DB implements DBInterface {
         Cursor cur = db.query(Entry_TABLE, new String[] {ENTRY_PHOTO}, ENTRY_DATE + " BETWEEN ? AND ?", new String[] {
                 from.toString(), to.toString() }, null, null, null, null);
         
-        cur.moveToFirst();
-        do {
-            photos.add(new Photo(cur.getString(1)));
+        if (cur.moveToFirst()) {
+            do {
+                photos.add(new Photo(cur.getString(1)));
+            }
+            while (cur.moveToNext());
         }
-        while (cur.moveToNext());
 
         cur.close();
         return photos;

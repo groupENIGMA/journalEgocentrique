@@ -124,6 +124,16 @@ public interface DBInterface {
     public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
     
     /**
+     * Gets a note from the specified id
+     * 
+     * @param id the identifier of the Note
+     * @return The Note with the specified id
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public Note getNote(long id) throws InvalidOperationException;
+    
+    /**
      * Updates the text note of the given Note
      * <p>
      * Each Note has a "grace period" during which it can be updated: calling
@@ -190,14 +200,14 @@ public interface DBInterface {
      * Sets the Photo for the given Entry
      * 
      * @param entry the Entry to be updated
-     * @param path the URI of the file containing the photo
+     * @param btmp the Bitmap file of the taken picture
      * @return the newly created Photo object
      * 
      * @throws InvalidOperationException if the Entry's photo can't be inserted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setPhoto(Entry entry, String path) throws InvalidOperationException;
+    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException;
     
     /**
      * Deletes the given photo from the database

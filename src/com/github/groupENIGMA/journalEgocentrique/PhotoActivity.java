@@ -22,7 +22,7 @@ import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 
 public class PhotoActivity extends Activity {
 
-	private static final int CAMERA_REQUEST = 1888; 
+	private static final int CAMERA_REQUEST = 1; 
 	private ImageView mImageView;
 	private Bitmap mImageBitmap;
 	
@@ -42,7 +42,6 @@ public class PhotoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 				startActivityForResult(intent, CAMERA_REQUEST);
 			}

@@ -21,8 +21,9 @@ public class MoodActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mood);
 		Intent intent = getIntent();
-		long entryId = intent.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
+		long entryId = intent.getLongExtra("EntryId", 0);
 		database = new DB(getApplicationContext());
+		database.open();
 		myEntry = database.getEntry(entryId);
 		GridView grid = (GridView)findViewById(R.id.moodGrid);
 		final MoodAdapter imgAdapter = new MoodAdapter(this);

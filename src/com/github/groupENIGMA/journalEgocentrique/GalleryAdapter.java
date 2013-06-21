@@ -21,6 +21,7 @@ public class GalleryAdapter extends BaseAdapter{
     public GalleryAdapter(Context c) {
         mContext = c;
         database = new DB(c);
+        database.open();
         photos = database.getPhotos();
     }
 

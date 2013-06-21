@@ -20,6 +20,7 @@ public class MoodAdapter extends BaseAdapter {
     public MoodAdapter(Context c) {
         mContext = c;
         database = new DB(c);
+        database.open();
         moods = database.getAvailableMoods();
     }
 

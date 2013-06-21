@@ -23,6 +23,7 @@ public class GalleryActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gallery);
 		database = new DB(getApplicationContext());
+		database.open();
 		GridView grid = (GridView)findViewById(R.id.galleryGrid);
 		final GalleryAdapter imgAdapter = new GalleryAdapter(this);
 		grid.setAdapter(imgAdapter);

@@ -10,6 +10,7 @@ import android.widget.EditText;
 public class WriteNote extends Activity {
 	
 	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+	private int lastPosMsg;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -18,6 +19,7 @@ public class WriteNote extends Activity {
 		Bundle intent = getIntent().getExtras();
 		if(intent != null){
 			String oldMsg = intent.getString("OldMsg");
+			lastPosMsg = intent.getInt("Pos");
 			Log.d("Da List", oldMsg+"");
 			if(oldMsg != null){
 				EditText txt = (EditText)findViewById(R.id.editNote);
@@ -31,6 +33,7 @@ public class WriteNote extends Activity {
 		EditText text = (EditText) findViewById(R.id.editNote);
 		String message = text.getText().toString();
 		intent.putExtra(EXTRA_MESSAGE, message);
+		intent.putExtra("LastPos", ++lastPosMsg);
 		startActivity(intent);
 	}
 

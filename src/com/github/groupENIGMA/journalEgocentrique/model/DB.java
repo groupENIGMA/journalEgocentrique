@@ -5,9 +5,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.SQLException;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.content.ContentValues;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +50,11 @@ public class DB implements DBInterface {
     public static final String Mood_TABLE = "Mood";
     public static final String MOOD_ID = "_id";
     public static final String MOOD_NAME = "name";
+    
+    //Default image path
+    
+    // TODO ----------->   change the default image and its path
+    public static final String DEFAULT_IMAGE = "res/drawable-mdpi/ic_launcher.png";
 
     // The Moods available in the first version of the database
     public static final String[][] MOODS_DB_VERSION_1 =  {
@@ -348,6 +357,34 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
+    public Note getNote(long id) throws InvalidOperationException{
+    	// Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+        
+        Cursor cur = db.rawQuery(
+                "SELECT *" +
+                " FROM " + Notes_TABLE +
+                " WHERE " + Notes_TABLE + "." + NOTE_ID + "=?",
+                new String[] {Long.toString(id)}
+        );
+
+        cur.moveToFirst();
+        Calendar date = Calendar.getInstance();
+        try {
+			date.setTime(date_format.parse(cur.getString(2)));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return null;
+		}
+        
+        Note n = new Note(cur.getLong(0), cur.getString(1), date);
+        cur.close();
+        return n;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     public Note updateNote(Note note, String new_note_text) throws InvalidOperationException {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
@@ -432,10 +469,33 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setPhoto(Entry entry, String path) throws InvalidOperationException {
+    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException {
+
+    	//Gets the path and the directory name where the Photo is going to be saved
+        String path = Environment.getExternalStorageDirectory().toString();
+        File myDir = new File(path + "/JE_Photos");
+        
+        //Creates the file
+        String fileName = "Photo " + entry.getDay().toString() + ".jpg";
+        File file = new File (myDir, fileName);
+        //Delete if already exists
+        if (file.exists ()) {
+        	file.delete (); 
+        }
+        //Writes the file with the picture in the selected path
+        try {
+               FileOutputStream out = new FileOutputStream(file);
+               btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+               out.flush();
+               out.close();
+
+        } catch (Exception e) {
+               e.printStackTrace();
+        }
+        
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-
+        
         ContentValues cv=new ContentValues();
 
         //Put the new path String in the Photo column
@@ -451,7 +511,13 @@ public class DB implements DBInterface {
     public void deletePhoto(Photo photo) throws InvalidOperationException {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        // TODO
+        
+        ContentValues cv=new ContentValues();
+
+        //Put the new path String in the Photo column
+        cv.put(ENTRY_PHOTO, DEFAULT_IMAGE);
+        db.update(Entry_TABLE, cv, ENTRY_PHOTO + "=?", new String []{String.valueOf(photo.getPath())});
+
     }
 
     /**

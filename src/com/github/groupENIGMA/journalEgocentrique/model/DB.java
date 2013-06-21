@@ -332,18 +332,17 @@ public class DB implements DBInterface {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        long entryId = entry.getId();
-        ContentValues cv=new ContentValues();
+        Calendar now = Calendar.getInstance();
 
-        //Insert the note text referred to the entry id
+        // Insert the note text referred to the entry id
+        ContentValues cv = new ContentValues();
+        cv.put(NOTE_ENTRY_ID, entry.getId());
         cv.put(NOTE_TEXT, note_text);
-        cv.put(NOTE_ENTRY_ID, entryId);
-        long id = db.insert(Notes_TABLE, NOTE_ID, cv);
-
-        Calendar cal = Calendar.getInstance();
+        cv.put(NOTE_TIME, time_format.format(now.getTime()));
+        long id = db.insert(Notes_TABLE, null, cv);
 
         //Create the note to return
-        return new Note(id, note_text, cal);
+        return new Note(id, note_text, now);
     }
 
     /**
@@ -541,9 +540,9 @@ public class DB implements DBInterface {
             String newNotesTable =
                     "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
                     NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    NOTE_TEXT       + " TEXT," +
-                    NOTE_TIME       + " TEXT," +
-                    NOTE_ENTRY_ID   + " INTEGER," +
+                    NOTE_TEXT       + " TEXT NOT NULL," +
+                    NOTE_TIME       + " TEXT NOT NULL," +
+                    NOTE_ENTRY_ID   + " INTEGER NOT NULL," +
                     "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRY_ID + ") " +
                         "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
                     " );";

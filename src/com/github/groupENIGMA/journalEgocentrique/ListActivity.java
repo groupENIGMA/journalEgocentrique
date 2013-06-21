@@ -30,8 +30,6 @@ import com.github.groupENIGMA.journalEgocentrique.model.Note;
 public class ListActivity extends Activity {
 
     public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
-    private String msg;
-    private int lastPosMsg;
     private List<Calendar> daysList;
     private DB dataBase;
     private Entry selectedEntry = null;
@@ -78,7 +76,6 @@ public class ListActivity extends Activity {
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putLong("Id", selectedEntry.getId());
-        edit.putInt("LastPos", lastPosMsg);
         edit.commit();
         // Close database connection
         dataBase.close();
@@ -97,25 +94,12 @@ public class ListActivity extends Activity {
      * @param selected Entry. The entry selected by the user.
      */
 	private void setNotes(ListView list, Entry selected) {
-	    SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        boolean editable = selected.canBeUpdated();Log.d("Editable", " " + editable);
-        Intent intent = getIntent();
-        msg = intent.getStringExtra(WriteNote.EXTRA_MESSAGE);  
-        List<Note> tmp = selected.getNotes();
+        boolean editable = selected.canBeUpdated();
+        final List<Note> tmp = selected.getNotes();
         List<String> notes = new ArrayList<String>();
         for(int i = 0;i < tmp.size();i++){
         	notes.add(tmp.get(i).getText());
         }
-		lastPosMsg = pref.getInt("LastPos", notes.size()-1);
-        Log.d("LastPosMsg", lastPosMsg+"");
-        Log.d("NewPos", ""+intent.getIntExtra("LastPos", lastPosMsg));
-        if(msg != null && lastPosMsg < intent.getIntExtra("LastPos", lastPosMsg)){
-        	dataBase.insertNote(selectedEntry, msg);
-        	notes.add(msg);
-        	lastPosMsg = intent.getIntExtra("LastPos", lastPosMsg);
-        	Log.d("newPosMsg", lastPosMsg+"");
-        }
-        msg = null;
 		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList, notes);
         list.setAdapter(arrayAdapter);
         if(editable){
@@ -128,7 +112,9 @@ public class ListActivity extends Activity {
 	                Log.d("Invio", modify);
 	                Intent intent = new Intent(getApplicationContext(), WriteNote.class);//ho messo WriteNote.class
 	                intent.putExtra("OldMsg", modify.toString());
-	                intent.putExtra("Pos", lastPosMsg);
+	                intent.putExtra("Update", true);
+	                intent.putExtra("EntryId", selectedEntry.getId());
+	                intent.putExtra("NoteId", tmp.get(position).getId());
 	                startActivity(intent);
 	                return true;
 	            }
@@ -246,7 +232,8 @@ public class ListActivity extends Activity {
 	            return true;
 	        case R.id.newNote:
 	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);
-	            intent.putExtra("Pos", lastPosMsg);
+	            intent.putExtra("Update", false);
+	            intent.putExtra("EntryId", selectedEntry.getId());
 	            startActivity(intent);
 	            return true;
 	        case R.id.settings:

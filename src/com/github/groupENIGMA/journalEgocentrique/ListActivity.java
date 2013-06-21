@@ -28,56 +28,62 @@ import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
-	
-	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
-	private String msg;
-	private int lastPosMsg;
-	private List<Calendar> menu;
-	private DB dataBase;
-	private Entry selectedEntry = null;
-	
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.main);
-	    dataBase = new DB(getApplicationContext());
-	    dataBase.open();
-	    menu = dataBase.getDays();
-	    if(menu == null){
-	    	menu = new ArrayList<Calendar>();
-	    }
-	/*    if (savedInstanceState != null){
-	    	long idValue = savedInstanceState.getLong("ID");
-	    	selectedEntry = dataBase.getEntry(idValue);
-	    }*/
-	    SharedPreferences pref = getPreferences(MODE_PRIVATE);
-	    long id = pref.getLong("Id", 0);
-	    if(id != 0)
-	    	selectedEntry = dataBase.getEntry(id);
-	    else
-	    	selectedEntry = null;
-	    ListView list = (ListView)findViewById(R.id.list);
-	    ListView notes = (ListView)findViewById(R.id.notes);
-	    setListView(list, menu);
-	    setImages(selectedEntry);
-	    Intent received;
-	    if(selectedEntry != null)
-	    	setNotes(notes, selectedEntry);
-	    }
-	
-	@Override
-	protected void onPause(){
-		super.onPause();
-		SharedPreferences pref = getPreferences(MODE_PRIVATE);
-		SharedPreferences.Editor edit = pref.edit();
-		
-		edit.putLong("Id", selectedEntry.getId());
-		edit.putInt("LastPos", lastPosMsg);
-		edit.commit();
-	}
-	
+    public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+    private String msg;
+    private int lastPosMsg;
+    private List<Calendar> daysList;
+    private DB dataBase;
+    private Entry selectedEntry = null;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.main);
+        dataBase = new DB(getApplicationContext());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Open database connection
+        dataBase.open();
+        // Display the list of days with an Entry
+        daysList = dataBase.getDays();
+        ListView list = (ListView)findViewById(R.id.list);
+        setListView(list, daysList);
+
+        // Display the last viewed Entry (if any)
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        long id = pref.getLong("Id", -1);
+        if(id != -1) {
+            selectedEntry = dataBase.getEntry(id);
+            // Display the Photo and Mood Image
+            setImages(selectedEntry);
+            // Display the Notes
+            ListView notes = (ListView)findViewById(R.id.notes);
+            setNotes(notes, selectedEntry);
+        }
+        else {
+            selectedEntry = null;
+        }
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        // Save selected Entry
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putLong("Id", selectedEntry.getId());
+        edit.putInt("LastPos", lastPosMsg);
+        edit.commit();
+        // Close database connection
+        dataBase.close();
+    }
+
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		if(selectedEntry != null){
 			long entryId = selectedEntry.getId();
@@ -234,9 +240,9 @@ public class ListActivity extends Activity {
 	        case R.id.newEntry:
 	            selectedEntry = dataBase.createEntry();
 	            Log.e("New Entry", selectedEntry.getId()+"");//debug
-	            menu = dataBase.getDays();
+	            daysList = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
-	    	    setListView(list, menu);
+	    	    setListView(list, daysList);
 	            return true;
 	        case R.id.newNote:
 	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);

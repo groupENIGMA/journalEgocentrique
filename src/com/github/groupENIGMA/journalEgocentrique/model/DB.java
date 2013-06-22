@@ -342,21 +342,27 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note insertNote(Entry entry, String note_text)  throws InvalidOperationException {
+    public Note insertNote(Entry entry, String note_text) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        Calendar now = Calendar.getInstance();
+        // Check if it's possible to add a Note to the given Entry
+        if (entry.canBeUpdated()) {
+            // Insert the Note in the database
+            Calendar now = Calendar.getInstance();
+            ContentValues cv = new ContentValues();
+            cv.put(NOTE_ENTRY_ID, entry.getId());
+            cv.put(NOTE_TEXT, note_text);
+            cv.put(NOTE_TIME, time_format.format(now.getTime()));
+            long id = db.insert(Notes_TABLE, null, cv);
 
-        // Insert the note text referred to the entry id
-        ContentValues cv = new ContentValues();
-        cv.put(NOTE_ENTRY_ID, entry.getId());
-        cv.put(NOTE_TEXT, note_text);
-        cv.put(NOTE_TIME, time_format.format(now.getTime()));
-        long id = db.insert(Notes_TABLE, null, cv);
-
-        //Create the note to return
-        return new Note(id, note_text, now);
+            //Create the Note object to return
+            return new Note(id, note_text, now);
+        }
+        else {
+            // The Entry can't be updated with a new Note
+            throw new InvalidOperationException();
+        }
     }
 
     /**

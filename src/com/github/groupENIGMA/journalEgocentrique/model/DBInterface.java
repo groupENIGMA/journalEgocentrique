@@ -128,7 +128,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
+    public Note insertNote(Entry entry, String note_text);
     
     /**
      * Gets the Note with the given id

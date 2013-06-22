@@ -130,7 +130,6 @@ public class ListActivity extends Activity {
                 // updated.
                 Note selectedNote = (Note) adapter.getItemAtPosition(position);
                 if (selectedNote.canBeUpdated(sharedPreferences)) {
-                    Log.d("Note can be updated", "");
                     Intent intent = new Intent(
                             getApplicationContext(), WriteNote.class
                     );
@@ -142,7 +141,6 @@ public class ListActivity extends Activity {
                 }
                 // The Note can't be updated
                 else {
-                    Log.d("Note can't be updated", "");
                     return false;
                 }
             }

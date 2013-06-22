@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,8 +20,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
@@ -42,6 +45,7 @@ public class ListActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+        setView();
         dataBase = new DB(getApplicationContext());
 
         // Open the shared preferences file
@@ -49,6 +53,46 @@ public class ListActivity extends Activity {
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 MODE_PRIVATE
         );
+    }
+    
+    /**
+     * Sets dinamically proportioned the size of the Entries, Images and Notes
+     */
+    private void setView(){
+    	Display display = getWindowManager().getDefaultDisplay();
+    	int width = display.getWidth();
+    	int height = display.getHeight();
+    	Log.d("Width", width+"");
+    	ListView list = (ListView)findViewById(R.id.list);
+    	ImageView photo = (ImageView)findViewById(R.id.dailyPhoto);
+    	ImageView mood = (ImageView)findViewById(R.id.emoticon);
+    	ListView notes = (ListView)findViewById(R.id.notes);
+    	FrameLayout frame = (FrameLayout)findViewById(R.id.frameLayout);
+    	// Set the ListView size
+    	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)list.getLayoutParams();
+    	params.height = height;
+    	params.width = width/4;
+    	list.setLayoutParams(params);
+    	// Set the FrameLayout
+    	params = (RelativeLayout.LayoutParams)frame.getLayoutParams();
+    	params.height = height;
+    	params.width = width*3/4;
+    	frame.setLayoutParams(params);
+    	// Set the photo
+    	FrameLayout.LayoutParams param = (FrameLayout.LayoutParams)photo.getLayoutParams();
+    	param.width = width/2;
+    	param.height = height/2;
+    	photo.setLayoutParams(param);
+    	// Set the mood
+    	param = (FrameLayout.LayoutParams)mood.getLayoutParams();
+    	param.width = width/2;
+    	param.height = height/3;
+    	mood.setLayoutParams(param);
+    	// Set the notes
+    	param = (FrameLayout.LayoutParams)notes.getLayoutParams();
+    	param.width = width/4;
+    	param.height = height;
+    	notes.setLayoutParams(param);
     }
 
     @Override

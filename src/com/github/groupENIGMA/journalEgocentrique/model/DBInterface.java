@@ -156,8 +156,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note updateNote(Note note, String new_note_text)
-            throws InvalidOperationException;
+    public Note updateNote(Note note, String new_note_text);
     
     /**
      * Deletes the given Note from the database

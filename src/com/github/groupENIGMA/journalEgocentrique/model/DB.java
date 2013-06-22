@@ -10,13 +10,14 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 /**
  * This class implements the Application Database.
@@ -420,19 +421,31 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note updateNote(Note note, String new_note_text) throws InvalidOperationException {
+    public Note updateNote(Note note, String new_note_text)  {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
-
-        //Put the new text into the database at the chosen id
-        cv.put(NOTE_TEXT, new_note_text);
-        long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
-                new String []{String.valueOf(note.getId())}
+        // Get the sharedPreferences (for the Note "grace period")
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                Context.MODE_PRIVATE
         );
 
-        return new Note(id, new_note_text, note.getTime());
+        // Check if the Note can be updated
+        if (note.canBeUpdated(sharedPreferences)) {
+            // Update the Note
+            ContentValues cv=new ContentValues();
+            cv.put(NOTE_TEXT, new_note_text);
+            long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
+                    new String []{String.valueOf(note.getId())}
+            );
+
+            return new Note(id, new_note_text, note.getTime());
+        }
+        else {
+            // The Note can't be updated
+            throw new InvalidOperationException();
+        }
     }
 
     /**

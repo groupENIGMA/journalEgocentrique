@@ -214,7 +214,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException;
+    public Photo setPhoto(Entry entry, Bitmap btmp);
     
     /**
      * Deletes the given photo from the database

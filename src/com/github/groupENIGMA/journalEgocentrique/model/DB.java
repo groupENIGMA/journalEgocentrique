@@ -548,9 +548,16 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException {
+    public Photo setPhoto(Entry entry, Bitmap btmp) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	//Gets the path and the directory name where the Photo is going to be saved
+        // If the Entry can't be updated throw the InvalidOperationException
+        if (!entry.canBeUpdated()) {
+            throw new InvalidOperationException();
+        }
+
+        //Gets the path and the directory name where the Photo is going to be saved
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         File myDir = new File(path + "/JE_Photos");
         //Creates the file
@@ -558,31 +565,29 @@ public class DB implements DBInterface {
         File file = new File (myDir, fileName);
         //Delete if already exists
         if (file.exists ()) {
-        	file.delete (); 
+            file.delete ();
         }
-	    if (! myDir.exists()){
-	        myDir.mkdirs();
-	    }
+        if (! myDir.exists()){
+            myDir.mkdirs();
+        }
         //Writes the file with the picture in the selected path
         try {
-        	   file.createNewFile();
-               FileOutputStream out = new FileOutputStream(file);
-               btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
-               out.flush();
-               out.close();
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
 
         } catch (Exception e) {
                e.printStackTrace();
         }
-        
-        // Check if the Connection to the DB is open
-        raiseConnectionExceptionIfNotConnected();
-        
-        ContentValues cv=new ContentValues();
 
-        //Put the new path String in the Photo column
+        // Update the path to the file in the database
+        ContentValues cv = new ContentValues();
         cv.put(ENTRY_PHOTO, file.getAbsolutePath());
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
+        db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                new String []{String.valueOf(entry.getId())}
+        );
 
         return new Photo(path);
     }

@@ -1,6 +1,5 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,7 +28,10 @@ import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
 
+    public final static String EXTRA_WRITENOTE_NoteId = "NoteId";
+    public final static String EXTRA_WRITENOTE_EntryId = "EntryId";
     public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+
     private List<Calendar> daysList;
     private DB dataBase;
     private Entry selectedEntry = null;
@@ -103,34 +105,42 @@ public class ListActivity extends Activity {
      * @param list The ListView that will be used to display the Entry
      */
     private void displayNotes(ListView list) {
-        boolean editable = selectedEntry.canBeUpdated();
-        final List<Note> tmp = selectedEntry.getNotes();
-        List<String> notes = new ArrayList<String>();
-        for(int i = 0;i < tmp.size();i++){
-            notes.add(tmp.get(i).getText());
-        }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList, notes);
+        // Display the Notes
+        List<Note> notes = selectedEntry.getNotes();
+        ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
+                this, R.layout.row, R.id.textViewList, notes
+        );
         list.setAdapter(arrayAdapter);
-        if(editable){
-	        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
-	
-	            @Override
-	            public boolean onItemLongClick(AdapterView<?> adapter, View view,
-	                int position, long id) {
-	                String modify = (String)adapter.getItemAtPosition(position);
-	                Log.d("Invio", modify);
-	                Intent intent = new Intent(getApplicationContext(), WriteNote.class);//ho messo WriteNote.class
-	                intent.putExtra("OldMsg", modify.toString());
-	                intent.putExtra("Update", true);
-	                intent.putExtra("EntryId", selectedEntry.getId());
-	                intent.putExtra("NoteId", tmp.get(position).getId());
-	                Log.d("Note id", tmp.get(position).getId()+"");
-	                startActivity(intent);
-	                return true;
-	            }
-	        };
-	        list.setOnItemLongClickListener(clickListener);
-        }
+
+        // Add the onLongClickListener that activates the WriteNote activity
+        // that can be used to update the Note text
+        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
+
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapter, View view,
+                int position, long id) {
+                // Enable the onLongClickListener only if the Note can be
+                // updated.
+                Note selectedNote = (Note) adapter.getItemAtPosition(position);
+                if (selectedNote.canBeUpdated(getPreferences(MODE_PRIVATE))) {
+                    Log.d("Note can be updated", "");
+                    Intent intent = new Intent(
+                            getApplicationContext(), WriteNote.class
+                    );
+                    intent.putExtra(
+                            EXTRA_WRITENOTE_NoteId, selectedNote.getId()
+                    );
+                    startActivity(intent);
+                    return true;
+                }
+                // The Note can't be updated
+                else {
+                    Log.d("Note can't be updated", "");
+                    return false;
+                }
+            }
+        };
+        list.setOnItemLongClickListener(clickListener);
     }
 
     /**
@@ -222,12 +232,14 @@ public class ListActivity extends Activity {
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    displayDaysList(list, daysList);
 	            return true;
-	        case R.id.newNote:
-	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);
-	            intent.putExtra("Update", false);
-	            intent.putExtra("EntryId", selectedEntry.getId());
-	            startActivity(intent);
-	            return true;
+            case R.id.newNote:
+                Intent intent = new Intent(
+                        getApplicationContext(), WriteNote.class
+                );
+                intent.putExtra(EXTRA_WRITENOTE_NoteId, -1L);
+                intent.putExtra(EXTRA_WRITENOTE_EntryId, selectedEntry.getId());
+                startActivity(intent);
+                return true;
 	        case R.id.settings:
 	        	Intent settings = new Intent(getApplicationContext(), Settings.class);
 	        	startActivity(settings);

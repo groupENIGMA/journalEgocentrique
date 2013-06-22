@@ -40,7 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/delete"
         android:layout_toRightOf="@+id/editNote"
-        android:onClick="sendNote"
+        android:onClick="saveNote"
         android:text="@string/done" />
 
 </RelativeLayout>

@@ -181,7 +181,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void setMood(Entry entry, Mood mood) throws InvalidOperationException;
+    public void setMood(Entry entry, Mood mood);
     
     /**
      * Sets the Mood for given Entry to null

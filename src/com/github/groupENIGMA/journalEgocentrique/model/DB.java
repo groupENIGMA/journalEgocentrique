@@ -476,15 +476,24 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void setMood(Entry entry, Mood mood) throws InvalidOperationException {
+    public void setMood(Entry entry, Mood mood) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
+        // Check if the Entry can be updated
+        if (entry.canBeUpdated()) {
+            // Update the Mood of the Entry
+            ContentValues cv=new ContentValues();
+            cv.put(ENTRY_MOOD, mood.getId());
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String [] {String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // The Entry can't be updated
+            throw new InvalidOperationException();
+        }
 
-        //Put the new path String in the mood column
-        cv.put(ENTRY_MOOD, mood.getId());
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
     }
 
     /**

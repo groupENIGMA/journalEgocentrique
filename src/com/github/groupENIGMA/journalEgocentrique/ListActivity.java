@@ -50,8 +50,8 @@ public class ListActivity extends Activity {
         dataBase.open();
         // Display the list of days with an Entry
         daysList = dataBase.getDays();
-        ListView list = (ListView)findViewById(R.id.list);
-        setListView(list, daysList);
+        ListView daysListView = (ListView)findViewById(R.id.list);
+        displayDaysList(daysListView, daysList);
 
         // Display the last viewed Entry (if any)
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
@@ -59,40 +59,57 @@ public class ListActivity extends Activity {
         if(id != -1) {
             selectedEntry = dataBase.getEntry(id);
             // Display the Photo and Mood Image
-            setImages(selectedEntry);
+            displayImages();
             // Display the Notes
-            ListView notes = (ListView)findViewById(R.id.notes);
-            setNotes(notes, selectedEntry);
+            ListView notesListView = (ListView)findViewById(R.id.notes);
+            displayNotes(notesListView);
         }
         else {
             selectedEntry = null;
         }
     }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        // Save selected Entry
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putLong("Id", selectedEntry.getId());
-        edit.commit();
-        // Close database connection
-        dataBase.close();
+    /**
+     * Display the list of all Days having an associated Entry
+     * It is also created a OnItemClickListener that at the click will display
+     * the details of the day.
+     *
+     * @param list The list to populate.
+     * @param entry With this List we will populate the ListView
+     */
+    private void displayDaysList(ListView list, List<Calendar> entry){
+        // Create and set the custom ArrayAdapter DaysArrayAdapter
+        DaysArrayAdapter arrayAdapter = new DaysArrayAdapter(
+                this, R.layout.row, entry
+        );
+        list.setAdapter(arrayAdapter);
+
+        // Set the listener
+        OnItemClickListener clickListener = new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view,
+                                    int position, long id) {
+                selectedEntry = dataBase.getEntry(
+                        (Calendar)adapter.getItemAtPosition(position)
+                );
+            }
+        };
+        list.setOnItemClickListener(clickListener);
     }
 
     /**
-     * Displays the correct notes for the entry selected by the user.
-     * @param selected Entry. The entry selected by the user.
+     * Displays the Notes of the selectedEntry
+     *
+     * @param list The ListView that will be used to display the Entry
      */
-	private void setNotes(ListView list, Entry selected) {
-        boolean editable = selected.canBeUpdated();
-        final List<Note> tmp = selected.getNotes();
+    private void displayNotes(ListView list) {
+        boolean editable = selectedEntry.canBeUpdated();
+        final List<Note> tmp = selectedEntry.getNotes();
         List<String> notes = new ArrayList<String>();
         for(int i = 0;i < tmp.size();i++){
-        	notes.add(tmp.get(i).getText());
+            notes.add(tmp.get(i).getText());
         }
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList, notes);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.row, R.id.textViewList, notes);
         list.setAdapter(arrayAdapter);
         if(editable){
 	        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
@@ -114,95 +131,78 @@ public class ListActivity extends Activity {
 	        };
 	        list.setOnItemLongClickListener(clickListener);
         }
-     }
-
-
-    /**
-     * The ListView will be populated with the data given by the database.
-     * It is also created a OnItemClickListener that at the click will display
-     * the details of the day.
-     * @param list ListView. The list to populate.
-     * @param entry List<Calendar> With this List we will populate the ListView
-     */
-    private void setListView(ListView list, List<Calendar> entry){
-        // Create and set the custom ArrayAdapter DaysArrayAdapter
-        DaysArrayAdapter arrayAdapter = new DaysArrayAdapter(
-                this, R.layout.row, entry
-        );
-        list.setAdapter(arrayAdapter);
-
-        // Set the listener
-        OnItemClickListener clickListener = new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view,
-                int position, long id) {
-                selectedEntry = dataBase.getEntry(
-                        (Calendar)adapter.getItemAtPosition(position)
-                );
-            }
-        };
-        list.setOnItemClickListener(clickListener);
     }
 
-	/**
-	 * Sets the correct image for photo and mood selected by the user.
-	 * @param selected Entry. The entry selected by the user, its details will be displayed.
-	 */
-	private void setImages(Entry selected){
-	   /*
-	    * Caso iniziale:nessun entry selezionata 
-	    */
-		if(selected == null){
-    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto); 
-    	    img.setImageResource(R.drawable.ic_launcher);
-    	    img = (ImageView)findViewById(R.id.emoticon);
-    	    img.setImageResource(R.drawable.ic_launcher);
+    /**
+     * Sets the correct image for photo and mood selected by the user.
+     */
+    private void displayImages(){
+        /*
+        * No selected entry; display the default images
+        */
+        if(selectedEntry == null){
+            ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
+            img.setImageResource(R.drawable.ic_launcher);
+            img = (ImageView)findViewById(R.id.emoticon);
+            img.setImageResource(R.drawable.ic_launcher);
         }
-	    /*
-	     * Caso entry selezionata dall'utente:
-	     * vengono aggiornate la foto, il mood e le note.
-	     * Controllando se e' possibile la modifica si permetta la stessa o meno
-	     */
+        /*
+         * Entry selected: display its images (if any) or the default ones
+         * If the Entry is editable also add the listeners that activate
+         * MoodActivity and PhotoActivity.to change the Mood and Photo
+         */
         else{
-    	    boolean editable = selected.canBeUpdated();
-    	    ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
-    	    if(selected.getPhoto() != null)
-    	    	img.setImageURI(Uri.parse(selected.getPhoto().getPath()));
-    	    else
-    	    	img.setImageResource(R.drawable.ic_launcher);
-    	    ImageView mood = (ImageView)findViewById(R.id.emoticon);
-    	    if(selected.getMood() == null)
-    	    	mood.setImageResource(R.drawable.ic_launcher);
-    	    else
-    	    	mood.setImageResource((selected.getMood().getEmoteId(getApplicationContext())));
-    	    if(editable){
-    	    	 img.setOnTouchListener(new OnTouchListener()
-    	         {
-    	             @Override
-    	             public boolean onTouch(View v, MotionEvent event)
-    	             {
-    	            	 // qui carica la vista per la fotoCamera
-    	            	 Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
-    	            	 intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
-    	            	 startActivity(intent);
-    	                 return false;
-    	             }
-    	        });
-    	    	 mood.setOnTouchListener(new OnTouchListener()
-    	    	 {
-    	    		@Override
-    	    		public boolean onTouch(View v, MotionEvent event)
-    	    		{
-    	    			// qui carica la vista per il moood
-    	    			Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
-    	    			intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
-    	    			startActivity(intent);
-    	    			return false;
-    	    		}
-    	    	 });
-    	    }
+            boolean editable = selectedEntry.canBeUpdated();
+            ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
+            if(selectedEntry.getPhoto() != null)
+                img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
+            else
+                img.setImageResource(R.drawable.ic_launcher);
+            ImageView mood = (ImageView)findViewById(R.id.emoticon);
+            if(selectedEntry.getMood() == null)
+                mood.setImageResource(R.drawable.ic_launcher);
+            else
+                mood.setImageResource((selectedEntry.getMood().getEmoteId(getApplicationContext())));
+            if(editable){
+                img.setOnTouchListener(new OnTouchListener()
+                {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event)
+                    {
+                        // qui carica la vista per la fotoCamera
+                        Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
+                        intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+                        startActivity(intent);
+                        return false;
+                    }
+                });
+                mood.setOnTouchListener(new OnTouchListener()
+                {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event)
+                    {
+                        // qui carica la vista per il moood
+                        Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
+                        intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+                        startActivity(intent);
+                        return false;
+                    }
+                });
+            }
         }
-	}
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        // Save selected Entry
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putLong("Id", selectedEntry.getId());
+        edit.commit();
+        // Close database connection
+        dataBase.close();
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
@@ -220,7 +220,7 @@ public class ListActivity extends Activity {
 	            Log.e("New Entry", selectedEntry.getId()+"");//debug
 	            daysList = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
-	    	    setListView(list, daysList);
+	    	    displayDaysList(list, daysList);
 	            return true;
 	        case R.id.newNote:
 	            Intent intent = new Intent(getApplicationContext(), WriteNote.class);

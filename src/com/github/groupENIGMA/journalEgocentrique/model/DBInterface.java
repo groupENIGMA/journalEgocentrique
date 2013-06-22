@@ -217,17 +217,17 @@ public interface DBInterface {
     public Photo setPhoto(Entry entry, Bitmap btmp);
     
     /**
-     * Deletes the given photo from the database
+     * Deletes the photo of the given entry from db and external storage
      * 
      * A Photo can be deleted only during the same day it was took.
      * 
-     * @param photo the Photo to be deleted
+     * @param entry
      * @throws InvalidOperationException When deleting a Photo that can't be
      *         deleted.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deletePhoto(Photo photo) throws InvalidOperationException;
+    public void removePhoto(Entry entry);
     
     /**
      * Returns the list of all the Photo saved in the database.

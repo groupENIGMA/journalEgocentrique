@@ -51,11 +51,6 @@ public class DB implements DBInterface {
     public static final String Mood_TABLE = "Mood";
     public static final String MOOD_ID = "_id";
     public static final String MOOD_NAME = "name";
-    
-    //Default image path
-    
-    // TODO ----------->   change the default image and its path
-    public static final String DEFAULT_IMAGE = "res/drawable-mdpi/ic_launcher.png";
 
     // The Moods available in the first version of the database
     public static final String[][] MOODS_DB_VERSION_1 =  {
@@ -595,16 +590,29 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void deletePhoto(Photo photo) throws InvalidOperationException {
+    public void removePhoto(Entry entry) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         
-        ContentValues cv=new ContentValues();
-
-        //Put the new path String in the Photo column
-        cv.put(ENTRY_PHOTO, DEFAULT_IMAGE);
-        db.update(Entry_TABLE, cv, ENTRY_PHOTO + "=?", new String []{String.valueOf(photo.getPath())});
-
+        // Check if the Photo can be deleted
+        if (entry.canBeUpdated()) {
+            // Remove the photo from external storage
+            String path = Environment.getExternalStorageDirectory().
+                    getAbsolutePath();
+            File myDir = new File(path + "/JE_Photos");
+            File photo = new File(myDir, entry.getPhoto().getPath());
+            photo.delete();
+            // Remove the photo from the database
+            ContentValues cv = new ContentValues();
+            cv.putNull(ENTRY_PHOTO);
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String []{String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // The Photo can't be deleted
+            throw new InvalidOperationException();
+        }
     }
 
     /**

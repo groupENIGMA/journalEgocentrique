@@ -282,6 +282,26 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
+    public void deleteEntry(Entry entry){
+    	
+    	// Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        // Check if the Entry is todays Entry and can be deleted
+        if (entry.canBeDeleted()) {
+            //Deletes the selected entry
+            db.delete(Entry_TABLE, ENTRY_ID + "=?",
+                    new String [] {String.valueOf(entry.getId())});
+        }
+        else {
+            // The Note can't be deleted
+            throw new InvalidOperationException();
+        }	
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsEntry() {
         Calendar day = Calendar.getInstance();

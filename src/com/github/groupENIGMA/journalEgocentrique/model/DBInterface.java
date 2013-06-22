@@ -167,7 +167,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteNote(Note note) throws InvalidOperationException;
+    public void deleteNote(Note note);
     
     /**
      * Sets the mood for the given Entry

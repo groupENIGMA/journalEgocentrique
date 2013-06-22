@@ -60,6 +60,11 @@ public class Note implements NoteInterface {
     }
 
     @Override
+    public String toString() {
+        return getText();
+    }
+
+    @Override
     public boolean canBeDeleted(SharedPreferences preferences) {
         return canBeUpdated(preferences);
     }

@@ -35,6 +35,7 @@ public class ListActivity extends Activity {
     private List<Calendar> daysList;
     private DB dataBase;
     private Entry selectedEntry = null;
+    private SharedPreferences sharedPreferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,12 @@ public class ListActivity extends Activity {
 
         setContentView(R.layout.main);
         dataBase = new DB(getApplicationContext());
+
+        // Open the shared preferences file
+        sharedPreferences = getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                MODE_PRIVATE
+        );
     }
 
     @Override
@@ -122,8 +129,7 @@ public class ListActivity extends Activity {
                 // Enable the onLongClickListener only if the Note can be
                 // updated.
                 Note selectedNote = (Note) adapter.getItemAtPosition(position);
-                if (selectedNote.canBeUpdated(getPreferences(MODE_PRIVATE))) {
-                    Log.d("Note can be updated", "");
+                if (selectedNote.canBeUpdated(sharedPreferences)) {
                     Intent intent = new Intent(
                             getApplicationContext(), WriteNote.class
                     );
@@ -135,7 +141,6 @@ public class ListActivity extends Activity {
                 }
                 // The Note can't be updated
                 else {
-                    Log.d("Note can't be updated", "");
                     return false;
                 }
             }

@@ -6,6 +6,11 @@ package com.github.groupENIGMA.journalEgocentrique;
 public class AppConstants {
 
     /**
+     * SharedPreferences file name
+     */
+    public static final String SHARED_PREFERENCES_FILENAME =
+            "journalEgocentrique_SharedPreferences";
+    /**
      * SharedPreferences key name for the Note timeout.
      * <p>
      * Each Note can be modified or deleted for a limited time set by the

@@ -10,13 +10,14 @@ import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 /**
  * This class implements the Application Database.
@@ -50,11 +51,6 @@ public class DB implements DBInterface {
     public static final String Mood_TABLE = "Mood";
     public static final String MOOD_ID = "_id";
     public static final String MOOD_NAME = "name";
-    
-    //Default image path
-    
-    // TODO ----------->   change the default image and its path
-    public static final String DEFAULT_IMAGE = "res/drawable-mdpi/ic_launcher.png";
 
     // The Moods available in the first version of the database
     public static final String[][] MOODS_DB_VERSION_1 =  {
@@ -342,21 +338,27 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note insertNote(Entry entry, String note_text)  throws InvalidOperationException {
+    public Note insertNote(Entry entry, String note_text) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        Calendar now = Calendar.getInstance();
+        // Check if it's possible to add a Note to the given Entry
+        if (entry.canBeUpdated()) {
+            // Insert the Note in the database
+            Calendar now = Calendar.getInstance();
+            ContentValues cv = new ContentValues();
+            cv.put(NOTE_ENTRY_ID, entry.getId());
+            cv.put(NOTE_TEXT, note_text);
+            cv.put(NOTE_TIME, time_format.format(now.getTime()));
+            long id = db.insert(Notes_TABLE, null, cv);
 
-        // Insert the note text referred to the entry id
-        ContentValues cv = new ContentValues();
-        cv.put(NOTE_ENTRY_ID, entry.getId());
-        cv.put(NOTE_TEXT, note_text);
-        cv.put(NOTE_TIME, time_format.format(now.getTime()));
-        long id = db.insert(Notes_TABLE, null, cv);
-
-        //Create the note to return
-        return new Note(id, note_text, now);
+            //Create the Note object to return
+            return new Note(id, note_text, now);
+        }
+        else {
+            // The Entry can't be updated with a new Note
+            throw new InvalidOperationException();
+        }
     }
 
     /**
@@ -414,58 +416,101 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note updateNote(Note note, String new_note_text) throws InvalidOperationException {
+    public Note updateNote(Note note, String new_note_text)  {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
-
-        //Put the new text into the database at the chosen id
-        cv.put(NOTE_TEXT, new_note_text);
-        long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
-                new String []{String.valueOf(note.getId())}
+        // Get the sharedPreferences (for the Note "grace period")
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                Context.MODE_PRIVATE
         );
 
-        return new Note(id, new_note_text, note.getTime());
+        // Check if the Note can be updated
+        if (note.canBeUpdated(sharedPreferences)) {
+            // Update the Note
+            ContentValues cv = new ContentValues();
+            cv.put(NOTE_TEXT, new_note_text);
+            long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
+                    new String []{String.valueOf(note.getId())}
+            );
+
+            return new Note(id, new_note_text, note.getTime());
+        }
+        else {
+            // The Note can't be updated
+            throw new InvalidOperationException();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void deleteNote(Note note) throws InvalidOperationException{
+    public void deleteNote(Note note) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        //Deletes the selected row from the Notes table in the database
-        db.delete(Notes_TABLE, NOTE_ID + "=?",
-                new String [] {String.valueOf(note.getId())});
+
+        // Get the sharedPreferences (for the Note "grace period")
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                Context.MODE_PRIVATE
+        );
+
+        // Check if the Note can be deleted
+        if (note.canBeDeleted(sharedPreferences)) {
+            //Deletes the selected row from the Notes table in the database
+            db.delete(Notes_TABLE, NOTE_ID + "=?",
+                    new String [] {String.valueOf(note.getId())});
+        }
+        else {
+            // The Note can't be deleted
+            throw new InvalidOperationException();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
-    public void setMood(Entry entry, Mood mood) throws InvalidOperationException {
+    public void setMood(Entry entry, Mood mood) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
+        // Check if the Entry can be updated
+        if (entry.canBeUpdated()) {
+            // Update the Mood of the Entry
+            ContentValues cv = new ContentValues();
+            cv.put(ENTRY_MOOD, mood.getId());
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String [] {String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // The Entry can't be updated
+            throw new InvalidOperationException();
+        }
 
-        //Put the new path String in the mood column
-        cv.put(ENTRY_MOOD, mood.getId());
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
     }
 
     /**
      * {@inheritDoc}
      */
-    public void removeMood(Entry entry) throws InvalidOperationException {
+    public void removeMood(Entry entry) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
-
-        //Removes the image path from the mood column
-        cv.putNull(ENTRY_MOOD);
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
+        // Check if the Entry can be updated
+        if (entry.canBeUpdated()) {
+            // Set to NULL the Mood Column of entry
+            ContentValues cv = new ContentValues();
+            cv.putNull(ENTRY_MOOD);
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String []{String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // Entry can't be updated
+            throw new InvalidOperationException();
+        }
     }
 
     /**
@@ -498,9 +543,16 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException {
+    public Photo setPhoto(Entry entry, Bitmap btmp) {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
 
-    	//Gets the path and the directory name where the Photo is going to be saved
+        // If the Entry can't be updated throw the InvalidOperationException
+        if (!entry.canBeUpdated()) {
+            throw new InvalidOperationException();
+        }
+
+        //Gets the path and the directory name where the Photo is going to be saved
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         File myDir = new File(path + "/JE_Photos");
         //Creates the file
@@ -508,31 +560,29 @@ public class DB implements DBInterface {
         File file = new File (myDir, fileName);
         //Delete if already exists
         if (file.exists ()) {
-        	file.delete (); 
+            file.delete ();
         }
-	    if (! myDir.exists()){
-	        myDir.mkdirs();
-	    }
+        if (! myDir.exists()){
+            myDir.mkdirs();
+        }
         //Writes the file with the picture in the selected path
         try {
-        	   file.createNewFile();
-               FileOutputStream out = new FileOutputStream(file);
-               btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
-               out.flush();
-               out.close();
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
 
         } catch (Exception e) {
                e.printStackTrace();
         }
-        
-        // Check if the Connection to the DB is open
-        raiseConnectionExceptionIfNotConnected();
-        
-        ContentValues cv=new ContentValues();
 
-        //Put the new path String in the Photo column
+        // Update the path to the file in the database
+        ContentValues cv = new ContentValues();
         cv.put(ENTRY_PHOTO, file.getAbsolutePath());
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
+        db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                new String []{String.valueOf(entry.getId())}
+        );
 
         return new Photo(path);
     }
@@ -540,16 +590,29 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void deletePhoto(Photo photo) throws InvalidOperationException {
+    public void removePhoto(Entry entry) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         
-        ContentValues cv=new ContentValues();
-
-        //Put the new path String in the Photo column
-        cv.put(ENTRY_PHOTO, DEFAULT_IMAGE);
-        db.update(Entry_TABLE, cv, ENTRY_PHOTO + "=?", new String []{String.valueOf(photo.getPath())});
-
+        // Check if the Photo can be deleted
+        if (entry.canBeUpdated()) {
+            // Remove the photo from external storage
+            String path = Environment.getExternalStorageDirectory().
+                    getAbsolutePath();
+            File myDir = new File(path + "/JE_Photos");
+            File photo = new File(myDir, entry.getPhoto().getPath());
+            photo.delete();
+            // Remove the photo from the database
+            ContentValues cv = new ContentValues();
+            cv.putNull(ENTRY_PHOTO);
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String []{String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // The Photo can't be deleted
+            throw new InvalidOperationException();
+        }
     }
 
     /**

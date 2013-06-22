@@ -128,7 +128,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
+    public Note insertNote(Entry entry, String note_text);
     
     /**
      * Gets the Note with the given id
@@ -156,8 +156,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note updateNote(Note note, String new_note_text)
-            throws InvalidOperationException;
+    public Note updateNote(Note note, String new_note_text);
     
     /**
      * Deletes the given Note from the database
@@ -168,7 +167,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteNote(Note note) throws InvalidOperationException;
+    public void deleteNote(Note note);
     
     /**
      * Sets the mood for the given Entry
@@ -182,7 +181,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void setMood(Entry entry, Mood mood) throws InvalidOperationException;
+    public void setMood(Entry entry, Mood mood);
     
     /**
      * Sets the Mood for given Entry to null
@@ -192,7 +191,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void removeMood(Entry entry) throws InvalidOperationException;
+    public void removeMood(Entry entry);
     
     /** Returns the list of available Moods.
      * <p>
@@ -215,20 +214,20 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException;
+    public Photo setPhoto(Entry entry, Bitmap btmp);
     
     /**
-     * Deletes the given photo from the database
+     * Deletes the photo of the given entry from db and external storage
      * 
      * A Photo can be deleted only during the same day it was took.
      * 
-     * @param photo the Photo to be deleted
+     * @param entry
      * @throws InvalidOperationException When deleting a Photo that can't be
      *         deleted.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deletePhoto(Photo photo) throws InvalidOperationException;
+    public void removePhoto(Entry entry);
     
     /**
      * Returns the list of all the Photo saved in the database.

@@ -48,7 +48,7 @@ public class Note implements NoteInterface {
         );
         // Prepare a Calendar set to when the timeout for this Note expires
         Calendar timeout = (Calendar) getTime().clone();
-        timeout.roll(Calendar.HOUR, hours_timeout);
+        timeout.add(Calendar.HOUR, hours_timeout);
         // Is the timeout expired?
         Calendar rightNow = Calendar.getInstance();
         if (rightNow.compareTo(timeout) >= 0) {

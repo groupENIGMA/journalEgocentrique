@@ -1,17 +1,11 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,20 +13,28 @@ import android.widget.ImageView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class PhotoActivity extends Activity {
 
 	private static final int CAMERA_REQUEST = 1; 
 	private ImageView mImageView;
 	private Bitmap mImageBitmap;
+	private Entry entry;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
 		mImageView = (ImageView)findViewById(R.id.photo);
+		final DB data = new DB(getApplicationContext());
 		Intent received = getIntent();
+		data.open();
 		final long entryId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
+		entry = data.getEntry(entryId); 
+		ImageView actualImg = (ImageView)findViewById(R.id.photo);
+		Photo tmp = entry.getPhoto();
+		actualImg.setImageURI(Uri.parse(tmp.getPath()));
 		
 		/*
 		 * Al click di takePicture lancia la fotocamera di sistema
@@ -56,11 +58,9 @@ public class PhotoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				DB data = new DB(getApplicationContext());
-				data.open();
-				Entry entry = data.getEntry(entryId); 
 				data.setPhoto(entry, mImageBitmap);
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+				data.close();
 				startActivity(intent);
 			}
 		});

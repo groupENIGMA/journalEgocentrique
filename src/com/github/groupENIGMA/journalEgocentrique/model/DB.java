@@ -1,15 +1,5 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.SQLException;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.os.Environment;
-import android.content.ContentValues;
-
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.ParseException;
@@ -17,6 +7,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.os.Environment;
+import android.util.Log;
 
 /**
  * This class implements the Application Database.
@@ -485,18 +485,21 @@ public class DB implements DBInterface {
     public Photo setPhoto(Entry entry, Bitmap btmp) throws InvalidOperationException {
 
     	//Gets the path and the directory name where the Photo is going to be saved
-        String path = Environment.getExternalStorageDirectory().toString();
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
         File myDir = new File(path + "/JE_Photos");
-        
         //Creates the file
-        String fileName = "Photo " + entry.getDay().toString() + ".jpg";
+        String fileName = "Photo_" + entry.getId() + ".jpg";
         File file = new File (myDir, fileName);
         //Delete if already exists
         if (file.exists ()) {
         	file.delete (); 
         }
+	    if (! myDir.exists()){
+	        myDir.mkdirs();
+	    }
         //Writes the file with the picture in the selected path
         try {
+        	   file.createNewFile();
                FileOutputStream out = new FileOutputStream(file);
                btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
                out.flush();

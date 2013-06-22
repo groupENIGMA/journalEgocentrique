@@ -30,11 +30,10 @@ public class WriteNote extends Activity {
 			String oldMsg = intent.getString("OldMsg");
 			updating = intent.getBoolean("Update");
 			selectedEntry = dataBase.getEntry(intent.getLong("EntryId"));
-			selectedNote = dataBase.getNote(intent.getLong("NoteId"));
-			Log.d("Da List", oldMsg+"");
 			if(updating){
 				EditText txt = (EditText)findViewById(R.id.editNote);
 				txt.append(oldMsg);
+				selectedNote = dataBase.getNote(intent.getLong("NoteId"));
 			}
 		}
 	}
@@ -52,6 +51,14 @@ public class WriteNote extends Activity {
 		}
 		intent.putExtra(EXTRA_MESSAGE, message);
 		startActivity(intent);
+	}
+	
+	public void deleteNote(View view){
+		Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+		if(selectedNote != null)
+			dataBase.deleteNote(selectedNote);
+		startActivity(intent);
+		
 	}
 
 }

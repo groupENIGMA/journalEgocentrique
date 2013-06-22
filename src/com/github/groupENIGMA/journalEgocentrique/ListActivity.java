@@ -115,6 +115,7 @@ public class ListActivity extends Activity {
 	                intent.putExtra("Update", true);
 	                intent.putExtra("EntryId", selectedEntry.getId());
 	                intent.putExtra("NoteId", tmp.get(position).getId());
+	                Log.d("Note id", tmp.get(position).getId()+"");
 	                startActivity(intent);
 	                return true;
 	            }

@@ -1,6 +1,6 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/LinearLayout1"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -14,18 +14,33 @@
         android:id="@+id/editNote"
         android:layout_width="439dp"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:ems="10"
-        android:hint="@string/editMessage" >
+        android:hint="@string/editMessage"
+        android:inputType="textMultiLine"
+        android:singleLine="false" >
 
         <requestFocus />
     </EditText>
 
     <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/editNote"
+        android:layout_alignLeft="@+id/button"
+        android:layout_marginBottom="14dp"
+        android:onClick="deleteNote"
+        android:text="@string/delete" />
+
+    <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:text="@string/done"
-        android:onClick="sendNote" />
+        android:layout_above="@+id/delete"
+        android:layout_toRightOf="@+id/editNote"
+        android:onClick="sendNote"
+        android:text="@string/done" />
 
-</LinearLayout>
+</RelativeLayout>

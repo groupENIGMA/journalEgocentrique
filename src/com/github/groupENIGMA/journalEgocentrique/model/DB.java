@@ -357,10 +357,11 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note getNote(long id) throws InvalidOperationException{
-    	// Check if the Connection to the DB is open
+    public Note getNote(long id) {
+        // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        
+
+        // Query the database for the note
         Cursor cur = db.rawQuery(
                 "SELECT *" +
                 " FROM " + Notes_TABLE +
@@ -368,18 +369,30 @@ public class DB implements DBInterface {
                 new String[] {Long.toString(id)}
         );
 
-        cur.moveToFirst();
-        Calendar date = Calendar.getInstance();
-        try {
-			date.setTime(time_format.parse(cur.getString(2)));
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return null;
-		}
-        
-        Note n = new Note(cur.getLong(0), cur.getString(1), date);
-        cur.close();
-        return n;
+        // If a Note with the given id exists return it
+        if (cur.moveToFirst()) {
+            // Parse NOTE_TIME for String to Calendar
+            Calendar note_time = Calendar.getInstance();
+            try {
+                note_time.setTime(time_format.parse(cur.getString(2)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+            // Create and return the Note
+            Note n = new Note(
+                    cur.getLong(0),     // NOTE_ID
+                    cur.getString(1),   // NOTE_TEXT
+                    note_time           // NOTE_TIME
+            );
+            cur.close();
+            return n;
+        }
+        // Note not found
+        else {
+            return null;
+        }
+
     }
     
     /**

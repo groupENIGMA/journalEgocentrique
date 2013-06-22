@@ -124,14 +124,15 @@ public interface DBInterface {
     public Note insertNote(Entry entry, String note_text) throws InvalidOperationException;
     
     /**
-     * Gets a note from the specified id
+     * Gets the Note with the given id
      * 
      * @param id the identifier of the Note
-     * @return The Note with the specified id
+     * @return The Note with the specified id, or null if the a Note with the
+     *         given id doesn't exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note getNote(long id) throws InvalidOperationException;
+    public Note getNote(long id);
     
     /**
      * Updates the text note of the given Note

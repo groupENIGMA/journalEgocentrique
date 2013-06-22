@@ -6,6 +6,12 @@
         android:id="@+id/newNote"
         android:title="@string/newNote"/>
     <item
+        android:id="@+id/deleteEntry"
+        android:title="@string/deleteEntry"/>
+    <item
+        android:id="@+id/gallery"
+        android:title="@string/gallery"/>
+    <item
         android:id="@+id/settings"
         android:title="@string/settings"/>
     

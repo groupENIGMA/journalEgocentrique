@@ -3,19 +3,19 @@ package com.github.groupENIGMA.journalEgocentrique;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
-import com.github.groupENIGMA.journalEgocentrique.model.Entry;
-import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class GalleryActivity extends Activity {
 
 	private DB database;
-	private Entry myEntry;
 	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
 	
 	@Override
@@ -35,5 +35,27 @@ public class GalleryActivity extends Activity {
 			}
 		});
 	}
-
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu){
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.gallery_option, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	    	case R.id.main:
+	    		Intent main = new Intent(getApplicationContext(), ListActivity.class);
+	    		startActivity(main);
+	    		return true;
+	    	case R.id.settings:
+	    		Intent settings = new Intent(getApplicationContext(), Settings.class);
+	    		startActivity(settings);
+	    		return true;
+	    }
+	    return false;
+	}
 }

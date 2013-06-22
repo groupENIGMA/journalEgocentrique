@@ -217,7 +217,6 @@ public class ListActivity extends Activity {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.option, menu);
 		return true;
-		
 	}
 	
 	@Override
@@ -241,6 +240,14 @@ public class ListActivity extends Activity {
 	        	Intent settings = new Intent(getApplicationContext(), Settings.class);
 	        	startActivity(settings);
 	        	return true;
+	        case R.id.deleteEntry:
+	        	if(selectedEntry != null){
+	        		//dataBase.deleteEntry(selectedEntry);
+	        		return true;
+	        	}
+	        case R.id.gallery:
+	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
+	        	startActivity(gallery);
 	    }
 		return false;
 	}

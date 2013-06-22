@@ -371,7 +371,7 @@ public class DB implements DBInterface {
         cur.moveToFirst();
         Calendar date = Calendar.getInstance();
         try {
-			date.setTime(date_format.parse(cur.getString(2)));
+			date.setTime(time_format.parse(cur.getString(2)));
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return null;

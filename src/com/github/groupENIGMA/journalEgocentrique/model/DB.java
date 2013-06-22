@@ -499,7 +499,7 @@ public class DB implements DBInterface {
         ContentValues cv=new ContentValues();
 
         //Put the new path String in the Photo column
-        cv.put(ENTRY_PHOTO, path);
+        cv.put(ENTRY_PHOTO, file.getAbsolutePath());
         db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
 
         return new Photo(path);

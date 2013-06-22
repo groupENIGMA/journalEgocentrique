@@ -81,14 +81,6 @@ public class ListActivity extends Activity {
         dataBase.close();
     }
 
-	public void onSaveInstanceState(Bundle savedInstanceState){
-		if(selectedEntry != null){
-			long entryId = selectedEntry.getId();
-			savedInstanceState.putLong("ID", entryId);
-		}
-		super.onSaveInstanceState(savedInstanceState);
-	}
-	
     /**
      * Displays the correct notes for the entry selected by the user.
      * @param selected Entry. The entry selected by the user.

@@ -32,6 +32,13 @@ public interface DBInterface {
     public void close();
 
     /**
+     * Checks if the database is open
+     *
+     * @return true if the database is open, false otherwise
+     */
+    public boolean isOpen();
+
+    /**
      * Returns the diary's Entry for today.
      * 
      * @return The Entry for today or null if an Entry for today doesn't exists

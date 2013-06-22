@@ -105,6 +105,11 @@ public class DB implements DBInterface {
         db.close();
     }
 
+    @Override
+    public boolean isOpen() {
+        return db.isOpen();
+    }
+
     /** Reads the rows available in the given Cursor to create and return
      * an Entry object with its related Notes
      * <p>

@@ -34,7 +34,8 @@ public class PhotoActivity extends Activity {
 		entry = data.getEntry(entryId); 
 		ImageView actualImg = (ImageView)findViewById(R.id.photo);
 		Photo tmp = entry.getPhoto();
-		actualImg.setImageURI(Uri.parse(tmp.getPath()));
+		if(tmp != null)
+			actualImg.setImageURI(Uri.parse(tmp.getPath()));
 		
 		/*
 		 * Al click di takePicture lancia la fotocamera di sistema

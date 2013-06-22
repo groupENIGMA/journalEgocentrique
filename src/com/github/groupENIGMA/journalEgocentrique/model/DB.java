@@ -434,7 +434,7 @@ public class DB implements DBInterface {
         // Check if the Note can be updated
         if (note.canBeUpdated(sharedPreferences)) {
             // Update the Note
-            ContentValues cv=new ContentValues();
+            ContentValues cv = new ContentValues();
             cv.put(NOTE_TEXT, new_note_text);
             long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
                     new String []{String.valueOf(note.getId())}
@@ -483,7 +483,7 @@ public class DB implements DBInterface {
         // Check if the Entry can be updated
         if (entry.canBeUpdated()) {
             // Update the Mood of the Entry
-            ContentValues cv=new ContentValues();
+            ContentValues cv = new ContentValues();
             cv.put(ENTRY_MOOD, mood.getId());
             db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
                     new String [] {String.valueOf(entry.getId())}
@@ -499,15 +499,23 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void removeMood(Entry entry) throws InvalidOperationException {
+    public void removeMood(Entry entry) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        ContentValues cv=new ContentValues();
-
-        //Removes the image path from the mood column
-        cv.putNull(ENTRY_MOOD);
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?", new String []{String.valueOf(entry.getId())});
+        // Check if the Entry can be updated
+        if (entry.canBeUpdated()) {
+            // Set to NULL the Mood Column of entry
+            ContentValues cv = new ContentValues();
+            cv.putNull(ENTRY_MOOD);
+            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String []{String.valueOf(entry.getId())}
+            );
+        }
+        else {
+            // Entry can't be updated
+            throw new InvalidOperationException();
+        }
     }
 
     /**

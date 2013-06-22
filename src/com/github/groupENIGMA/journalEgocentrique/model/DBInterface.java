@@ -191,7 +191,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void removeMood(Entry entry) throws InvalidOperationException;
+    public void removeMood(Entry entry);
     
     /** Returns the list of available Moods.
      * <p>

@@ -62,7 +62,6 @@ public class ListActivity extends Activity {
     	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
     	int height = display.getHeight();
-    	Log.d("Width", width+"");
     	ListView list = (ListView)findViewById(R.id.list);
     	ImageView photo = (ImageView)findViewById(R.id.dailyPhoto);
     	ImageView mood = (ImageView)findViewById(R.id.emoticon);

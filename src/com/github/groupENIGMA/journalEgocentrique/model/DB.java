@@ -457,7 +457,7 @@ public class DB implements DBInterface {
         // Read the mood information from the cursor
         if (cur.moveToFirst()) {
             do {
-                Mood md = new Mood(cur.getLong(1));
+                Mood md = new Mood(cur.getLong(0));
                 moods.add(md);
             }
             while (cur.moveToNext());

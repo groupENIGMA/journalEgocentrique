@@ -87,6 +87,14 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public Entry createEntry(Calendar day);
+    
+    /**
+     * Deletes the given Entry 
+     *
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public void deleteEntry(Entry entry);
 
     /**
      * Checks if there's already an Entry for the today in the database

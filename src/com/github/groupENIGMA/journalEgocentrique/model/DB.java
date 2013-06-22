@@ -368,27 +368,38 @@ public class DB implements DBInterface {
 
         // Query the database for the note
         Cursor cur = db.rawQuery(
-                "SELECT *" +
-                " FROM " + Notes_TABLE +
+                "SELECT " + Notes_TABLE + "." + NOTE_ID     + ", " +
+                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
+                            Notes_TABLE + "." + NOTE_TIME   + ", " +
+                            Entry_TABLE + "." + ENTRY_DATE  +
+                " FROM " + Notes_TABLE + " INNER JOIN " + Entry_TABLE +
+                        " ON " + Notes_TABLE + "." + NOTE_ENTRY_ID + "=" +
+                                 Entry_TABLE + "." + ENTRY_ID +
                 " WHERE " + Notes_TABLE + "." + NOTE_ID + "=?",
                 new String[] {Long.toString(id)}
         );
 
         // If a Note with the given id exists return it
         if (cur.moveToFirst()) {
-            // Parse NOTE_TIME for String to Calendar
+            // Compute the Note time from ENTRY_DATE and NOTE_TIME
             Calendar note_time = Calendar.getInstance();
+            Calendar entry_date = Calendar.getInstance();
             try {
                 note_time.setTime(time_format.parse(cur.getString(2)));
+                entry_date.setTime(date_format.parse(cur.getString(3)));
             } catch (ParseException e) {
                 e.printStackTrace();
                 return null;
             }
+            note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
+            note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
+            note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
+
             // Create and return the Note
             Note n = new Note(
                     cur.getLong(0),     // NOTE_ID
                     cur.getString(1),   // NOTE_TEXT
-                    note_time           // NOTE_TIME
+                    note_time           // ENTRY_DATE + NOTE_TIME
             );
             cur.close();
             return n;

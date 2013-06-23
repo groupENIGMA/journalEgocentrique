@@ -6,11 +6,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
@@ -34,21 +37,37 @@ public class ShareActivity extends Activity {
 		note = null;
 		
 		displayNotes();
+		createCustomPhoto();
 	}
 	
 	// Create the union of mood and the photo
 	private void createCustomPhoto(){
-		
+		// Per ora mette la foto del giorno
+		ImageView img = (ImageView)findViewById(R.id.photoComposite);
+		img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
+	 	Display display = getWindowManager().getDefaultDisplay();
+    	int width = display.getWidth();
+    	int height = display.getHeight();
+    	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)img.getLayoutParams();
+    	params.height = height/2;
+    	params.width = width/2;
+    	img.setLayoutParams(params);
 	}
 	
 	// Creates the list of the notes. Only the selected will be sended.
 	private void displayNotes(){
+	 	Display display = getWindowManager().getDefaultDisplay();
+    	int width = display.getWidth();
+    	int height = display.getHeight();
 		List<Note> notes = entry.getNotes();
         ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
                 this, R.layout.row, R.id.textViewList, notes
         );
         ListView list = (ListView)findViewById(R.id.notes);
         list.setAdapter(arrayAdapter);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)list.getLayoutParams();
+        params.width = width /2;
+        list.setLayoutParams(params);
 
         // Add the onLongClickListener that permits to choose the
         // note that will be sent

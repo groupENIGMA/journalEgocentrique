@@ -6,10 +6,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
@@ -26,6 +29,7 @@ public class PhotoActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
+		setView();
 		mImageView = (ImageView)findViewById(R.id.photo);
 		final DB data = new DB(getApplicationContext());
 		Intent received = getIntent();
@@ -46,6 +50,7 @@ public class PhotoActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+				data.close();
 				startActivityForResult(intent, CAMERA_REQUEST);
 			}
 		});
@@ -75,9 +80,32 @@ public class PhotoActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+				data.close();
 				startActivity(intent);
 			}
 		});
+	}
+	
+    /**
+     * Sets dinamically proportioned the size of the Entries, Images and Notes
+     */
+    private void setView(){
+    	Display display = getWindowManager().getDefaultDisplay();
+    	int width = display.getWidth();
+    	int height = display.getHeight();
+    	
+    	ImageView photo = (ImageView)findViewById(R.id.photo);
+    	LinearLayout list = (LinearLayout)findViewById(R.id.linear_layout);
+    	Button button = (Button)findViewById(R.id.button);
+    	
+    	// Set the photo
+    	FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)photo.getLayoutParams();
+    	params.width = width * 3 / 4;
+    	photo.setLayoutParams(params);
+    	// Set the list
+    	params = (FrameLayout.LayoutParams)list.getLayoutParams();
+    	params.width = width/6;
+    	list.setLayoutParams(params);
 	}
 	
 	@Override

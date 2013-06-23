@@ -36,5 +36,13 @@ public class MoodActivity extends Activity {
 	        }
 	    });
 	}
+	
+	/**
+	 * Close the database connection
+	 */
+	protected void onPause(){
+		super.onPause();
+		database.close();
+	}
 
 }

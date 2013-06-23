@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -23,6 +24,7 @@ public class GalleryAdapter extends BaseAdapter{
         database = new DB(c);
         database.open();
         photos = database.getPhotos();
+        Log.d("Photos is empty", photos.isEmpty()+"");
     }
 
     public int getCount() {
@@ -45,7 +47,7 @@ public class GalleryAdapter extends BaseAdapter{
             imageView = (ImageView) convertView;
         }
 
-        imageView.setImageURI(Uri.parse(photos.get(position).getPathThumb()));
+        imageView.setImageURI(Uri.parse(photos.get(position).getPath()));//dovrebbe essere getPathThumb ma non e' ancora implementato, pero' gia cosi' fa il resize da solo
         return imageView;
     }
 

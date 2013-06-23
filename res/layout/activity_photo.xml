@@ -16,26 +16,27 @@
         android:src="@drawable/ic_launcher" android:contentDescription="@string/bigImage"/>
 
     <LinearLayout
+        android:id="@+id/linear_layout"
         android:layout_width="146dp"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:orientation="vertical" >
 
         <Button
             android:id="@+id/take_picture"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/take_picture" />
 
         <Button
             android:id="@+id/accept"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/accept" />
 
         <Button
             android:id="@+id/delete"
-            android:layout_width="match_parent"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete" />
 

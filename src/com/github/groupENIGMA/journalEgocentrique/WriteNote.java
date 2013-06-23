@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
@@ -22,6 +24,7 @@ public class WriteNote extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_note);
+        setView();
         // Open the connection to the database
         dataBase = new DB(getApplicationContext());
         dataBase.open();
@@ -40,8 +43,22 @@ public class WriteNote extends Activity {
             updating = true;
             selectedNote = dataBase.getNote(noteId);
             EditText text = (EditText) findViewById(R.id.editNote);
-            text.setText(selectedNote.getText());
+            text.append(selectedNote.getText());
         }
+    }
+    
+    /**
+     * Sets dinamically proportioned the size of the EditText
+     */
+    private void setView(){
+    	Display display = getWindowManager().getDefaultDisplay();
+    	int width = display.getWidth();
+    	int height = display.getHeight();
+    	EditText text = (EditText)findViewById(R.id.editNote);
+    	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)text.getLayoutParams();
+    	params.height = height;
+    	params.width = width/2;
+    	text.setLayoutParams(params);
     }
 
     public void saveNote(View view) {

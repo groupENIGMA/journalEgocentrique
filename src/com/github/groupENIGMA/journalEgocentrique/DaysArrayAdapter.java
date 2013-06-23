@@ -1,7 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +41,6 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
         // Set a personalized text in the textViewList
         TextView dayTextView = (TextView) rowView.findViewById(R.id.textViewList);
         String dayText = dayFormat.format(getItem(position).getTime());
-        Log.d("Day text", dayText);
         dayTextView.setText(dayText);
 
         return rowView;

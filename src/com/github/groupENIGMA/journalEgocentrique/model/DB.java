@@ -17,6 +17,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.util.Log;
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 /**
@@ -335,13 +336,14 @@ public class DB implements DBInterface {
 
         // Create the list to return
         List<Calendar> days = new ArrayList<Calendar>();
-        //Create a calendar instance
-        Calendar date = Calendar.getInstance();
+        // Create a calendar instance
+        Calendar date;
         // Processes the query result with the cursor
         if (cur.moveToFirst()) {
             do {
                 try {
                     // Fill the list with the dates
+                    date = Calendar.getInstance();
                     date.setTime(date_format.parse(cur.getString(0)));
                     days.add(date);
                 } catch (ParseException e) {

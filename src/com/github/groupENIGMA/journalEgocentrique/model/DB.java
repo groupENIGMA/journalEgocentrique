@@ -574,16 +574,18 @@ public class DB implements DBInterface {
 
         //Gets the path and the directory name where the Photo is going to be saved
         String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File myDir = new File(path + "/JE_Photos");
+        File photoDir = new File(
+                path + File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR
+        );
         //Creates the file
         String fileName = "Photo_" + entry.getId() + ".jpg";
-        File file = new File (myDir, fileName);
+        File file = new File (photoDir, fileName);
         //Delete if already exists
         if (file.exists ()) {
             file.delete ();
         }
-        if (! myDir.exists()){
-            myDir.mkdirs();
+        if (! photoDir.exists()){
+            photoDir.mkdirs();
         }
         //Writes the file with the picture in the selected path
         try {
@@ -617,10 +619,7 @@ public class DB implements DBInterface {
         // Check if the Photo can be deleted
         if (entry.canBeUpdated()) {
             // Remove the photo from external storage
-            String path = Environment.getExternalStorageDirectory().
-                    getAbsolutePath();
-            File myDir = new File(path + "/JE_Photos");
-            File photo = new File(myDir, entry.getPhoto().getPath());
+            File photo = new File(entry.getPhoto().getPath());
             photo.delete();
             // Remove the photo from the database
             ContentValues cv = new ContentValues();

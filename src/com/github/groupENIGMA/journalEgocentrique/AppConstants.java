@@ -10,6 +10,7 @@ public class AppConstants {
      */
     public static final String SHARED_PREFERENCES_FILENAME =
             "journalEgocentrique_SharedPreferences";
+
     /**
      * SharedPreferences key name for the Note timeout.
      * <p>
@@ -40,4 +41,10 @@ public class AppConstants {
      */
     public static final String MOOD_EMOTE_PREFIX = "mood_emote_";
 
+    /**
+     * The directory name in the External Storage where the photos will be
+     * saved
+     */
+    public static final String EXTERNAL_STORAGE_PHOTO_DIR =
+            "JournalEgocentrique Photos";
 }

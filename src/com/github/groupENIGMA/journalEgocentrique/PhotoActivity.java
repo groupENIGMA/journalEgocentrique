@@ -50,7 +50,7 @@ public class PhotoActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-				data.close();
+			//	data.close();
 				startActivityForResult(intent, CAMERA_REQUEST);
 			}
 		});

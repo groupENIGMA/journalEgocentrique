@@ -18,6 +18,7 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
     private Context context;
     private int resource;
     private SimpleDateFormat dayFormat;
+    private List<Calendar> list;
 
 
     public DaysArrayAdapter(Context context, int resource, List<Calendar> days) {
@@ -25,27 +26,35 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
         this.context = context;
         this.resource = resource;
         this.dayFormat = new SimpleDateFormat("d MMMMMMMMMM y");
+        list = days;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the row layout
-        View rowView;
+        View rowView = convertView;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = convertView;
             rowView = inflater.inflate(resource, parent, false);
-        }
-        else {
-            rowView = convertView;
         }
 
         // Set a personalized text in the textViewList
         TextView dayTextView = (TextView) rowView.findViewById(R.id.textViewList);
         String dayText = dayFormat.format(getItem(position).getTime());
+        Log.d("Day text", dayText);
         dayTextView.setText(dayText);
 
         return rowView;
+    }
+    
+    @Override
+    public Calendar getItem(int position){
+    	return list.get(position);
+    }
+    
+    @Override
+    public int getCount(){
+    	return list.size();
     }
 }

@@ -584,7 +584,7 @@ public class DB implements DBInterface {
                 new String []{String.valueOf(entry.getId())}
         );
 
-        return new Photo(path);
+        return new Photo(file.getAbsolutePath());
     }
 
     /**

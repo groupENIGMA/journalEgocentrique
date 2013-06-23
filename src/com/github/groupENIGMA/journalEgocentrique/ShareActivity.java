@@ -87,7 +87,7 @@ public class ShareActivity extends Activity {
 	// This method is invocated when the user press on SHARE! button
 	public void share(View view){
 		Intent share = new Intent(Intent.ACTION_SEND);
-		share.setType("text/plain");
+		share.setType("*/*");
 		if(note != null)
 			share.putExtra(Intent.EXTRA_TEXT, note.getText());
 		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(entry.getPhoto().getPath()));// per ora ho messo la photo poi vediamo di cambiare con la custom photo

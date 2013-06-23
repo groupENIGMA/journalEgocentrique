@@ -642,14 +642,25 @@ public class DB implements DBInterface {
     public List<Photo> getPhotos() {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        //Sets the "to" day on tomorrow to get all the Entries
-        Calendar to = Calendar.getInstance();
-        to.add(Calendar.DAY_OF_YEAR, 1);
-        //sets the "from" day on 01-01-1970 to get all the Entries
-        Calendar from = Calendar.getInstance();
-        from.set(1970, 01, 01);
 
-        return getPhotos(from, to);
+        // Query the photos
+        Cursor cur = db.rawQuery(
+            "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
+            " FROM " + Entry_TABLE +
+            " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
+            null
+        );
+
+        // Read all the photos
+        ArrayList<Photo> photos = new ArrayList<Photo>();
+        if (cur.moveToFirst()) {
+            do {
+                photos.add(new Photo(cur.getString(0)));
+            }
+            while (cur.moveToNext());
+        }
+
+        return photos;
     }
 
     /**
@@ -661,9 +672,15 @@ public class DB implements DBInterface {
 
         ArrayList<Photo> photos = new ArrayList<Photo>();
         // Query the database
-        Cursor cur = db.query(Entry_TABLE, new String[] {ENTRY_PHOTO}, ENTRY_DATE + " BETWEEN ? AND ?", new String[] {
-        		date_format.format(from.getTime()), date_format.format(to.getTime()) }, null, null, null, null);
-        
+        Cursor cur = db.rawQuery(
+            "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
+            " FROM " + Entry_TABLE +
+            " WHERE " + Entry_TABLE + "." + ENTRY_DATE + " BETWEEN =? AND =? " +
+            " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
+            new String[] {date_format.format(from.getTime()),
+                          date_format.format(to.getTime()) }
+        );
+
         if (cur.moveToFirst()) {
             do {
                 photos.add(new Photo(cur.getString(0)));

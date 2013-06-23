@@ -10,9 +10,9 @@
     <string name="title_activity_photo">Take a photo</string>
     <string name="title_activity_mood">Select your mood</string>
     <string name="done">Done</string>
-    <string name="take_picture">Take another picture</string>
-    <string name="accept">Accept</string>
-    <string name="delete">Delete</string>
+    <string name="take_picture">New photo</string>
+    <string name="accept">OK</string>
+    <string name="delete">Abort</string>
     <string name="album_name">Daily</string>
     <string name="title_activity_gallery">Gallery</string>
     <string name="title_activity_image">journalEgocentrique</string>

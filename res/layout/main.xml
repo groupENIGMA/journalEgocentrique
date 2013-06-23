@@ -1,29 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/RelativeLayout1"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    tools:context=".ListActivity" >
+    android:baselineAligned="false">
 
-    <ListView
-        android:id="@+id/list"
-        android:layout_width="194dp"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_gravity="bottom" >
-    </ListView>
+    <LinearLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:background="@android:color/darker_gray"
+            android:baselineAligned="false">
+
+            <TextView
+                android:id="@+id/ListDaysHeaderTitle"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:text="@string/ListDaysHeaderTitle"
+                android:textSize="@dimen/ListDaysHeaderTitleSize"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_weight="1">
+            </TextView>
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0.5"
+                android:gravity="center"
+                android:layout_gravity="center">
+                <Button
+                    android:id="@+id/ListDaysAddEntry"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:text="@string/ListDaysAddEntry">
+                </Button>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ListView
+                android:id="@+id/daysList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+        </ListView>
+    </LinearLayout>
+
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBaseline="@+id/list"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:layout_toRightOf="@+id/list" >
+        android:layout_weight="1">
 
         <ImageView
             android:id="@+id/dailyPhoto"
@@ -45,7 +83,7 @@
             android:layout_height="162dp"
             android:layout_gravity="bottom"
             android:contentDescription="@string/emoticon"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/mood_emote_1" />
     </FrameLayout>
 
-</RelativeLayout>
+</LinearLayout>

@@ -62,7 +62,7 @@ public class ListActivity extends Activity {
         dataBase.open();
         // Display the list of days with an Entry
         daysList = dataBase.getDays();
-        ListView daysListView = (ListView)findViewById(R.id.list);
+        ListView daysListView = (ListView)findViewById(R.id.daysList);
         displayDaysList(daysListView, daysList);
 
         // Display the last viewed Entry (if any)
@@ -242,7 +242,7 @@ public class ListActivity extends Activity {
 	            selectedEntry = dataBase.createEntry();
 	            Log.e("New Entry", selectedEntry.getId()+"");//debug
 	            daysList = dataBase.getDays();
-	    	    ListView list = (ListView)findViewById(R.id.list);
+	    	    ListView list = (ListView)findViewById(R.id.daysList);
 	    	    displayDaysList(list, daysList);
 	            return true;
             case R.id.newNote:

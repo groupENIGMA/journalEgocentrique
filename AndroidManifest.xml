@@ -5,6 +5,7 @@
     android:versionName="1.0" >
 
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -51,6 +52,10 @@
         <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.Settings"
             android:label="@string/title_activity_settings" >
+        </activity>
+        <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.ShareActivity"
+            android:label="@string/title_activity_share" >
         </activity>
     </application>
 

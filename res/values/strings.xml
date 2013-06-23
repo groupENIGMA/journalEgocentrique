@@ -24,5 +24,9 @@
     <string name="deleteEntry">Delete Actual Entry</string>
     <string name="gallery">Go to Gallery</string>
     <string name="main">Back to Home</string>
+    <string name="share">Share!</string>
+    <string name="title_activity_share">ShareActivity</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="chooseNote">Choose the note you want to share</string>
 
 </resources>

@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".ShareActivity" >
+
+    <TextView
+        android:id="@+id/choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/chooseNote" />
+
+    <ImageView
+        android:id="@+id/photoComposite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/choose"
+        android:layout_marginRight="21dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_launcher" />
+
+    <ListView
+        android:id="@+id/notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/choose"
+        android:layout_toRightOf="@+id/photoComposite"
+        android:layout_marginRight="56dp" >
+
+    </ListView>
+
+    <Button
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/notes"
+        android:layout_alignParentLeft="true"
+        android:text="@string/share"
+        android:onClick="share" />
+
+</RelativeLayout>

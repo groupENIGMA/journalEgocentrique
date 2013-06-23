@@ -641,11 +641,11 @@ public class DB implements DBInterface {
         ArrayList<Photo> photos = new ArrayList<Photo>();
         // Query the database
         Cursor cur = db.query(Entry_TABLE, new String[] {ENTRY_PHOTO}, ENTRY_DATE + " BETWEEN ? AND ?", new String[] {
-                from.toString(), to.toString() }, null, null, null, null);
+        		date_format.format(from.getTime()), date_format.format(to.getTime()) }, null, null, null, null);
         
         if (cur.moveToFirst()) {
             do {
-                photos.add(new Photo(cur.getString(1)));
+                photos.add(new Photo(cur.getString(0)));
             }
             while (cur.moveToNext());
         }

@@ -38,7 +38,7 @@
         android:id="@+id/share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/notes"
+        android:layout_below="@+id/photoComposite"
         android:layout_alignParentLeft="true"
         android:text="@string/share"
         android:onClick="share" />

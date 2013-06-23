@@ -1,10 +1,14 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Display;
 import android.view.View;
@@ -21,24 +25,28 @@ import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 public class PhotoActivity extends Activity {
 
 	private static final int CAMERA_REQUEST = 1; 
-	private ImageView mImageView;
+	private ImageView actualImg;
 	private Bitmap mImageBitmap;
 	private Entry entry;
+	private String tempPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
+			File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR + "~temp.jpg";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
 		setView();
-		mImageView = (ImageView)findViewById(R.id.photo);
+		actualImg = (ImageView)findViewById(R.id.photo);
 		final DB data = new DB(getApplicationContext());
 		Intent received = getIntent();
 		data.open();
 		final long entryId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
-		entry = data.getEntry(entryId); 
-		ImageView actualImg = (ImageView)findViewById(R.id.photo);
+		entry = data.getEntry(entryId);
 		Photo tmp = entry.getPhoto();
-		if(tmp != null)
+		final File tmpImg = new File(tempPath);
+		if(tmpImg.exists())
+			actualImg.setImageURI(Uri.parse(tempPath));
+		else if(tmp != null)
 			actualImg.setImageURI(Uri.parse(tmp.getPath()));
 		
 		/*
@@ -67,6 +75,8 @@ public class PhotoActivity extends Activity {
 				data.setPhoto(entry, mImageBitmap);
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 				data.close();
+				if(tmpImg.exists())
+					tmpImg.delete();
 				startActivity(intent);
 			}
 		});
@@ -81,6 +91,8 @@ public class PhotoActivity extends Activity {
 			public void onClick(View v) {
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 				data.close();
+				if(tmpImg.exists())
+					tmpImg.delete();
 				startActivity(intent);
 			}
 		});
@@ -116,7 +128,33 @@ public class PhotoActivity extends Activity {
 	private void handleCameraPhoto(Intent intent) {
 	    Bundle extras = intent.getExtras();
 	    mImageBitmap = (Bitmap) extras.get("data");
-	    mImageView.setImageBitmap(mImageBitmap);
+	    actualImg.setImageBitmap(mImageBitmap);
+	    
+	       //Gets the path and the directory name where the Photo is going to be saved
+        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File photoDir = new File(
+                path + File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR
+        );
+        //Creates the file
+        File file = new File (tempPath);
+        //Delete if already exists
+        if (file.exists ()) {
+            file.delete ();
+        }
+        if (! photoDir.exists()){
+            photoDir.mkdirs();
+        }
+        //Writes the file with the picture in the selected path
+        try {
+            file.createNewFile();
+            FileOutputStream out = new FileOutputStream(file);
+            mImageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+               e.printStackTrace();
+        }
 	}
 
 }

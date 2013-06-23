@@ -144,6 +144,11 @@ public class ListActivity extends Activity {
                 selectedEntry = dataBase.getEntry(
                         (Calendar)adapter.getItemAtPosition(position)
                 );
+                // Refresh notes and images
+                displayImages();
+                // Display the Notes
+                ListView notesListView = (ListView)findViewById(R.id.notes);
+                displayNotes(notesListView);
             }
         };
         list.setOnItemClickListener(clickListener);

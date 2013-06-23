@@ -133,6 +133,7 @@ public interface DBInterface {
      * @return the newly created Note
      * @throws InvalidOperationException When adding a Note to an Entry that
      *         is wasn't created today
+     * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -161,6 +162,7 @@ public interface DBInterface {
      * @return the new version of the Note
      * @throws InvalidOperationException When note's grace period is already
      *         ended
+     * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */

@@ -246,7 +246,7 @@ public class ListActivity extends Activity {
                     {
                         // qui carica la vista per il moood
                         Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
-                        intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+                        intent.putExtra("EntryId", selectedEntry.getId());
                         startActivity(intent);
                         return false;
                     }

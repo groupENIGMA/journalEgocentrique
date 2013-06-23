@@ -46,8 +46,9 @@ public class GalleryAdapter extends BaseAdapter{
         } else {
             imageView = (ImageView) convertView;
         }
-
-        imageView.setImageURI(Uri.parse(photos.get(position).getPath()));//dovrebbe essere getPathThumb ma non e' ancora implementato, pero' gia cosi' fa il resize da solo
+        String path = photos.get(position).getPath();
+        if(path != null)
+        	imageView.setImageURI(Uri.parse(path));//dovrebbe essere getPathThumb ma non e' ancora implementato, pero' gia cosi' fa il resize da solo
         return imageView;
     }
 

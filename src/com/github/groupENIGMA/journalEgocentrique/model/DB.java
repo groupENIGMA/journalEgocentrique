@@ -619,9 +619,11 @@ public class DB implements DBInterface {
         
         // Check if the Photo can be deleted
         if (entry.canBeUpdated()) {
-            // Remove the photo from external storage
+            // Remove the photo and his thumb from external storage
             File photo = new File(entry.getPhoto().getPath());
             photo.delete();
+            File thumb = new File(entry.getPhoto().getPathThumb());
+            thumb.delete();
             // Remove the photo from the database
             ContentValues cv = new ContentValues();
             cv.putNull(ENTRY_PHOTO);

@@ -259,10 +259,12 @@ public class ListActivity extends Activity {
     protected void onPause(){
         super.onPause();
         // Save selected Entry
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putLong("Id", selectedEntry.getId());
-        edit.commit();
+        if (selectedEntry != null) {
+            SharedPreferences pref = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putLong("Id", selectedEntry.getId());
+            edit.commit();
+        }
         // Close database connection
         dataBase.close();
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">journalEgocentrique</string>
+    <string name="app_name">JournalEgocentrique</string>
     <string name="bigImage">Photo</string>
     <string name="emoticon">Emoticon</string>
     <string name="editMessage">Insert your note here</string>

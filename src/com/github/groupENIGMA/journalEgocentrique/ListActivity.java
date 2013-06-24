@@ -263,9 +263,6 @@ public class ListActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.newEntry:
-	            addTodayEntry(null);
-	            return true;
             case R.id.newNote:
                 Intent intent = new Intent(
                         getApplicationContext(), WriteNote.class

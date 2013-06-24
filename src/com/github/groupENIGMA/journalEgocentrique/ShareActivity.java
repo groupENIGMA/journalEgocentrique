@@ -46,7 +46,8 @@ public class ShareActivity extends Activity {
 	private void createCustomPhoto(){
 		// Per ora mette la foto del giorno
 		ImageView img = (ImageView)findViewById(R.id.photoComposite);
-		img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
+		if(entry.getPhoto() != null)
+			img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
     	int height = display.getHeight();
@@ -60,7 +61,6 @@ public class ShareActivity extends Activity {
 	private void displayNotes(){
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
-    	int height = display.getHeight();
 		List<Note> notes = entry.getNotes();
         ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
                 this, R.layout.row, R.id.textViewList, notes

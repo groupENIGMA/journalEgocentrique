@@ -298,7 +298,7 @@ public class DB implements DBInterface {
         else {
             // The Note can't be deleted
             throw new InvalidOperationException();
-        }	
+        }
     }
     
     /**

@@ -37,8 +37,8 @@ public class ListActivity extends Activity {
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
 
-    private List<Calendar> daysList;
     private DB dataBase;
+    private DaysArrayAdapter daysListArratAdapter;
     private Entry selectedEntry = null;
     private SharedPreferences sharedPreferences;
 
@@ -63,9 +63,7 @@ public class ListActivity extends Activity {
         // Open database connection
         dataBase.open();
         // Display the list of days with an Entry
-        daysList = dataBase.getDays();
-        ListView daysListView = (ListView)findViewById(R.id.daysList);
-        displayDaysList(daysListView, daysList);
+        displayDaysList();
 
         // Display the last viewed Entry (if any)
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
@@ -87,16 +85,19 @@ public class ListActivity extends Activity {
      * Display the list of all Days having an associated Entry
      * It is also created a OnItemClickListener that at the click will display
      * the details of the day.
-     *
-     * @param list The list to populate.
-     * @param entry With this List we will populate the ListView
      */
-    private void displayDaysList(ListView list, List<Calendar> entry){
+    private void displayDaysList(){
+        // Get the ListView that display the days
+        ListView daysListView = (ListView)findViewById(R.id.daysList);
+
+        // Get the list of available days from the database
+        List<Calendar> daysList = dataBase.getDays();
+
         // Create and set the custom ArrayAdapter DaysArrayAdapter
-        DaysArrayAdapter arrayAdapter = new DaysArrayAdapter(
-                this, R.layout.row, entry
+        daysListArratAdapter = new DaysArrayAdapter(
+                this, R.layout.row, daysList
         );
-        list.setAdapter(arrayAdapter);
+        daysListView.setAdapter(daysListArratAdapter);
 
         // Set the listener
         OnItemClickListener clickListener = new OnItemClickListener() {
@@ -113,7 +114,7 @@ public class ListActivity extends Activity {
                 displayNotes(notesListView);
             }
         };
-        list.setOnItemClickListener(clickListener);
+        daysListView.setOnItemClickListener(clickListener);
     }
 
     /**
@@ -248,10 +249,8 @@ public class ListActivity extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
 	            selectedEntry = dataBase.createEntry();
-	            Log.e("New Entry", selectedEntry.getId()+"");//debug
-	            daysList = dataBase.getDays();
-	    	    ListView list = (ListView)findViewById(R.id.daysList);
-	    	    displayDaysList(list, daysList);
+	            // Add the Entry to the beginning of the displayed list
+                daysListArratAdapter.insert(selectedEntry.getDay(), 0);
 	            return true;
             case R.id.newNote:
                 Intent intent = new Intent(
@@ -266,10 +265,14 @@ public class ListActivity extends Activity {
 	        	startActivity(settings);
 	        	return true;
 	        case R.id.deleteEntry:
-	        	if(selectedEntry != null){
-	        		dataBase.deleteEntry(selectedEntry);
-	        		return true;
-	        	}
+	            if(selectedEntry != null){
+                    // Removed it from the database
+	                dataBase.deleteEntry(selectedEntry);
+                    // Remove it from the displayed list
+                    daysListArratAdapter.remove(selectedEntry.getDay());
+                    selectedEntry = null;
+	                return true;
+	            }
 	        case R.id.gallery:
 	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
 	        	startActivity(gallery);

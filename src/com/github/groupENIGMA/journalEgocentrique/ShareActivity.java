@@ -7,7 +7,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
@@ -94,7 +93,8 @@ public class ShareActivity extends Activity {
 			share.putExtra(Intent.EXTRA_TEXT, note.getText());
 		share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
 		File tmp = new File(entry.getPhoto().getPath());
-		share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
+		if(tmp != null)
+			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
 		startActivity(Intent.createChooser(share, "Share to..."));
 	}
 }

@@ -301,7 +301,7 @@ public class ListActivity extends Activity {
 	        	return true;
 	        case R.id.deleteEntry:
 	        	if(selectedEntry != null){
-	        		//dataBase.deleteEntry(selectedEntry);
+	        		dataBase.deleteEntry(selectedEntry);
 	        		return true;
 	        	}
 	        case R.id.gallery:

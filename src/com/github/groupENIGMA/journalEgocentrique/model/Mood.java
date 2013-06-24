@@ -24,7 +24,7 @@ public class Mood implements MoodInterface {
     @Override
     public int getEmoteId(Context context) {
         return context.getResources().getIdentifier(
-                AppConstants.MOOD_EMOTE_PREFIX + String.valueOf(this.id) + ".PNG",
+                AppConstants.MOOD_EMOTE_PREFIX + String.valueOf(this.id),
                 "drawable",
                 context.getPackageName()
         );

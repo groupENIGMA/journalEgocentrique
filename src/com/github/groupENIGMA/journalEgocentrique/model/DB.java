@@ -60,7 +60,8 @@ public class DB implements DBInterface {
             {"2", "Angry"},
             {"3", "Bored"},
             {"4", "Depressed"},
-            {"5", "Apathetic"}
+            {"5", "Apathetic"},
+            {"6", "Psycho"}
     };
 
     // Format used by the dates and times saved in the database
@@ -134,7 +135,7 @@ public class DB implements DBInterface {
             try {
                 entry_date.setTime(date_format.parse(cur.getString(1)));
             } catch (ParseException e) {
-                e.printStackTrace();
+                throw new DatabaseError();
             }
             // Get the Entry Photo (if exists)
             Photo entry_photo;
@@ -161,7 +162,7 @@ public class DB implements DBInterface {
                     try {
                         note_time.setTime(time_format.parse(cur.getString(6)));
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                    	throw new DatabaseError();
                     }
                     // Set the year, month and day using the entry_date
                     note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
@@ -347,8 +348,7 @@ public class DB implements DBInterface {
                     date.setTime(date_format.parse(cur.getString(0)));
                     days.add(date);
                 } catch (ParseException e) {
-                    e.printStackTrace();
-                    return null;
+                	throw new DatabaseError();
                 }
             }
             while (cur.moveToNext());
@@ -412,8 +412,7 @@ public class DB implements DBInterface {
                 note_time.setTime(time_format.parse(cur.getString(2)));
                 entry_date.setTime(date_format.parse(cur.getString(3)));
             } catch (ParseException e) {
-                e.printStackTrace();
-                return null;
+            	throw new DatabaseError();
             }
             note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
             note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
@@ -620,9 +619,11 @@ public class DB implements DBInterface {
         
         // Check if the Photo can be deleted
         if (entry.canBeUpdated()) {
-            // Remove the photo from external storage
+            // Remove the photo and his thumb from external storage
             File photo = new File(entry.getPhoto().getPath());
             photo.delete();
+            File thumb = new File(entry.getPhoto().getPathThumb());
+            thumb.delete();
             // Remove the photo from the database
             ContentValues cv = new ContentValues();
             cv.putNull(ENTRY_PHOTO);
@@ -705,7 +706,6 @@ public class DB implements DBInterface {
             throw new ConnectionException();
         }
     }
-
 
     /**
      * This class implements an open helper extending the SQLiteOpenHelper

@@ -206,7 +206,7 @@ public class ListActivity extends Activity {
                     {
                         // qui carica la vista per il moood
                         Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
-                        intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+                        intent.putExtra("EntryId", selectedEntry.getId());
                         startActivity(intent);
                         return false;
                     }
@@ -219,10 +219,12 @@ public class ListActivity extends Activity {
     protected void onPause(){
         super.onPause();
         // Save selected Entry
-        SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putLong("Id", selectedEntry.getId());
-        edit.commit();
+        if (selectedEntry != null) {
+            SharedPreferences pref = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putLong("Id", selectedEntry.getId());
+            edit.commit();
+        }
         // Close database connection
         dataBase.close();
     }
@@ -265,6 +267,10 @@ public class ListActivity extends Activity {
 	        case R.id.gallery:
 	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
 	        	startActivity(gallery);
+	        case R.id.share:
+	        	Intent share = new Intent(getApplicationContext(), ShareActivity.class);
+	        	share.putExtra("EntryId", selectedEntry.getId());
+	        	startActivity(share);
 	    }
 		return false;
 	}

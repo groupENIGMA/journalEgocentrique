@@ -15,12 +15,12 @@
     <string name="delete">Abort</string>
     <string name="album_name">Daily</string>
     <string name="title_activity_gallery">Gallery</string>
-    <string name="title_activity_image">journalEgocentrique</string>
+    <string name="title_activity_image">JournalEgocentrique</string>
     <string name="newEntry">New entry</string>
     <string name="newNote">New note</string>
     <string name="settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
-    <string name="title_activity_full_screen_photo">journalEgocentrique</string>
+    <string name="title_activity_full_screen_photo">JournalEgocentrique</string>
     <string name="deleteEntry">Delete Actual Entry</string>
     <string name="gallery">Go to Gallery</string>
     <string name="main">Back to Home</string>
@@ -28,6 +28,7 @@
     <string name="title_activity_share">ShareActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="chooseNote">Choose the note you want to share</string>
+    <string name="defaultImage">Set default image</string>
 
     <!-- ListActivity -->
     <string name="ListDaysHeaderTitle">Days</string>

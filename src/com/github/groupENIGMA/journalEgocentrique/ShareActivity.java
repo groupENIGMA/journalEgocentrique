@@ -1,5 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.io.File;
 import java.util.List;
 
 import android.app.Activity;
@@ -44,7 +45,8 @@ public class ShareActivity extends Activity {
 	private void createCustomPhoto(){
 		// Per ora mette la foto del giorno
 		ImageView img = (ImageView)findViewById(R.id.photoComposite);
-		img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
+		if(entry.getPhoto() != null)
+			img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
     	int height = display.getHeight();
@@ -58,7 +60,6 @@ public class ShareActivity extends Activity {
 	private void displayNotes(){
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
-    	int height = display.getHeight();
 		List<Note> notes = entry.getNotes();
         ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
                 this, R.layout.row, R.id.textViewList, notes
@@ -90,7 +91,10 @@ public class ShareActivity extends Activity {
 		share.setType("*/*");
 		if(note != null)
 			share.putExtra(Intent.EXTRA_TEXT, note.getText());
-		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(entry.getPhoto().getPath()));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
+		share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
+		File tmp = new File(entry.getPhoto().getPath());
+		if(tmp != null)
+			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
 		startActivity(Intent.createChooser(share, "Share to..."));
 	}
 }

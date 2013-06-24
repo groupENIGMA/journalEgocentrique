@@ -156,5 +156,14 @@ public class PhotoActivity extends Activity {
                e.printStackTrace();
         }
 	}
+	
+	// Remove the daily photo and sets the default avatar
+	// The button must be enabled ONLY IF the actual image isn't the default avatar
+	public void removeImage(View view){
+		DB data = new DB(getApplicationContext());
+		data.open();
+		data.removePhoto(entry);
+		actualImg.setImageResource(R.drawable.ic_launcher);
+	}
 
 }

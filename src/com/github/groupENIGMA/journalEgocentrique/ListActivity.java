@@ -35,6 +35,8 @@ public class ListActivity extends Activity {
     public final static String EXTRA_WRITENOTE_EntryId = "EntryId";
     public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
 
+    private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
+
     private List<Calendar> daysList;
     private DB dataBase;
     private Entry selectedEntry = null;
@@ -67,7 +69,7 @@ public class ListActivity extends Activity {
 
         // Display the last viewed Entry (if any)
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        long id = pref.getLong("Id", -1);
+        long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedEntry = dataBase.getEntry(id);
             // Display the Photo and Mood Image
@@ -218,13 +220,17 @@ public class ListActivity extends Activity {
     @Override
     protected void onPause(){
         super.onPause();
-        // Save selected Entry
-        if (selectedEntry != null) {
-            SharedPreferences pref = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor edit = pref.edit();
-            edit.putLong("Id", selectedEntry.getId());
-            edit.commit();
+        // Get the preference file
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        // Save selected Entry (if any)
+        if (selectedEntry == null) {
+            edit.putLong(PREF_SELECTED_ENTRY, -1L);
         }
+        else {
+            edit.putLong(PREF_SELECTED_ENTRY, selectedEntry.getId());
+        }
+        edit.commit();
         // Close database connection
         dataBase.close();
     }
@@ -261,7 +267,7 @@ public class ListActivity extends Activity {
 	        	return true;
 	        case R.id.deleteEntry:
 	        	if(selectedEntry != null){
-	        		//dataBase.deleteEntry(selectedEntry);
+	        		dataBase.deleteEntry(selectedEntry);
 	        		return true;
 	        	}
 	        case R.id.gallery:

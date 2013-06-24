@@ -38,12 +38,13 @@
                 android:gravity="center"
                 android:layout_gravity="center">
                 <Button
-                    android:id="@+id/ListDaysAddEntry"
+                    android:id="@+id/ListDaysAddEntryButton"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:gravity="center"
                     android:layout_gravity="center"
-                    android:text="@string/ListDaysAddEntry">
+                    android:text="@string/ListDaysAddEntry"
+                    android:onClick="addTodayEntry">
                 </Button>
             </LinearLayout>
 

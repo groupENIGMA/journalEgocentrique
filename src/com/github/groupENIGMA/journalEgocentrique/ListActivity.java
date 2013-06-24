@@ -9,21 +9,15 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
@@ -78,6 +72,12 @@ public class ListActivity extends Activity {
         }
         else {
             selectedEntry = null;
+        }
+
+        // If the Entry for today already exists disable the AddEntry button
+        if (dataBase.existsEntry()) {
+            Button addEntry = (Button)findViewById(R.id.ListDaysAddEntryButton);
+            addEntry.setEnabled(false);
         }
     }
 
@@ -236,6 +236,22 @@ public class ListActivity extends Activity {
         dataBase.close();
     }
 
+    /**
+     * Adds an Entry for today to the database and to the displayed list.
+     * Used by ListDaysAddEntryButton in main.xml
+     *
+     * @param view as required by android:onClick xml attribute. Not used.
+     */
+    public void addTodayEntry(View view) {
+        // New Entry in the database
+        selectedEntry = dataBase.createEntry();
+        // Entry to the beginning of the displayed list
+        daysListArratAdapter.insert(selectedEntry.getDay(), 0);
+        // Disable the ListDaysAddEntryButton
+        Button addEntry = (Button)findViewById(R.id.ListDaysAddEntryButton);
+        addEntry.setEnabled(false);
+    }
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflater = getMenuInflater();
@@ -248,9 +264,7 @@ public class ListActivity extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
-	            selectedEntry = dataBase.createEntry();
-	            // Add the Entry to the beginning of the displayed list
-                daysListArratAdapter.insert(selectedEntry.getDay(), 0);
+	            addTodayEntry(null);
 	            return true;
             case R.id.newNote:
                 Intent intent = new Intent(

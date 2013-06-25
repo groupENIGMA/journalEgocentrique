@@ -270,7 +270,7 @@ public class DB implements DBInterface {
 
         // Throw InvalidOperationException if a Day with the given date already
         // exists
-        if (existsEntry(date)) {
+        if (existsDay(date)) {
             throw new InvalidOperationException();
         }
         // Insert the new Day
@@ -298,19 +298,38 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsEntry() {
-        Calendar day = Calendar.getInstance();
-        return existsEntry(day);
+    public boolean existsDay() {
+        Calendar today = Calendar.getInstance();
+        return existsDay(today);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean existsEntry(Calendar day) {
+    public boolean existsDay(Calendar date) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        return (getDay(day) == null) ? false : true;
+
+        // Query the database
+        Cursor cur = db.rawQuery(
+                "SELECT * " +
+                " FROM " + Day_TABLE +
+                " WHERE " + Day_TABLE + "." + DAY_DATE + "=?",
+                new String[] {date_format.format(date.getTime())}
+        );
+
+        // Check the number of returned rows
+        boolean exists;
+        if (cur.getCount() == 0) {
+            exists = false;
+        }
+        else {
+            exists = true;
+        }
+        // Close cursor and exit
+        cur.close();
+        return exists;
     }
 
     /**
@@ -341,7 +360,7 @@ public class DB implements DBInterface {
                     date.setTime(date_format.parse(cur.getString(0)));
                     days.add(date);
                 } catch (ParseException e) {
-                	throw new DatabaseError();
+                    throw new DatabaseError();
                 }
             }
             while (cur.moveToNext());

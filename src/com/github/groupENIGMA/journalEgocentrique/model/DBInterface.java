@@ -99,22 +99,24 @@ public interface DBInterface {
     public void deleteDay(Day day);
 
     /**
-     * Checks if there's already an Day for the today in the database
+     * Checks if there's already a saved Day with today's date
      *
-     * @return true if an Day for today already exists, false otherwise
+     * @return true if a Day for today already exists, false otherwise
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public boolean existsEntry();
+    public boolean existsDay();
 
     /**
-     * Checks if there's already an Day for the day in the database
+     * Checks if there's already a saved Day with the given date
      *
-     * @return true if an Day for today already exists, false otherwise
+     *
+     * @param date the date to check
+     * @return true if a Day for date already exists, false otherwise
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public boolean existsEntry(Calendar day);
+    public boolean existsDay(Calendar date);
 
     /** Returns the list of days that have an Day associated
      * <p>

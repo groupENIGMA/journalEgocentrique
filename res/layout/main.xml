@@ -7,8 +7,8 @@
 
     <LinearLayout
         android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:layout_weight="3"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -58,18 +58,11 @@
     </LinearLayout>
 
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <ImageView
-            android:id="@+id/dailyPhoto"
-            android:layout_width="557dp"
-            android:layout_height="308dp"
-            android:contentDescription="@string/bigImage"
-            android:src="@drawable/ic_launcher" />
+        android:layout_width="0dp"
+        android:layout_weight="3">
 
         <ListView
             android:id="@+id/notes"
@@ -78,13 +71,7 @@
             android:layout_gravity="right" >
         </ListView>
 
-        <ImageView
-            android:id="@+id/emoticon"
-            android:layout_width="490dp"
-            android:layout_height="162dp"
-            android:layout_gravity="bottom"
-            android:contentDescription="@string/emoticon"
-            android:src="@drawable/mood_emote_1" />
-    </FrameLayout>
+
+    </LinearLayout>
 
 </LinearLayout>

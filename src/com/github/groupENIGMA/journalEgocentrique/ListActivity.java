@@ -4,15 +4,12 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnTouchListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
@@ -111,6 +108,11 @@ public class ListActivity extends Activity {
                 // Display the Notes
                 ListView notesListView = (ListView)findViewById(R.id.notes);
                 displayNotes(notesListView);
+                // Adds the header with the photos
+                View headerView = ((LayoutInflater) getApplicationContext()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE))
+                        .inflate(R.layout.main_detail_photos, null, false);
+                notesListView.addHeaderView(headerView);
             }
         };
         daysListView.setOnItemClickListener(clickListener);

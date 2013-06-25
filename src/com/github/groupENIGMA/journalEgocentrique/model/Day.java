@@ -22,16 +22,13 @@ public class Day implements DayInterface {
      * @param date The date of Day
      * @param photo The photo for the Day (can be null if the Day doesn't
      *        have one)
-     * @param mood The mood of the Day (can be null)
      * @param entries The list containing all the Entries of the Day (can be
      *        an empty List if the Day doesn't have an Entry)
      */
-    protected Day(long id, Calendar date, Photo photo, Mood mood,
-                  List<Entry> entries) {
+    protected Day(long id, Calendar date, Photo photo, List<Entry> entries) {
         this.id = id;
         this.date = date;
         this.photo = photo;
-        this.mood = mood;
         this.entries = (ArrayList<Entry>) entries;
     }
 

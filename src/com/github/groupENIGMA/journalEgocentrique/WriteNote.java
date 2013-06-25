@@ -40,7 +40,7 @@ public class WriteNote extends Activity {
         else {
             // Updating an existing Entry
             updating = true;
-            selectedNote = dataBase.getNote(noteId);
+            selectedNote = dataBase.getEntry(noteId);
             EditText text = (EditText) findViewById(R.id.editNote);
             text.append(selectedNote.getNote());
         }

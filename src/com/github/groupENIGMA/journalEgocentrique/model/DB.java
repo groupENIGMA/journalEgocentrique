@@ -405,46 +405,56 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry getNote(long id) {
+    public Entry getEntry(long id) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Query the database for the note
+        // Query the database for the Entry
         Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + ENTRY_ID + ", " +
-                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
-                        Entry_TABLE + "." + ENTRY_TIME + ", " +
-                        Day_TABLE + "." + DAY_DATE +
+                "SELECT " + Entry_TABLE + "." + ENTRY_ID        + ", " +
+                            Entry_TABLE + "." + ENTRY_TIME      + ", " +
+                            Entry_TABLE + "." + ENTRY_NOTE      + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD_ID   + ", " +
+                            Day_TABLE   + "." + DAY_DATE +
                 " FROM " + Entry_TABLE + " INNER JOIN " + Day_TABLE +
                         " ON " + Entry_TABLE + "." + ENTRY_DAY_ID + "=" +
-                        Day_TABLE + "." + DAY_ID +
+                                 Day_TABLE   + "." + DAY_ID +
                 " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?",
                 new String[] {Long.toString(id)}
         );
 
-        // If a Entry with the given id exists return it
+        // If an Entry with the given id exists return it
         if (cur.moveToFirst()) {
             // Compute the Entry time from DAY_DATE and ENTRY_TIME
-            Calendar note_time = Calendar.getInstance();
-            Calendar entry_date = Calendar.getInstance();
+            Calendar entry_time = Calendar.getInstance();
+            Calendar day_date = Calendar.getInstance();
             try {
-                note_time.setTime(time_format.parse(cur.getString(2)));
-                entry_date.setTime(date_format.parse(cur.getString(3)));
+                entry_time.setTime(time_format.parse(cur.getString(1)));
+                day_date.setTime(date_format.parse(cur.getString(4)));
             } catch (ParseException e) {
-            	throw new DatabaseError();
+                throw new DatabaseError();
             }
-            note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
-            note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
-            note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
+            entry_time.set(Calendar.YEAR, day_date.get(Calendar.YEAR));
+            entry_time.set(Calendar.MONTH, day_date.get(Calendar.MONTH));
+            entry_time.set(Calendar.DATE, day_date.get(Calendar.DATE));
 
+            // Get the Mood
+            Mood mood;
+            if (cur.isNull(3)) {
+                mood = null;
+            }
+            else {
+                mood = new Mood(cur.getLong(3));
+            }
             // Create and return the Entry
-            Entry n = new Entry(
+            Entry entry = new Entry(
                     cur.getLong(0),     // ENTRY_ID
-                    cur.getString(1),   // ENTRY_NOTE
-                    note_time           // DAY_DATE + ENTRY_TIME
+                    entry_time,         // DAY_DATE + ENTRY_TIME
+                    cur.getString(2),   // ENTRY_NOTE
+                    mood                // MOOD
             );
             cur.close();
-            return n;
+            return entry;
         }
         // Entry not found
         else {

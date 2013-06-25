@@ -138,7 +138,7 @@ public interface DBInterface {
      * @return the newly created Entry
      * @throws InvalidOperationException when adding an Entry to a Day other
      *         than today
-     * @throws DatabaseError when an error occurs parsing a date to Date_format
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -147,13 +147,15 @@ public interface DBInterface {
     /**
      * Gets the Entry with the given id
      * 
+     *
      * @param id the identifier of the Entry
-     * @return The Entry with the specified id, or null if the a Entry with the
-     *         given id doesn't exists.
+     * @return The Entry with the specified id, or null if the an Entry with
+     *         the given id doesn't exists.
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getNote(long id);
+    public Entry getEntry(long id);
     
     /**
      * Updates the text note of the given Entry

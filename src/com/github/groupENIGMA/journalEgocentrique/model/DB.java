@@ -34,21 +34,21 @@ public class DB implements DBInterface {
     private static final int DB_VERSION = 1; 
 
     // DAY table
-    public static final String Day_TABLE = "Day";
+    public static final String Day_TABLE = "day";
     public static final String DAY_ID = "_id";
-    public static final String DAY_DATE = "Date";
-    public static final String DAY_PHOTO = "Photo";
+    public static final String DAY_DATE = "date";
+    public static final String DAY_PHOTO = "photo";
 
-    // Day table
-    public static final String Entry_TABLE = "Day";
+    // ENTRY table
+    public static final String Entry_TABLE = "entry";
     public static final String ENTRY_ID = "_id";
-    public static final String ENTRY_TIME = "Time";
-    public static final String ENTRY_NOTE = "Entry";
-    public static final String ENTRY_MOOD_ID = "Mood_id";
-    public static final String ENTRY_DAY_ID = "Day_id";
+    public static final String ENTRY_TIME = "time";
+    public static final String ENTRY_NOTE = "note";
+    public static final String ENTRY_MOOD_ID = "mood_id";
+    public static final String ENTRY_DAY_ID = "day_id";
 
     // MOOD table
-    public static final String Mood_TABLE = "Mood";
+    public static final String Mood_TABLE = "mood";
     public static final String MOOD_ID = "_id";
     public static final String MOOD_NAME = "name";
 

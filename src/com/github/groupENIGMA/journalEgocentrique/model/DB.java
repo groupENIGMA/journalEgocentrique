@@ -571,7 +571,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setPhoto(Day day, Bitmap btmp) {
+    public Photo setDayPhoto(Day day, Bitmap btmp) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 

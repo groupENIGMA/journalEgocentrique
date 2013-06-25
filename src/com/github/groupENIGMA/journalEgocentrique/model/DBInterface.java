@@ -192,7 +192,7 @@ public interface DBInterface {
     
     /**
      * Deletes the given Entry from the database
-     * 
+     *
      * @param entry the Entry to be deleted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
@@ -212,6 +212,7 @@ public interface DBInterface {
     /**
      * Sets the Photo for the given Day
      * 
+     *
      * @param day the Day to be updated
      * @param btmp the Bitmap file of the taken picture
      * @return the newly created Photo object
@@ -220,7 +221,7 @@ public interface DBInterface {
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setPhoto(Day day, Bitmap btmp);
+    public Photo setDayPhoto(Day day, Bitmap btmp);
     
     /**
      * Deletes the photo of the given day from db and external storage

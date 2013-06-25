@@ -72,7 +72,7 @@ public class PhotoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				data.setPhoto(day, mImageBitmap);
+				data.setDayPhoto(day, mImageBitmap);
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 				data.close();
 				if(tmpImg.exists())

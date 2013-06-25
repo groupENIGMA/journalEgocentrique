@@ -26,7 +26,8 @@ public class Photo implements PhotoInterface {
      * @return the path of thumbnail of this one
      */
     private String createThumb(){
-        Bitmap img = BitmapFactory.decodeFile(this.getPath());
+        if(getPath() != null){
+    	Bitmap img = BitmapFactory.decodeFile(this.getPath());
         Bitmap thumb = Bitmap.createScaledBitmap(img, 85, 85, false);
 
         //Gets the path and the directory name where the Photo is going to be saved
@@ -56,6 +57,8 @@ public class Photo implements PhotoInterface {
                e.printStackTrace();
         }
         return file.getAbsolutePath();
+        }
+        return null;
     }
 
     @Override

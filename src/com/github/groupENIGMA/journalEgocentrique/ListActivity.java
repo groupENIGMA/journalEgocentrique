@@ -224,7 +224,7 @@ public class ListActivity extends Activity {
                 img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
             else{
             	img.setImageResource(R.drawable.ic_launcher);
-            	dataBase.setPhoto(selectedEntry, ((BitmapDrawable)img.getDrawable()).getBitmap());
+            //	dataBase.setPhoto(selectedEntry, ((BitmapDrawable)img.getDrawable()).getBitmap());
             }
             ImageView mood = (ImageView)findViewById(R.id.emoticon);
             if(selectedEntry.getMood() == null)

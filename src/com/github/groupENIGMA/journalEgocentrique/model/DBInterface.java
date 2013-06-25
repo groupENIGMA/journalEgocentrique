@@ -91,12 +91,12 @@ public interface DBInterface {
     public Day createDay(Calendar date);
     
     /**
-     * Deletes the given Day
+     * Deletes from the database the given Day
      *
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteEntry(Day day);
+    public void deleteDay(Day day);
 
     /**
      * Checks if there's already an Day for the today in the database

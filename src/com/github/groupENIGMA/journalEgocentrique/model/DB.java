@@ -285,21 +285,13 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void deleteEntry(Day day){
-    	
-    	// Check if the Connection to the DB is open
+    public void deleteDay(Day day){
+        // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-
-        // Check if the Day is todays Day and can be deleted
-        if (day.canBeDeleted()) {
-            //Deletes the selected day
-            db.delete(Day_TABLE, DAY_ID + "=?",
-                    new String [] {String.valueOf(day.getId())});
-        }
-        else {
-            // The Entry can't be deleted
-            throw new InvalidOperationException();
-        }	
+        // Deletes the given day
+        db.delete(Day_TABLE, DAY_ID + "=?",
+                new String [] {String.valueOf(day.getId())}
+        );
     }
     
     /**

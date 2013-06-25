@@ -309,7 +309,7 @@ public class ListActivity extends Activity {
 	        	return true;
 	        case R.id.deleteEntry:
 	        	if(selectedDay != null){
-	        		dataBase.deleteEntry(selectedDay);
+	        		dataBase.deleteDay(selectedDay);
 	        		selectedDay = null;
 	        		return true;
 	        	}

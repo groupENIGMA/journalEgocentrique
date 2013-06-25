@@ -33,7 +33,7 @@ public class Day implements DayInterface {
     }
 
     @Override
-    public Calendar getDay() {
+    public Calendar getDate() {
         return this.date;
     }
 

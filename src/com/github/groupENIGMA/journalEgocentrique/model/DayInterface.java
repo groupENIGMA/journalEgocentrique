@@ -21,7 +21,7 @@ public interface DayInterface {
      * 
      * @return the Calendar with the Day date
      */
-    public Calendar getDay();
+    public Calendar getDate();
 
     /**
      * Returns the unique id that identifies a Day

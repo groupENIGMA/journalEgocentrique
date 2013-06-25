@@ -117,6 +117,7 @@ public class DB implements DBInterface {
      * (it's basically the Day table joined with the Entry one)
      * 
      * @param cur The Cursor containing the rows with the Day data
+     * @throws DatabaseError when an error occurs parsing a date
      * @return a Day or, if the cur is "empty", null
      */
     private Day parseDayWithEntryFromCursor(Cursor cur) {

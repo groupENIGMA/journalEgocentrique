@@ -42,6 +42,7 @@ public interface DBInterface {
      * Returns the Day object with date equal to the current system date
      * 
      * @return The Day object for today or null if it's not saved in the database
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -53,6 +54,7 @@ public interface DBInterface {
      *
      * @param date the Calendar with year, month and day set to the wanted date
      * @return If available the Day of date, otherwise null
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -65,6 +67,7 @@ public interface DBInterface {
      * @param id The searched id.
      * @return the Day with the given id or null (if the an Day with the
      * given id doesn't exists).
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -122,6 +125,7 @@ public interface DBInterface {
      * <p>
      * @return the list of dates in the diary, can be empty on a brand new
      *         database
+     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -138,7 +142,6 @@ public interface DBInterface {
      * @return the newly created Entry
      * @throws InvalidOperationException when adding an Entry to a Day other
      *         than today
-     * @throws DatabaseError when an error occurs parsing a date
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
@@ -158,7 +161,7 @@ public interface DBInterface {
     public Entry getEntry(long id);
     
     /**
-     * Updates the NOte of the given Entry and its database copy
+     * Updates the Note of the given Entry and its database copy
      * <p>
      * Each Entry has a "grace period" during which it can be updated: calling
      * this method on a Entry after the end of the grace period will result

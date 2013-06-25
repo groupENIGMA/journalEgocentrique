@@ -45,9 +45,37 @@ public class Entry implements EntryInterface {
         return this.note;
     }
 
+    /**
+     * Sets the text note of the Entry
+     * <p>
+     * Should be called only by {@link DBInterface} implementations.
+     * Only updates the object field, not the Entry saved the database.
+     * If you are looking for a method to update an Entry object and its copy in
+     * the database use {@link DBInterface#setEntryNote(Entry, String)}
+     *
+     * @param note The new note
+     */
+    protected void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public Mood getMood() {
         return this.mood;
+    }
+
+    /**
+     * Sets the Mood of the Entry
+     * <p>
+     * Should be called only by {@link DBInterface} implementations.
+     * Only updates the object field, not the Entry saved the database.
+     * If you are looking for a method to update an Entry object and its copy in
+     * the database use {@link DBInterface#setEntryMood(Entry, Mood)}
+     *
+     * @param mood The new mood. If you want to remove the mood you can use null
+     */
+    protected void setMood(Mood mood) {
+        this.mood = mood;
     }
 
     @Override

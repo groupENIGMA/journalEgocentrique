@@ -478,14 +478,49 @@ public class DB implements DBInterface {
 
         // Check if the Entry can be updated
         if (entry.canBeUpdated(sharedPreferences)) {
-            // Update the Entry
+            // Update the database
             ContentValues cv = new ContentValues();
             cv.put(ENTRY_NOTE, new_note_text);
             long id = db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
                     new String []{String.valueOf(entry.getId())}
             );
-            // Update the given object
+            // Update the Entry object
             entry.setNote(new_note_text);
+        }
+        else {
+            // The Entry can't be updated
+            throw new InvalidOperationException();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setEntryMood(Entry entry, Mood new_mood)  {
+        // Check if the Connection to the DB is open
+        raiseConnectionExceptionIfNotConnected();
+
+        // Get the sharedPreferences (for the Entry "grace period")
+        SharedPreferences sharedPreferences = context.getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                Context.MODE_PRIVATE
+        );
+
+        // Check if the Entry can be updated
+        if (entry.canBeUpdated(sharedPreferences)) {
+            // Update the Entry
+            ContentValues cv = new ContentValues();
+            if (new_mood == null) {
+                cv.putNull(ENTRY_MOOD_ID);
+            }
+            else {
+                cv.put(ENTRY_MOOD_ID, new_mood.getId());
+            }
+            long id = db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+                    new String []{String.valueOf(entry.getId())}
+            );
+            // Update the Entry object
+            entry.setMood(new_mood);
         }
         else {
             // The Entry can't be updated
@@ -514,51 +549,6 @@ public class DB implements DBInterface {
         }
         else {
             // The Entry can't be deleted
-            throw new InvalidOperationException();
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void setMood(Day day, Mood mood) {
-        // Check if the Connection to the DB is open
-        raiseConnectionExceptionIfNotConnected();
-
-        // Check if the Day can be updated
-        if (day.canBeUpdated()) {
-            // Update the Mood of the Day
-            ContentValues cv = new ContentValues();
-            cv.put(ENTRY_MOOD_ID, mood.getId());
-            db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String [] {String.valueOf(day.getId())}
-            );
-        }
-        else {
-            // The Day can't be updated
-            throw new InvalidOperationException();
-        }
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public void removeMood(Day day) {
-        // Check if the Connection to the DB is open
-        raiseConnectionExceptionIfNotConnected();
-
-        // Check if the Day can be updated
-        if (day.canBeUpdated()) {
-            // Set to NULL the Mood Column of day
-            ContentValues cv = new ContentValues();
-            cv.putNull(ENTRY_MOOD_ID);
-            db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String []{String.valueOf(day.getId())}
-            );
-        }
-        else {
-            // Day can't be updated
             throw new InvalidOperationException();
         }
     }

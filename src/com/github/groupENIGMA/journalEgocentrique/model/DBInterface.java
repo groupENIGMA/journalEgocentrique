@@ -158,12 +158,11 @@ public interface DBInterface {
     public Entry getEntry(long id);
     
     /**
-     * Sets the text note of the given Entry and updates the database copy
+     * Updates the NOte of the given Entry and its database copy
      * <p>
      * Each Entry has a "grace period" during which it can be updated: calling
      * this method on a Entry after the end of the grace period will result
      * in an error.
-     *
      *
      * @param entry the Entry you want to update
      * @param new_note_text the new text of the note
@@ -173,6 +172,23 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public void setEntryNote(Entry entry, String new_note_text);
+
+    /**
+     * Updates the Mood of the given Entry and its database copy
+     * <p>
+     * Each Entry has a "grace period" during which it can be updated: calling
+     * this method on a Entry after the end of the grace period will result
+     * in an error.
+     *
+     * @param entry the Entry you want to update
+     * @param new_mood the new Mood. If you want to remove the Mood of entry
+     *        you can use null.
+     * @throws InvalidOperationException When note's grace period is already
+     *         ended
+     * @throws ConnectionException if called before connecting to the database
+     *         with {@link DB#open()}.
+     */
+    public void setEntryMood(Entry entry, Mood new_mood);
     
     /**
      * Deletes the given Entry from the database
@@ -184,30 +200,6 @@ public interface DBInterface {
      *         with {@link DB#open()}.
      */
     public void deleteNote(Entry note);
-    
-    /**
-     * Sets the mood for the given Day
-     * <p>
-     * The Mood of an Day can be modified only during the day the Day was
-     * created.
-     * 
-     * @param day the Day to update
-     * @param mood the new Mood
-     * @throws InvalidOperationException If the Day's mood can't be modified
-     * @throws ConnectionException if called before connecting to the database
-     *         with {@link DB#open()}.
-     */
-    public void setMood(Day day, Mood mood);
-    
-    /**
-     * Sets the Mood for given Day to null
-     * 
-     * @param day
-     * @throws InvalidOperationException if the Day's mood can't be removed
-     * @throws ConnectionException if called before connecting to the database
-     *         with {@link DB#open()}.
-     */
-    public void removeMood(Day day);
     
     /** Returns the list of available Moods.
      * <p>

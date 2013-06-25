@@ -311,6 +311,7 @@ public class ListActivity extends Activity {
 	        case R.id.deleteEntry:
 	        	if(selectedEntry != null){
 	        		dataBase.deleteEntry(selectedEntry);
+	        		selectedEntry = null;
 	        		return true;
 	        	}
 	        case R.id.gallery:

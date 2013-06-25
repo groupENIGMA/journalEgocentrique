@@ -648,6 +648,7 @@ public class DB implements DBInterface {
         Cursor cur = db.rawQuery(
             "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
             " FROM " + Entry_TABLE +
+            " WHERE " + Entry_TABLE + "." + ENTRY_PHOTO + " IS NOT NULL " + 
             " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
             null
         );
@@ -677,6 +678,7 @@ public class DB implements DBInterface {
             "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
             " FROM " + Entry_TABLE +
             " WHERE " + Entry_TABLE + "." + ENTRY_DATE + " BETWEEN =? AND =? " +
+            " AND " + Entry_TABLE + "." + ENTRY_PHOTO + " IS NOT NULL " + 
             " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
             new String[] {date_format.format(from.getTime()),
                           date_format.format(to.getTime()) }

@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 /**
  * This class acts as the Model for the Application.
  * Using its methods is possible to perform all the basic CRUD operations
- * on the Day, Photo and Entry saved in the database.
+ * on the Day, Photo, Entry and Mood saved in the database.
  * 
  * @version 0.1 
  * @author groupENIGMA
@@ -39,34 +39,36 @@ public interface DBInterface {
     public boolean isOpen();
 
     /**
-     * Returns the diary's Day for today.
+     * Returns the Day object with date equal to the current system date
      * 
-     * @return The Day for today or null if an Day for today doesn't exists
+     * @return The Day object for today or null if it's not saved in the database
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Day getEntry();
+    public Day getDay();
     
     /**
-     * Returns the diary's Day for a given day.
+     * Returns the Day object for the given date
      * 
-     * @param day
-     * @return The Day for day or null if an Day for day doesn't exists
+     *
+     * @param date the Calendar with year, month and day set to the wanted date
+     * @return If available the Day of date, otherwise null
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Day getEntry(Calendar day);
+    public Day getDay(Calendar date);
 
     /**
      * Returns the diary's Day with the given id.
      * 
+     *
      * @param id The searched id.
      * @return the Day with the given id or null (if the an Day with the
      * given id doesn't exists).
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Day getEntry(long id);
+    public Day getDay(long id);
 
     /**
      * Creates the Day for today and inserts it into the database

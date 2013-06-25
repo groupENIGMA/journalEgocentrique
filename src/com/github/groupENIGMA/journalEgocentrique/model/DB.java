@@ -108,18 +108,18 @@ public class DB implements DBInterface {
     }
 
     /** Reads the rows available in the given Cursor to create and return
-     * an Day object with its related Notes
+     * an Day object with all its related Entry
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
-     *      DAY_ID, DAY_DATE, DAY_PHOTO, ENTRY_MOOD_ID, ENTRY_ID, ENTRY_NOTE,
-     *      ENTRY_TIME
+     *      DAY_ID, DAY_DATE, DAY_PHOTO, ENTRY_ID, ENTRY_TIME, ENTRY_NOTE,
+     *      ENTRY_MOOD_ID
      * (it's basically the Day table joined with the Entry one)
      * 
      * @param cur The Cursor containing the rows with the Day data
-     * @return an Day or, if the cur is "empty", null
+     * @return a Day or, if the cur is "empty", null
      */
-    private Day createEntryWithNotesFromCursor(Cursor cur) {
+    private Day parseDayWithEntryFromCursor(Cursor cur) {
         // Check if the Cursor has at least one row
         if (cur.getCount() == 0) {
             return null;
@@ -128,126 +128,127 @@ public class DB implements DBInterface {
             // Move to the first row
             cur.moveToFirst();
             // Get the Day id
-            long entry_id = cur.getLong(0);
+            long day_id = cur.getLong(0);
             // Get the Day date
-            Calendar entry_date = Calendar.getInstance();
+            Calendar day_date = Calendar.getInstance();
             try {
-                entry_date.setTime(date_format.parse(cur.getString(1)));
+                day_date.setTime(date_format.parse(cur.getString(1)));
             } catch (ParseException e) {
                 throw new DatabaseError();
             }
             // Get the Day Photo (if exists)
-            Photo entry_photo;
+            Photo day_photo;
             if (cur.isNull(2)) {
-                entry_photo = null;
+                day_photo = null;
             }
             else {
-                entry_photo= new Photo(cur.getString(2));
+                day_photo= new Photo(cur.getString(2));
             }
-            // Get the Day Mood (if exists)
-            Mood entry_mood;
-            if (cur.isNull(3)) {
-                entry_mood = null;
-            }
-            else {
-                entry_mood = new Mood(cur.getLong(3));
-            }
-            // Get all the Notes (if any)
-            ArrayList<Entry> note_list = new ArrayList<Entry>();
-            if (!cur.isNull(4)) {  // Notes are available only if ENTRY_ID!=NULL
+            // Get all the Entry (if any)
+            ArrayList<Entry> entry_list = new ArrayList<Entry>();
+            // One or more Entry are available only if ENTRY_ID!=NULL
+            if (!cur.isNull(3)) {
                 do {
                     // Parse the time from the database string
-                    Calendar note_time = Calendar.getInstance();
+                    Calendar entry_time = Calendar.getInstance();
                     try {
-                        note_time.setTime(time_format.parse(cur.getString(6)));
+                        entry_time.setTime(time_format.parse(cur.getString(4)));
                     } catch (ParseException e) {
-                    	throw new DatabaseError();
+                        throw new DatabaseError();
                     }
-                    // Set the year, month and day using the entry_date
-                    note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
-                    note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
-                    note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
+                    // Set the year, month and day using the date of Day
+                    entry_time.set(Calendar.YEAR, day_date.get(Calendar.YEAR));
+                    entry_time.set(Calendar.MONTH, day_date.get(Calendar.MONTH));
+                    entry_time.set(Calendar.DATE, day_date.get(Calendar.DATE));
+                    // Get the Entry Mood (if any)
+                    Mood entry_mood;
+                    if (cur.isNull(6)) {
+                        entry_mood = null;
+                    }
+                    else {
+                        entry_mood = new Mood(cur.getLong(6));
+                    }
                     // Create the Entry and add it to the list
-                    Entry note = new Entry(
-                            cur.getLong(4),     // ENTRY_ID
+                    Entry entry = new Entry(
+                            cur.getLong(3),     // ENTRY_ID
+                            entry_time,         // ENTRY_TIME + DAY_DATE
                             cur.getString(5),   // ENTRY_NOTE
-                            note_time
+                            entry_mood          // Mood
                             );
-                    note_list.add(note);
+                    entry_list.add(entry);
                 }
                 while (cur.moveToNext());
             }
             // Create and return the Day
-            return new Day(entry_id, entry_date, entry_photo, entry_mood,
-                    note_list);
+            return new Day(day_id, day_date, day_photo, entry_list);
         }
     }
 
     /**
      * {@inheritDoc}
      */
-    public Day getEntry() {
-        Calendar cal = Calendar.getInstance();
-        return this.getEntry(cal);
+    public Day getDay() {
+        Calendar today = Calendar.getInstance();
+        return this.getDay(today);
     }
 
     /** 
      * {@inheritDoc}
      */
-    public Day getEntry(Calendar day) {
+    public Day getDay(Calendar date) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Convert the Calendar object to a String in the same format
         // used in the database
-        String date_string = date_format.format(day.getTime());
+        String date_string = date_format.format(date.getTime());
         // Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Day_TABLE + "." + DAY_ID + ", " +
-                        Day_TABLE + "." + DAY_DATE + ", " +
-                        Day_TABLE + "." + DAY_PHOTO + ", " +
-                        Day_TABLE + "." + ENTRY_MOOD_ID + ", " +
-                        Entry_TABLE + "." + ENTRY_ID + ", " +
-                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
-                        Entry_TABLE + "." + ENTRY_TIME +
+                "SELECT " + Day_TABLE   + "." + DAY_ID          + ", " +
+                            Day_TABLE   + "." + DAY_DATE        + ", " +
+                            Day_TABLE   + "." + DAY_PHOTO       + ", " +
+                            Entry_TABLE + "." + ENTRY_ID        + ", " +
+                            Entry_TABLE + "." + ENTRY_TIME      + ", " +
+                            Entry_TABLE + "." + ENTRY_NOTE      + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD_ID   +
                 " FROM " + Day_TABLE + " LEFT OUTER JOIN " + Entry_TABLE +
-                            " ON " + Day_TABLE + "." + DAY_ID + "=" +
-                        Entry_TABLE + "." + ENTRY_DAY_ID +
+                        " ON " + Day_TABLE  + "." + DAY_ID + " = " +
+                                 Entry_TABLE + "." + ENTRY_DAY_ID +
                 " WHERE " + Day_TABLE + "." + DAY_DATE + "=?" +
-                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " ASC ",
+                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " DESC ",
                 new String[] {date_string}
         );
 
-        Day e = createEntryWithNotesFromCursor(cur);
+        Day day = parseDayWithEntryFromCursor(cur);
         cur.close();
-        return e;
+        return day;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Day getEntry(long id) {
+    public Day getDay(long id) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Day_TABLE + "." + DAY_ID + ", " +
-                        Day_TABLE + "." + DAY_DATE + ", " +
-                        Day_TABLE + "." + DAY_PHOTO + ", " +
-                        Day_TABLE + "." + ENTRY_MOOD_ID + ", " +
-                        Entry_TABLE + "." + ENTRY_ID + ", " +
-                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
-                        Entry_TABLE + "." + ENTRY_TIME +
+                "SELECT " + Day_TABLE   + "." + DAY_ID          + ", " +
+                            Day_TABLE   + "." + DAY_DATE        + ", " +
+                            Day_TABLE   + "." + DAY_PHOTO       + ", " +
+                            Entry_TABLE + "." + ENTRY_ID        + ", " +
+                            Entry_TABLE + "." + ENTRY_TIME      + ", " +
+                            Entry_TABLE + "." + ENTRY_NOTE      + ", " +
+                            Entry_TABLE + "." + ENTRY_MOOD_ID   +
                 " FROM " + Day_TABLE + " LEFT OUTER JOIN " + Entry_TABLE +
-                            " ON " + Day_TABLE + "." + DAY_ID + "=" +
-                        Entry_TABLE + "." + ENTRY_DAY_ID +
+                        " ON " + Day_TABLE  + "." + DAY_ID + " = " +
+                                 Entry_TABLE + "." + ENTRY_DAY_ID +
                 " WHERE " + Day_TABLE + "." + DAY_ID + "=?"+
-                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " ASC ",
+                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " DESC ",
                 new String[] {Long.toString(id)}
         );
 
-        Day e = createEntryWithNotesFromCursor(cur);
+        Day day = parseDayWithEntryFromCursor(cur);
         cur.close();
-        return e;
+        return day;
     }
 
     /**
@@ -276,7 +277,7 @@ public class DB implements DBInterface {
             ContentValues cv = new ContentValues();
             cv.put(DAY_DATE, date_format.format(day.getTime()));
             long newEntryId = db.insert(Day_TABLE, null, cv);
-            return getEntry(newEntryId);
+            return getDay(newEntryId);
         }
     }
 
@@ -316,7 +317,7 @@ public class DB implements DBInterface {
     public boolean existsEntry(Calendar day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-        return (getEntry(day) == null) ? false : true;
+        return (getDay(day) == null) ? false : true;
     }
 
     /**

@@ -34,7 +34,7 @@ public class ShareActivity extends Activity {
 		db.open();
 		
 		Intent received = getIntent();
-		day = db.getEntry(received.getLongExtra("EntryId", 0));
+		day = db.getDay(received.getLongExtra("EntryId", 0));
 		note = null;
 		
 		displayNotes();

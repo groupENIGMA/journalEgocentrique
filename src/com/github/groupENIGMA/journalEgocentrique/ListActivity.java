@@ -111,7 +111,7 @@ public class ListActivity extends Activity {
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
-            selectedDay = dataBase.getEntry(id);
+            selectedDay = dataBase.getDay(id);
             // Display the Photo and Mood Image
             displayImages();
             // Display the Notes
@@ -143,8 +143,8 @@ public class ListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
                                     int position, long id) {
-                selectedDay = dataBase.getEntry(
-                        (Calendar)adapter.getItemAtPosition(position)
+                selectedDay = dataBase.getDay(
+                        (Calendar) adapter.getItemAtPosition(position)
                 );
                 // Refresh notes and images
                 displayImages();

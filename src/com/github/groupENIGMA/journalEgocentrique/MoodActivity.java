@@ -24,7 +24,7 @@ public class MoodActivity extends Activity {
 		long entryId = intent.getLongExtra("EntryId", 0);
 		database = new DB(getApplicationContext());
 		database.open();
-		myDay = database.getEntry(entryId);
+		myDay = database.getDay(entryId);
 		GridView grid = (GridView)findViewById(R.id.moodGrid);
 		final MoodAdapter imgAdapter = new MoodAdapter(this);
 		grid.setAdapter(imgAdapter);

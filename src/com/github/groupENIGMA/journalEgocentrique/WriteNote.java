@@ -33,7 +33,7 @@ public class WriteNote extends Activity {
         if ( noteId == -1L) {
             // Creating a new note
             updating = false;
-            selectedDay = dataBase.getEntry(
+            selectedDay = dataBase.getDay(
                     intent.getLong(ListActivity.EXTRA_WRITENOTE_EntryId)
             );
         }

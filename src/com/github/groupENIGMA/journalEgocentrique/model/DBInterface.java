@@ -193,13 +193,11 @@ public interface DBInterface {
     /**
      * Deletes the given Entry from the database
      * 
-     * @param note the Entry to be deleted
-     * @throws InvalidOperationException If the given Entry isn't in the database or if
-     * the operation is not permitted
+     * @param entry the Entry to be deleted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteNote(Entry note);
+    public void deleteEntry(Entry entry);
     
     /** Returns the list of available Moods.
      * <p>

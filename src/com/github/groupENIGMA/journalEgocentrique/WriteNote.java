@@ -76,7 +76,7 @@ public class WriteNote extends Activity {
 
     public void deleteNote(View view){
         if(selectedNote != null) {
-            dataBase.deleteNote(selectedNote);
+            dataBase.deleteEntry(selectedNote);
         }
         startActivity(new Intent(this, ListActivity.class));
     }

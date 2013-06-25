@@ -530,27 +530,15 @@ public class DB implements DBInterface {
 
     /**
      * {@inheritDoc}
+     * @param entry
      */
-    public void deleteNote(Entry note) {
+    public void deleteEntry(Entry entry) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Get the sharedPreferences (for the Entry "grace period")
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                AppConstants.SHARED_PREFERENCES_FILENAME,
-                Context.MODE_PRIVATE
-        );
-
-        // Check if the Entry can be deleted
-        if (note.canBeDeleted(sharedPreferences)) {
-            //Deletes the selected row from the Notes table in the database
-            db.delete(Entry_TABLE, ENTRY_ID + "=?",
-                    new String [] {String.valueOf(note.getId())});
-        }
-        else {
-            // The Entry can't be deleted
-            throw new InvalidOperationException();
-        }
+        // Deletes the Entry from database
+        db.delete(Entry_TABLE, ENTRY_ID + "=?",
+                new String [] {String.valueOf(entry.getId())});
     }
 
     /**

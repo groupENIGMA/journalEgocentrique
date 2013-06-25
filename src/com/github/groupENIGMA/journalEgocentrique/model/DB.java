@@ -335,11 +335,11 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public List<Calendar> getDays() {
+    public List<Calendar> getDatesList() {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Select all the days stored in the database (they are UNIQUE)
+        // Select all the dates stored in the database (they are UNIQUE)
         Cursor cur = db.rawQuery(
                 "SELECT " + Day_TABLE + "." + DAY_DATE +
                 " FROM " + Day_TABLE +
@@ -348,7 +348,7 @@ public class DB implements DBInterface {
         );
 
         // Create the list to return
-        List<Calendar> days = new ArrayList<Calendar>();
+        List<Calendar> datesList = new ArrayList<Calendar>();
         // Create a calendar instance
         Calendar date;
         // Processes the query result with the cursor
@@ -358,7 +358,7 @@ public class DB implements DBInterface {
                     // Fill the list with the dates
                     date = Calendar.getInstance();
                     date.setTime(date_format.parse(cur.getString(0)));
-                    days.add(date);
+                    datesList.add(date);
                 } catch (ParseException e) {
                     throw new DatabaseError();
                 }
@@ -366,7 +366,7 @@ public class DB implements DBInterface {
             while (cur.moveToNext());
         }
         cur.close();
-        return days;
+        return datesList;
     }
 
     /**

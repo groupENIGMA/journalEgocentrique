@@ -118,14 +118,14 @@ public interface DBInterface {
      */
     public boolean existsDay(Calendar date);
 
-    /** Returns the list of days that have an Day associated
+    /** Returns the list of dates with a Day saved in the database
      * <p>
-     * @return the list of days in the diary, can be empty on a brand new
+     * @return the list of dates in the diary, can be empty on a brand new
      *         database
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public List<Calendar> getDays();
+    public List<Calendar> getDatesList();
     
     /** Insert a new text Entry to the given Day.
      * <p>

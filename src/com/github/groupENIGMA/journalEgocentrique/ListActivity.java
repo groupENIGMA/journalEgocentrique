@@ -103,7 +103,7 @@ public class ListActivity extends Activity {
         // Open database connection
         dataBase.open();
         // Display the list of days with an Day
-        daysList = dataBase.getDays();
+        daysList = dataBase.getDatesList();
         ListView daysListView = (ListView)findViewById(R.id.list);
         displayDaysList(daysListView, daysList);
 
@@ -291,7 +291,7 @@ public class ListActivity extends Activity {
 	        case R.id.newEntry:
 	            selectedDay = dataBase.createDay();
 	            Log.e("New Day", selectedDay.getId() + "");//debug
-	            daysList = dataBase.getDays();
+	            daysList = dataBase.getDatesList();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    displayDaysList(list, daysList);
 	            return true;

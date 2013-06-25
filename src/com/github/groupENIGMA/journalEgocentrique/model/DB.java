@@ -22,7 +22,7 @@ import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 /**
  * This class implements the Application Database.
  * It creates or updates the database, if already existing
- * it also implements methods to manage the stored data for each Entry
+ * it also implements methods to manage the stored data for each Day
  * 
  * @version 0.1 
  * @author groupENIGMA
@@ -39,11 +39,11 @@ public class DB implements DBInterface {
     public static final String DAY_DATE = "Date";
     public static final String DAY_PHOTO = "Photo";
 
-    // Entry table
-    public static final String Entry_TABLE = "Entry";
+    // Day table
+    public static final String Entry_TABLE = "Day";
     public static final String ENTRY_ID = "_id";
     public static final String ENTRY_TIME = "Time";
-    public static final String ENTRY_NOTE = "Text";
+    public static final String ENTRY_NOTE = "Entry";
     public static final String ENTRY_MOOD_ID = "Mood_id";
     public static final String ENTRY_DAY_ID = "Day_id";
 
@@ -108,18 +108,18 @@ public class DB implements DBInterface {
     }
 
     /** Reads the rows available in the given Cursor to create and return
-     * an Entry object with its related Notes
+     * an Day object with its related Notes
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
      *      DAY_ID, DAY_DATE, DAY_PHOTO, ENTRY_MOOD_ID, ENTRY_ID, ENTRY_NOTE,
      *      ENTRY_TIME
-     * (it's basically the Entry table joined with the Note one)
+     * (it's basically the Day table joined with the Entry one)
      * 
-     * @param cur The Cursor containing the rows with the Entry data
-     * @return an Entry or, if the cur is "empty", null
+     * @param cur The Cursor containing the rows with the Day data
+     * @return an Day or, if the cur is "empty", null
      */
-    private Entry createEntryWithNotesFromCursor(Cursor cur) {
+    private Day createEntryWithNotesFromCursor(Cursor cur) {
         // Check if the Cursor has at least one row
         if (cur.getCount() == 0) {
             return null;
@@ -127,16 +127,16 @@ public class DB implements DBInterface {
         else {
             // Move to the first row
             cur.moveToFirst();
-            // Get the Entry id
+            // Get the Day id
             long entry_id = cur.getLong(0);
-            // Get the Entry date
+            // Get the Day date
             Calendar entry_date = Calendar.getInstance();
             try {
                 entry_date.setTime(date_format.parse(cur.getString(1)));
             } catch (ParseException e) {
                 throw new DatabaseError();
             }
-            // Get the Entry Photo (if exists)
+            // Get the Day Photo (if exists)
             Photo entry_photo;
             if (cur.isNull(2)) {
                 entry_photo = null;
@@ -144,7 +144,7 @@ public class DB implements DBInterface {
             else {
                 entry_photo= new Photo(cur.getString(2));
             }
-            // Get the Entry Mood (if exists)
+            // Get the Day Mood (if exists)
             Mood entry_mood;
             if (cur.isNull(3)) {
                 entry_mood = null;
@@ -153,7 +153,7 @@ public class DB implements DBInterface {
                 entry_mood = new Mood(cur.getLong(3));
             }
             // Get all the Notes (if any)
-            ArrayList<Note> note_list = new ArrayList<Note>();
+            ArrayList<Entry> note_list = new ArrayList<Entry>();
             if (!cur.isNull(4)) {  // Notes are available only if ENTRY_ID!=NULL
                 do {
                     // Parse the time from the database string
@@ -167,8 +167,8 @@ public class DB implements DBInterface {
                     note_time.set(Calendar.YEAR, entry_date.get(Calendar.YEAR));
                     note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
                     note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
-                    // Create the Note and add it to the list
-                    Note note = new Note(
+                    // Create the Entry and add it to the list
+                    Entry note = new Entry(
                             cur.getLong(4),     // ENTRY_ID
                             cur.getString(5),   // ENTRY_NOTE
                             note_time
@@ -177,8 +177,8 @@ public class DB implements DBInterface {
                 }
                 while (cur.moveToNext());
             }
-            // Create and return the Entry
-            return new Entry(entry_id, entry_date, entry_photo, entry_mood,
+            // Create and return the Day
+            return new Day(entry_id, entry_date, entry_photo, entry_mood,
                     note_list);
         }
     }
@@ -186,7 +186,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry getEntry() {
+    public Day getEntry() {
         Calendar cal = Calendar.getInstance();
         return this.getEntry(cal);
     }
@@ -194,7 +194,7 @@ public class DB implements DBInterface {
     /** 
      * {@inheritDoc}
      */
-    public Entry getEntry(Calendar day) {
+    public Day getEntry(Calendar day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Convert the Calendar object to a String in the same format
@@ -217,7 +217,7 @@ public class DB implements DBInterface {
                 new String[] {date_string}
         );
 
-        Entry e = createEntryWithNotesFromCursor(cur);
+        Day e = createEntryWithNotesFromCursor(cur);
         cur.close();
         return e;
     }
@@ -225,7 +225,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry getEntry(long id) {
+    public Day getEntry(long id) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         // Query the database
@@ -245,7 +245,7 @@ public class DB implements DBInterface {
                 new String[] {Long.toString(id)}
         );
 
-        Entry e = createEntryWithNotesFromCursor(cur);
+        Day e = createEntryWithNotesFromCursor(cur);
         cur.close();
         return e;
     }
@@ -254,7 +254,7 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     @Override
-    public Entry createEntry() {
+    public Day createEntry() {
         Calendar day = Calendar.getInstance();
         return createEntry(day);
     }
@@ -263,15 +263,15 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     @Override
-    public Entry createEntry(Calendar day) {
+    public Day createEntry(Calendar day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Throw InvalidOperationException if an Entry for day already exists
+        // Throw InvalidOperationException if an Day for day already exists
         if (existsEntry(day)) {
             throw new InvalidOperationException();
         }
-        // Insert the new Entry
+        // Insert the new Day
         else {
             ContentValues cv = new ContentValues();
             cv.put(DAY_DATE, date_format.format(day.getTime()));
@@ -283,19 +283,19 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void deleteEntry(Entry entry){
+    public void deleteEntry(Day day){
     	
     	// Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Check if the Entry is todays Entry and can be deleted
-        if (entry.canBeDeleted()) {
-            //Deletes the selected entry
+        // Check if the Day is todays Day and can be deleted
+        if (day.canBeDeleted()) {
+            //Deletes the selected day
             db.delete(Day_TABLE, DAY_ID + "=?",
-                    new String [] {String.valueOf(entry.getId())});
+                    new String [] {String.valueOf(day.getId())});
         }
         else {
-            // The Note can't be deleted
+            // The Entry can't be deleted
             throw new InvalidOperationException();
         }	
     }
@@ -359,25 +359,25 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note insertNote(Entry entry, String note_text) {
+    public Entry insertNote(Day day, String note_text) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Check if it's possible to add a Note to the given Entry
-        if (entry.canBeUpdated()) {
-            // Insert the Note in the database
+        // Check if it's possible to add a Entry to the given Day
+        if (day.canBeUpdated()) {
+            // Insert the Entry in the database
             Calendar now = Calendar.getInstance();
             ContentValues cv = new ContentValues();
-            cv.put(ENTRY_DAY_ID, entry.getId());
+            cv.put(ENTRY_DAY_ID, day.getId());
             cv.put(ENTRY_NOTE, note_text);
             cv.put(ENTRY_TIME, time_format.format(now.getTime()));
             long id = db.insert(Entry_TABLE, null, cv);
 
-            //Create the Note object to return
-            return new Note(id, note_text, now);
+            //Create the Entry object to return
+            return new Entry(id, note_text, now);
         }
         else {
-            // The Entry can't be updated with a new Note
+            // The Day can't be updated with a new Entry
             throw new InvalidOperationException();
         }
     }
@@ -385,7 +385,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note getNote(long id) {
+    public Entry getNote(long id) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
@@ -402,9 +402,9 @@ public class DB implements DBInterface {
                 new String[] {Long.toString(id)}
         );
 
-        // If a Note with the given id exists return it
+        // If a Entry with the given id exists return it
         if (cur.moveToFirst()) {
-            // Compute the Note time from DAY_DATE and ENTRY_TIME
+            // Compute the Entry time from DAY_DATE and ENTRY_TIME
             Calendar note_time = Calendar.getInstance();
             Calendar entry_date = Calendar.getInstance();
             try {
@@ -417,8 +417,8 @@ public class DB implements DBInterface {
             note_time.set(Calendar.MONTH, entry_date.get(Calendar.MONTH));
             note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
 
-            // Create and return the Note
-            Note n = new Note(
+            // Create and return the Entry
+            Entry n = new Entry(
                     cur.getLong(0),     // ENTRY_ID
                     cur.getString(1),   // ENTRY_NOTE
                     note_time           // DAY_DATE + ENTRY_TIME
@@ -426,7 +426,7 @@ public class DB implements DBInterface {
             cur.close();
             return n;
         }
-        // Note not found
+        // Entry not found
         else {
             return null;
         }
@@ -436,29 +436,29 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Note updateNote(Note note, String new_note_text)  {
+    public Entry updateNote(Entry note, String new_note_text)  {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Get the sharedPreferences (for the Note "grace period")
+        // Get the sharedPreferences (for the Entry "grace period")
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 Context.MODE_PRIVATE
         );
 
-        // Check if the Note can be updated
+        // Check if the Entry can be updated
         if (note.canBeUpdated(sharedPreferences)) {
-            // Update the Note
+            // Update the Entry
             ContentValues cv = new ContentValues();
             cv.put(ENTRY_NOTE, new_note_text);
             long id = db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
                     new String []{String.valueOf(note.getId())}
             );
 
-            return new Note(id, new_note_text, note.getTime());
+            return new Entry(id, new_note_text, note.getTime());
         }
         else {
-            // The Note can't be updated
+            // The Entry can't be updated
             throw new InvalidOperationException();
         }
     }
@@ -466,24 +466,24 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void deleteNote(Note note) {
+    public void deleteNote(Entry note) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Get the sharedPreferences (for the Note "grace period")
+        // Get the sharedPreferences (for the Entry "grace period")
         SharedPreferences sharedPreferences = context.getSharedPreferences(
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 Context.MODE_PRIVATE
         );
 
-        // Check if the Note can be deleted
+        // Check if the Entry can be deleted
         if (note.canBeDeleted(sharedPreferences)) {
             //Deletes the selected row from the Notes table in the database
             db.delete(Entry_TABLE, ENTRY_ID + "=?",
                     new String [] {String.valueOf(note.getId())});
         }
         else {
-            // The Note can't be deleted
+            // The Entry can't be deleted
             throw new InvalidOperationException();
         }
     }
@@ -491,21 +491,21 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void setMood(Entry entry, Mood mood) {
+    public void setMood(Day day, Mood mood) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Check if the Entry can be updated
-        if (entry.canBeUpdated()) {
-            // Update the Mood of the Entry
+        // Check if the Day can be updated
+        if (day.canBeUpdated()) {
+            // Update the Mood of the Day
             ContentValues cv = new ContentValues();
             cv.put(ENTRY_MOOD_ID, mood.getId());
             db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String [] {String.valueOf(entry.getId())}
+                    new String [] {String.valueOf(day.getId())}
             );
         }
         else {
-            // The Entry can't be updated
+            // The Day can't be updated
             throw new InvalidOperationException();
         }
 
@@ -514,21 +514,21 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void removeMood(Entry entry) {
+    public void removeMood(Day day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Check if the Entry can be updated
-        if (entry.canBeUpdated()) {
-            // Set to NULL the Mood Column of entry
+        // Check if the Day can be updated
+        if (day.canBeUpdated()) {
+            // Set to NULL the Mood Column of day
             ContentValues cv = new ContentValues();
             cv.putNull(ENTRY_MOOD_ID);
             db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String []{String.valueOf(entry.getId())}
+                    new String []{String.valueOf(day.getId())}
             );
         }
         else {
-            // Entry can't be updated
+            // Day can't be updated
             throw new InvalidOperationException();
         }
     }
@@ -563,12 +563,12 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp) {
+    public Photo setPhoto(Day day, Bitmap btmp) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // If the Entry can't be updated throw the InvalidOperationException
-        if (!entry.canBeUpdated()) {
+        // If the Day can't be updated throw the InvalidOperationException
+        if (!day.canBeUpdated()) {
             throw new InvalidOperationException();
         }
 
@@ -578,7 +578,7 @@ public class DB implements DBInterface {
                 path + File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR
         );
         //Creates the file
-        String fileName = "Photo_" + entry.getId() + ".jpg";
+        String fileName = "Photo_" + day.getId() + ".jpg";
         File file = new File (photoDir, fileName);
         //Delete if already exists
         if (file.exists ()) {
@@ -603,7 +603,7 @@ public class DB implements DBInterface {
         ContentValues cv = new ContentValues();
         cv.put(DAY_PHOTO, file.getAbsolutePath());
         db.update(Day_TABLE, cv, DAY_ID + "=?",
-                new String []{String.valueOf(entry.getId())}
+                new String []{String.valueOf(day.getId())}
         );
 
         return new Photo(file.getAbsolutePath());
@@ -612,22 +612,22 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public void removePhoto(Entry entry) {
+    public void removePhoto(Day day) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
         
         // Check if the Photo can be deleted
-        if (entry.canBeUpdated()) {
+        if (day.canBeUpdated()) {
             // Remove the photo and his thumb from external storage
-            File photo = new File(entry.getPhoto().getPath());
+            File photo = new File(day.getPhoto().getPath());
             photo.delete();
-            File thumb = new File(entry.getPhoto().getPathThumb());
+            File thumb = new File(day.getPhoto().getPathThumb());
             thumb.delete();
             // Remove the photo from the database
             ContentValues cv = new ContentValues();
             cv.putNull(DAY_PHOTO);
             db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String []{String.valueOf(entry.getId())}
+                    new String []{String.valueOf(day.getId())}
             );
         }
         else {

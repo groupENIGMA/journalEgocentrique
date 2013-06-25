@@ -12,9 +12,9 @@ public class AppConstants {
             "journalEgocentrique_SharedPreferences";
 
     /**
-     * SharedPreferences key name for the Note timeout.
+     * SharedPreferences key name for the Entry timeout.
      * <p>
-     * Each Note can be modified or deleted for a limited time set by the
+     * Each Entry can be modified or deleted for a limited time set by the
      * final user in the settings activity.
      * This is the name of the key used to save this time in the
      * SharedPreferences
@@ -22,9 +22,9 @@ public class AppConstants {
     public static final String PREFERENCES_KEY_NOTE_TIMEOUT = "note_timeout";
 
     /**
-     * The default value for the Note Timeout
+     * The default value for the Entry Timeout
      * <p>
-     * Each Note can be modified or deleted for a limited time set by the
+     * Each Entry can be modified or deleted for a limited time set by the
      * final user in the settings activity.
      * This is the default value for this timeout (number of hours).
      */

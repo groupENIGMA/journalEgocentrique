@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 /**
  * This class acts as the Model for the Application.
  * Using its methods is possible to perform all the basic CRUD operations
- * on the Entry, Photo and Note saved in the database.
+ * on the Day, Photo and Entry saved in the database.
  * 
  * @version 0.1 
  * @author groupENIGMA
@@ -39,82 +39,82 @@ public interface DBInterface {
     public boolean isOpen();
 
     /**
-     * Returns the diary's Entry for today.
+     * Returns the diary's Day for today.
      * 
-     * @return The Entry for today or null if an Entry for today doesn't exists
+     * @return The Day for today or null if an Day for today doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntry();
+    public Day getEntry();
     
     /**
-     * Returns the diary's Entry for a given day.
+     * Returns the diary's Day for a given day.
      * 
      * @param day
-     * @return The Entry for day or null if an Entry for day doesn't exists
+     * @return The Day for day or null if an Day for day doesn't exists
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntry(Calendar day);
+    public Day getEntry(Calendar day);
 
     /**
-     * Returns the diary's Entry with the given id.
+     * Returns the diary's Day with the given id.
      * 
      * @param id The searched id.
-     * @return the Entry with the given id or null (if the an Entry with the
+     * @return the Day with the given id or null (if the an Day with the
      * given id doesn't exists).
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry getEntry(long id);
+    public Day getEntry(long id);
 
     /**
-     * Creates the Entry for today and inserts it into the database
+     * Creates the Day for today and inserts it into the database
      *
-     * @return the newly created Entry
-     * @throws InvalidOperationException if an Entry for today already exists.
+     * @return the newly created Day
+     * @throws InvalidOperationException if an Day for today already exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry createEntry();
+    public Day createEntry();
 
     /**
-     * Creates the Entry for the given day and inserts it into the database
+     * Creates the Day for the given day and inserts it into the database
      *
-     * @return the newly created Entry
-     * @throws InvalidOperationException if an Entry for day already exists.
+     * @return the newly created Day
+     * @throws InvalidOperationException if an Day for day already exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry createEntry(Calendar day);
+    public Day createEntry(Calendar day);
     
     /**
-     * Deletes the given Entry 
+     * Deletes the given Day
      *
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteEntry(Entry entry);
+    public void deleteEntry(Day day);
 
     /**
-     * Checks if there's already an Entry for the today in the database
+     * Checks if there's already an Day for the today in the database
      *
-     * @return true if an Entry for today already exists, false otherwise
+     * @return true if an Day for today already exists, false otherwise
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
     public boolean existsEntry();
 
     /**
-     * Checks if there's already an Entry for the day in the database
+     * Checks if there's already an Day for the day in the database
      *
-     * @return true if an Entry for today already exists, false otherwise
+     * @return true if an Day for today already exists, false otherwise
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
     public boolean existsEntry(Calendar day);
 
-    /** Returns the list of days that have an Entry associated
+    /** Returns the list of days that have an Day associated
      * <p>
      * @return the list of days in the diary, can be empty on a brand new
      *         database
@@ -123,85 +123,85 @@ public interface DBInterface {
      */
     public List<Calendar> getDays();
     
-    /** Insert a new text Note to the given Entry.
+    /** Insert a new text Entry to the given Day.
      * <p>
-     * It's possible to add a Note to an Entry only during the day of creation
+     * It's possible to add a Entry to an Day only during the day of creation
      * of the note.
      * 
-     * @param entry
-     * @param note_text The text of the Note
-     * @return the newly created Note
-     * @throws InvalidOperationException When adding a Note to an Entry that
+     * @param day
+     * @param note_text The text of the Entry
+     * @return the newly created Entry
+     * @throws InvalidOperationException When adding a Entry to an Day that
      *         is wasn't created today
      * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note insertNote(Entry entry, String note_text);
+    public Entry insertNote(Day day, String note_text);
     
     /**
-     * Gets the Note with the given id
+     * Gets the Entry with the given id
      * 
-     * @param id the identifier of the Note
-     * @return The Note with the specified id, or null if the a Note with the
+     * @param id the identifier of the Entry
+     * @return The Entry with the specified id, or null if the a Entry with the
      *         given id doesn't exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note getNote(long id);
+    public Entry getNote(long id);
     
     /**
-     * Updates the text note of the given Note
+     * Updates the text note of the given Entry
      * <p>
-     * Each Note has a "grace period" during which it can be updated: calling
-     * this method on a Note after the end of the grace period will result
+     * Each Entry has a "grace period" during which it can be updated: calling
+     * this method on a Entry after the end of the grace period will result
      * in an error.
      *
      * @param note the Node you want to update
      * @param new_note_text the new text of the note
-     * @return the new version of the Note
+     * @return the new version of the Entry
      * @throws InvalidOperationException When note's grace period is already
      *         ended
      * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Note updateNote(Note note, String new_note_text);
+    public Entry updateNote(Entry note, String new_note_text);
     
     /**
-     * Deletes the given Note from the database
+     * Deletes the given Entry from the database
      * 
-     * @param note the Note to be deleted
-     * @throws InvalidOperationException If the given Note isn't in the database or if 
+     * @param note the Entry to be deleted
+     * @throws InvalidOperationException If the given Entry isn't in the database or if
      * the operation is not permitted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteNote(Note note);
+    public void deleteNote(Entry note);
     
     /**
-     * Sets the mood for the given Entry
+     * Sets the mood for the given Day
      * <p>
-     * The Mood of an Entry can be modified only during the day the Entry was
+     * The Mood of an Day can be modified only during the day the Day was
      * created.
      * 
-     * @param entry the Entry to update
+     * @param day the Day to update
      * @param mood the new Mood
-     * @throws InvalidOperationException If the Entry's mood can't be modified
+     * @throws InvalidOperationException If the Day's mood can't be modified
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void setMood(Entry entry, Mood mood);
+    public void setMood(Day day, Mood mood);
     
     /**
-     * Sets the Mood for given Entry to null
+     * Sets the Mood for given Day to null
      * 
-     * @param entry
-     * @throws InvalidOperationException if the Entry's mood can't be removed
+     * @param day
+     * @throws InvalidOperationException if the Day's mood can't be removed
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void removeMood(Entry entry);
+    public void removeMood(Day day);
     
     /** Returns the list of available Moods.
      * <p>
@@ -214,30 +214,30 @@ public interface DBInterface {
     public List<Mood> getAvailableMoods();
     
     /**
-     * Sets the Photo for the given Entry
+     * Sets the Photo for the given Day
      * 
-     * @param entry the Entry to be updated
+     * @param day the Day to be updated
      * @param btmp the Bitmap file of the taken picture
      * @return the newly created Photo object
      * 
-     * @throws InvalidOperationException if the Entry's photo can't be inserted
+     * @throws InvalidOperationException if the Day's photo can't be inserted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setPhoto(Entry entry, Bitmap btmp);
+    public Photo setPhoto(Day day, Bitmap btmp);
     
     /**
-     * Deletes the photo of the given entry from db and external storage
+     * Deletes the photo of the given day from db and external storage
      * 
      * A Photo can be deleted only during the same day it was took.
      * 
-     * @param entry
+     * @param day
      * @throws InvalidOperationException When deleting a Photo that can't be
      *         deleted.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void removePhoto(Entry entry);
+    public void removePhoto(Day day);
     
     /**
      * Returns the list of all the Photo saved in the database.

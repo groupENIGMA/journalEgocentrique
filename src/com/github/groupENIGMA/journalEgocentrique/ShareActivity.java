@@ -17,14 +17,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
-import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ShareActivity extends Activity {
 
-	private Entry entry;
+	private Day day;
 	private DB db;
-	private Note note;
+	private Entry note;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class ShareActivity extends Activity {
 		db.open();
 		
 		Intent received = getIntent();
-		entry = db.getEntry(received.getLongExtra("EntryId", 0));
+		day = db.getEntry(received.getLongExtra("EntryId", 0));
 		note = null;
 		
 		displayNotes();
@@ -45,8 +45,8 @@ public class ShareActivity extends Activity {
 	private void createCustomPhoto(){
 		// Per ora mette la foto del giorno
 		ImageView img = (ImageView)findViewById(R.id.photoComposite);
-		if(entry.getPhoto() != null)
-			img.setImageURI(Uri.parse(entry.getPhoto().getPath()));
+		if(day.getPhoto() != null)
+			img.setImageURI(Uri.parse(day.getPhoto().getPath()));
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
     	int height = display.getHeight();
@@ -60,8 +60,8 @@ public class ShareActivity extends Activity {
 	private void displayNotes(){
 	 	Display display = getWindowManager().getDefaultDisplay();
     	int width = display.getWidth();
-		List<Note> notes = entry.getNotes();
-        ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
+		List<Entry> notes = day.getEntries();
+        ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
                 this, R.layout.row, R.id.textViewList, notes
         );
         ListView list = (ListView)findViewById(R.id.notes);
@@ -78,7 +78,7 @@ public class ShareActivity extends Activity {
             public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {
                 // Set the correct note that will be sent
-                note = (Note) adapter.getItemAtPosition(position);
+                note = (Entry) adapter.getItemAtPosition(position);
             }
         };
         list.setOnItemClickListener(clickListener);
@@ -90,9 +90,9 @@ public class ShareActivity extends Activity {
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("*/*");
 		if(note != null)
-			share.putExtra(Intent.EXTRA_TEXT, note.getText());
+			share.putExtra(Intent.EXTRA_TEXT, note.getNote());
 		share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
-		File tmp = new File(entry.getPhoto().getPath());
+		File tmp = new File(day.getPhoto().getPath());
 		if(tmp != null)
 			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
 		startActivity(Intent.createChooser(share, "Share to..."));

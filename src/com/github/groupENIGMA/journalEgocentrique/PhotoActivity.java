@@ -19,7 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
-import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class PhotoActivity extends Activity {
@@ -27,7 +27,7 @@ public class PhotoActivity extends Activity {
 	private static final int CAMERA_REQUEST = 1; 
 	private ImageView actualImg;
 	private Bitmap mImageBitmap;
-	private Entry entry;
+	private Day day;
 	private String tempPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
 			File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR + "~temp.jpg";
 	
@@ -41,8 +41,8 @@ public class PhotoActivity extends Activity {
 		Intent received = getIntent();
 		data.open();
 		final long entryId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
-		entry = data.getEntry(entryId);
-		Photo tmp = entry.getPhoto();
+		day = data.getEntry(entryId);
+		Photo tmp = day.getPhoto();
 		final File tmpImg = new File(tempPath);
 		if(tmpImg.exists())
 			actualImg.setImageURI(Uri.parse(tempPath));
@@ -64,7 +64,7 @@ public class PhotoActivity extends Activity {
 		});
 		
 		/*
-		 * Al click di accept salva l'immagine associandola alla corretta Entry,
+		 * Al click di accept salva l'immagine associandola alla corretta Day,
 		 * poi ritorna alla ListActivity
 		 */
 		Button accept = (Button)findViewById(R.id.accept);
@@ -72,7 +72,7 @@ public class PhotoActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				data.setPhoto(entry, mImageBitmap);
+				data.setPhoto(day, mImageBitmap);
 				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 				data.close();
 				if(tmpImg.exists())
@@ -162,7 +162,7 @@ public class PhotoActivity extends Activity {
 	public void removeImage(View view){
 		DB data = new DB(getApplicationContext());
 		data.open();
-		data.removePhoto(entry);
+		data.removePhoto(day);
 		actualImg.setImageResource(R.drawable.ic_launcher);
 	}
 

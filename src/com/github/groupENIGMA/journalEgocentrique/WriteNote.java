@@ -3,22 +3,21 @@ package com.github.groupENIGMA.journalEgocentrique;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
-import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class WriteNote extends Activity {
 
     private DB dataBase;
     private boolean updating;
-    private Entry selectedEntry;
-    private Note selectedNote;
+    private Day selectedDay;
+    private Entry selectedNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,22 +27,22 @@ public class WriteNote extends Activity {
         // Open the connection to the database
         dataBase = new DB(getApplicationContext());
         dataBase.open();
-        // Check if we are updating or creating a Note
+        // Check if we are updating or creating a Entry
         Bundle intent = getIntent().getExtras();
         long noteId = intent.getLong(ListActivity.EXTRA_WRITENOTE_NoteId);
         if ( noteId == -1L) {
             // Creating a new note
             updating = false;
-            selectedEntry = dataBase.getEntry(
+            selectedDay = dataBase.getEntry(
                     intent.getLong(ListActivity.EXTRA_WRITENOTE_EntryId)
             );
         }
         else {
-            // Updating an existing Note
+            // Updating an existing Entry
             updating = true;
             selectedNote = dataBase.getNote(noteId);
             EditText text = (EditText) findViewById(R.id.editNote);
-            text.append(selectedNote.getText());
+            text.append(selectedNote.getNote());
         }
     }
     
@@ -69,7 +68,7 @@ public class WriteNote extends Activity {
             dataBase.updateNote(selectedNote, message);
         }
         else{
-            dataBase.insertNote(selectedEntry, message);
+            dataBase.insertNote(selectedDay, message);
         }
         // Return to ListActivity
         startActivity(new Intent(this, ListActivity.class));

@@ -6,7 +6,6 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,8 +26,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
-import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class ListActivity extends Activity {
 
@@ -40,7 +39,7 @@ public class ListActivity extends Activity {
 
     private List<Calendar> daysList;
     private DB dataBase;
-    private Entry selectedEntry = null;
+    private Day selectedDay = null;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -103,16 +102,16 @@ public class ListActivity extends Activity {
 
         // Open database connection
         dataBase.open();
-        // Display the list of days with an Entry
+        // Display the list of days with an Day
         daysList = dataBase.getDays();
         ListView daysListView = (ListView)findViewById(R.id.list);
         displayDaysList(daysListView, daysList);
 
-        // Display the last viewed Entry (if any)
+        // Display the last viewed Day (if any)
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
-            selectedEntry = dataBase.getEntry(id);
+            selectedDay = dataBase.getEntry(id);
             // Display the Photo and Mood Image
             displayImages();
             // Display the Notes
@@ -120,12 +119,12 @@ public class ListActivity extends Activity {
             displayNotes(notesListView);
         }
         else {
-            selectedEntry = null;
+            selectedDay = null;
         }
     }
 
     /**
-     * Display the list of all Days having an associated Entry
+     * Display the list of all Days having an associated Day
      * It is also created a OnItemClickListener that at the click will display
      * the details of the day.
      *
@@ -144,7 +143,7 @@ public class ListActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
                                     int position, long id) {
-                selectedEntry = dataBase.getEntry(
+                selectedDay = dataBase.getEntry(
                         (Calendar)adapter.getItemAtPosition(position)
                 );
                 // Refresh notes and images
@@ -158,28 +157,28 @@ public class ListActivity extends Activity {
     }
 
     /**
-     * Displays the Notes of the selectedEntry
+     * Displays the Notes of the selectedDay
      *
-     * @param list The ListView that will be used to display the Entry
+     * @param list The ListView that will be used to display the Day
      */
     private void displayNotes(ListView list) {
         // Display the Notes
-        List<Note> notes = selectedEntry.getNotes();
-        ArrayAdapter<Note> arrayAdapter = new ArrayAdapter<Note>(
+        List<Entry> notes = selectedDay.getEntries();
+        ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
                 this, R.layout.row, R.id.textViewList, notes
         );
         list.setAdapter(arrayAdapter);
 
         // Add the onLongClickListener that activates the WriteNote activity
-        // that can be used to update the Note text
+        // that can be used to update the Entry text
         OnItemLongClickListener clickListener = new OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapter, View view,
                 int position, long id) {
-                // Enable the onLongClickListener only if the Note can be
+                // Enable the onLongClickListener only if the Entry can be
                 // updated.
-                Note selectedNote = (Note) adapter.getItemAtPosition(position);
+                Entry selectedNote = (Entry) adapter.getItemAtPosition(position);
                 if (selectedNote.canBeUpdated(sharedPreferences)) {
                     Intent intent = new Intent(
                             getApplicationContext(), WriteNote.class
@@ -190,7 +189,7 @@ public class ListActivity extends Activity {
                     startActivity(intent);
                     return true;
                 }
-                // The Note can't be updated
+                // The Entry can't be updated
                 else {
                     return false;
                 }
@@ -206,31 +205,31 @@ public class ListActivity extends Activity {
         /*
         * No selected entry; display the default images
         */
-        if(selectedEntry == null){
+        if(selectedDay == null){
             ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
             img.setImageResource(R.drawable.ic_launcher);
             img = (ImageView)findViewById(R.id.emoticon);
             img.setImageResource(R.drawable.ic_launcher);
         }
         /*
-         * Entry selected: display its images (if any) or the default ones
-         * If the Entry is editable also add the listeners that activate
+         * Day selected: display its images (if any) or the default ones
+         * If the Day is editable also add the listeners that activate
          * MoodActivity and PhotoActivity.to change the Mood and Photo
          */
         else{
-            boolean editable = selectedEntry.canBeUpdated();
+            boolean editable = selectedDay.canBeUpdated();
             ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
-            if(selectedEntry.getPhoto() != null)
-                img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
+            if(selectedDay.getPhoto() != null)
+                img.setImageURI(Uri.parse(selectedDay.getPhoto().getPath()));
             else{
             	img.setImageResource(R.drawable.ic_launcher);
-            //	dataBase.setPhoto(selectedEntry, ((BitmapDrawable)img.getDrawable()).getBitmap());
+            //	dataBase.setPhoto(selectedDay, ((BitmapDrawable)img.getDrawable()).getBitmap());
             }
             ImageView mood = (ImageView)findViewById(R.id.emoticon);
-            if(selectedEntry.getMood() == null)
+            if(selectedDay.getMood() == null)
                 mood.setImageResource(R.drawable.ic_launcher);
             else
-                mood.setImageResource((selectedEntry.getMood().getEmoteId(getApplicationContext())));
+                mood.setImageResource((selectedDay.getMood().getEmoteId(getApplicationContext())));
             if(editable){
                 img.setOnTouchListener(new OnTouchListener()
                 {
@@ -239,7 +238,7 @@ public class ListActivity extends Activity {
                     {
                         // qui carica la vista per la fotoCamera
                         Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
-                        intent.putExtra(EXTRA_MESSAGE, selectedEntry.getId());
+                        intent.putExtra(EXTRA_MESSAGE, selectedDay.getId());
                         startActivity(intent);
                         return false;
                     }
@@ -251,7 +250,7 @@ public class ListActivity extends Activity {
                     {
                         // qui carica la vista per il moood
                         Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
-                        intent.putExtra("EntryId", selectedEntry.getId());
+                        intent.putExtra("EntryId", selectedDay.getId());
                         startActivity(intent);
                         return false;
                     }
@@ -266,12 +265,12 @@ public class ListActivity extends Activity {
         // Get the preference file
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        // Save selected Entry (if any)
-        if (selectedEntry == null) {
+        // Save selected Day (if any)
+        if (selectedDay == null) {
             edit.putLong(PREF_SELECTED_ENTRY, -1L);
         }
         else {
-            edit.putLong(PREF_SELECTED_ENTRY, selectedEntry.getId());
+            edit.putLong(PREF_SELECTED_ENTRY, selectedDay.getId());
         }
         edit.commit();
         // Close database connection
@@ -290,8 +289,8 @@ public class ListActivity extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
-	            selectedEntry = dataBase.createEntry();
-	            Log.e("New Entry", selectedEntry.getId()+"");//debug
+	            selectedDay = dataBase.createEntry();
+	            Log.e("New Day", selectedDay.getId() + "");//debug
 	            daysList = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    displayDaysList(list, daysList);
@@ -301,7 +300,7 @@ public class ListActivity extends Activity {
                         getApplicationContext(), WriteNote.class
                 );
                 intent.putExtra(EXTRA_WRITENOTE_NoteId, -1L);
-                intent.putExtra(EXTRA_WRITENOTE_EntryId, selectedEntry.getId());
+                intent.putExtra(EXTRA_WRITENOTE_EntryId, selectedDay.getId());
                 startActivity(intent);
                 return true;
 	        case R.id.settings:
@@ -309,9 +308,9 @@ public class ListActivity extends Activity {
 	        	startActivity(settings);
 	        	return true;
 	        case R.id.deleteEntry:
-	        	if(selectedEntry != null){
-	        		dataBase.deleteEntry(selectedEntry);
-	        		selectedEntry = null;
+	        	if(selectedDay != null){
+	        		dataBase.deleteEntry(selectedDay);
+	        		selectedDay = null;
 	        		return true;
 	        	}
 	        case R.id.gallery:
@@ -320,7 +319,7 @@ public class ListActivity extends Activity {
 	        	return true;
 	        case R.id.share:
 	        	Intent share = new Intent(getApplicationContext(), ShareActivity.class);
-	        	share.putExtra("EntryId", selectedEntry.getId());
+	        	share.putExtra("EntryId", selectedDay.getId());
 	        	startActivity(share);
 	        	return true;
 	    }

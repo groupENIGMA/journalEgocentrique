@@ -287,10 +287,12 @@ public class ListActivity extends Activity {
 	        case R.id.gallery:
 	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
 	        	startActivity(gallery);
+                return true;
 	        case R.id.share:
 	        	Intent share = new Intent(getApplicationContext(), ShareActivity.class);
 	        	share.putExtra("EntryId", selectedEntry.getId());
 	        	startActivity(share);
+                return true;
 	    }
 		return false;
 	}

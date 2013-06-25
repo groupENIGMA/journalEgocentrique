@@ -372,22 +372,29 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry insertNote(Day day, String note_text) {
+    public Entry insertEntry(Day day, String note, Mood mood) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
         // Check if it's possible to add a Entry to the given Day
         if (day.canBeUpdated()) {
-            // Insert the Entry in the database
+            // ENTRY_TIME = now (creation time)
             Calendar now = Calendar.getInstance();
+            // Insert the Entry in the database
             ContentValues cv = new ContentValues();
             cv.put(ENTRY_DAY_ID, day.getId());
-            cv.put(ENTRY_NOTE, note_text);
+            cv.put(ENTRY_NOTE, note);
             cv.put(ENTRY_TIME, time_format.format(now.getTime()));
+            if (mood == null) {
+                cv.putNull(ENTRY_MOOD_ID);
+            }
+            else {
+                cv.put(ENTRY_MOOD_ID, mood.getId());
+            }
             long id = db.insert(Entry_TABLE, null, cv);
 
             //Create the Entry object to return
-            return new Entry(id, note_text, now);
+            return new Entry(id, now, note, mood);
         }
         else {
             // The Day can't be updated with a new Entry

@@ -68,7 +68,7 @@ public class WriteNote extends Activity {
             dataBase.updateNote(selectedNote, message);
         }
         else{
-            dataBase.insertNote(selectedDay, message);
+            dataBase.insertEntry(selectedDay, message, null);
         }
         // Return to ListActivity
         startActivity(new Intent(this, ListActivity.class));

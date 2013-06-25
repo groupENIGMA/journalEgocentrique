@@ -127,21 +127,22 @@ public interface DBInterface {
      */
     public List<Calendar> getDatesList();
     
-    /** Insert a new text Entry to the given Day.
+    /** Add a new Entry to the given Day.
      * <p>
-     * It's possible to add a Entry to an Day only during the day of creation
-     * of the note.
+     * It's possible to add an Entry to a Day only during the date of Day.
      * 
-     * @param day
-     * @param note_text The text of the Entry
+     *
+     * @param day The new Entry will be added to this Day
+     * @param note The text of the Entry
+     * @param mood The Mood of the Entry (can be null)
      * @return the newly created Entry
-     * @throws InvalidOperationException When adding a Entry to an Day that
-     *         is wasn't created today
+     * @throws InvalidOperationException when adding an Entry to a Day other
+     *         than today
      * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry insertNote(Day day, String note_text);
+    public Entry insertEntry(Day day, String note, Mood mood);
     
     /**
      * Gets the Entry with the given id

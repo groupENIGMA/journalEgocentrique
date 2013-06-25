@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -221,8 +222,10 @@ public class ListActivity extends Activity {
             ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
             if(selectedEntry.getPhoto() != null)
                 img.setImageURI(Uri.parse(selectedEntry.getPhoto().getPath()));
-            else
-                img.setImageResource(R.drawable.ic_launcher);
+            else{
+            	img.setImageResource(R.drawable.ic_launcher);
+            	dataBase.setPhoto(selectedEntry, ((BitmapDrawable)img.getDrawable()).getBitmap());
+            }
             ImageView mood = (ImageView)findViewById(R.id.emoticon);
             if(selectedEntry.getMood() == null)
                 mood.setImageResource(R.drawable.ic_launcher);
@@ -313,10 +316,12 @@ public class ListActivity extends Activity {
 	        case R.id.gallery:
 	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
 	        	startActivity(gallery);
+	        	return true;
 	        case R.id.share:
 	        	Intent share = new Intent(getApplicationContext(), ShareActivity.class);
 	        	share.putExtra("EntryId", selectedEntry.getId());
 	        	startActivity(share);
+	        	return true;
 	    }
 		return false;
 	}

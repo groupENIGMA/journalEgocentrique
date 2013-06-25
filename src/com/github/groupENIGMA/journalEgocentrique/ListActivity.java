@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,7 +31,7 @@ public class ListActivity extends Activity {
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
 
     private DB dataBase;
-    private DaysArrayAdapter daysListArratAdapter;
+    private DaysArrayAdapter daysListArrayAdapter;
     private Entry selectedEntry = null;
     private SharedPreferences sharedPreferences;
 
@@ -94,10 +93,10 @@ public class ListActivity extends Activity {
         List<Calendar> daysList = dataBase.getDays();
 
         // Create and set the custom ArrayAdapter DaysArrayAdapter
-        daysListArratAdapter = new DaysArrayAdapter(
+        daysListArrayAdapter = new DaysArrayAdapter(
                 this, R.layout.row, daysList
         );
-        daysListView.setAdapter(daysListArratAdapter);
+        daysListView.setAdapter(daysListArrayAdapter);
 
         // Set the listener
         OnItemClickListener clickListener = new OnItemClickListener() {
@@ -246,7 +245,7 @@ public class ListActivity extends Activity {
         // New Entry in the database
         selectedEntry = dataBase.createEntry();
         // Entry to the beginning of the displayed list
-        daysListArratAdapter.insert(selectedEntry.getDay(), 0);
+        daysListArrayAdapter.insert(selectedEntry.getDay(), 0);
         // Disable the ListDaysAddEntryButton
         Button addEntry = (Button)findViewById(R.id.ListDaysAddEntryButton);
         addEntry.setEnabled(false);
@@ -280,7 +279,7 @@ public class ListActivity extends Activity {
                     // Removed it from the database
 	                dataBase.deleteEntry(selectedEntry);
                     // Remove it from the displayed list
-                    daysListArratAdapter.remove(selectedEntry.getDay());
+                    daysListArrayAdapter.remove(selectedEntry.getDay());
                     selectedEntry = null;
 	                return true;
 	            }

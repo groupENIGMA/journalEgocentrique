@@ -285,6 +285,7 @@ public class ListActivity extends Activity {
                     selectedEntry = null;
 	                return true;
 	            }
+                return false;
 	        case R.id.gallery:
 	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
 	        	startActivity(gallery);

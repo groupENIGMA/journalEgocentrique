@@ -32,5 +32,5 @@
 
     <!-- ListActivity -->
     <string name="ListDaysHeaderTitle">Days</string>
-    <string name="ListDaysAddEntry">Add</string>
+    <string name="ListDaysAddEntry">+</string>
 </resources>

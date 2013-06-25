@@ -17,7 +17,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.os.Environment;
-import android.util.Log;
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 /**
@@ -30,23 +29,23 @@ import com.github.groupENIGMA.journalEgocentrique.AppConstants;
  */
 public class DB implements DBInterface {
 
-    // Constants about the database
+    // Database Constants
     private static final String DB_NAME = "JournalEgocentrique.db"; 
     private static final int DB_VERSION = 1; 
 
-    // ENTRY table
-    public static final String Entry_TABLE = "Entry"; 
-    public static final String ENTRY_ID = "_id";
-    public static final String ENTRY_DATE = "Date";
-    public static final String ENTRY_PHOTO = "Photo";
-    public static final String ENTRY_MOOD = "Mood";
+    // DAY table
+    public static final String Day_TABLE = "Day";
+    public static final String DAY_ID = "_id";
+    public static final String DAY_DATE = "Date";
+    public static final String DAY_PHOTO = "Photo";
 
-    // NOTE table
-    public static final String Notes_TABLE = "Note";
-    public static final String NOTE_ID = "_id";
-    public static final String NOTE_TEXT = "Text";
-    public static final String NOTE_TIME = "Time";
-    public static final String NOTE_ENTRY_ID = "Entry_id";
+    // Entry table
+    public static final String Entry_TABLE = "Entry";
+    public static final String ENTRY_ID = "_id";
+    public static final String ENTRY_TIME = "Time";
+    public static final String ENTRY_NOTE = "Text";
+    public static final String ENTRY_MOOD_ID = "Mood_id";
+    public static final String ENTRY_DAY_ID = "Day_id";
 
     // MOOD table
     public static final String Mood_TABLE = "Mood";
@@ -113,8 +112,8 @@ public class DB implements DBInterface {
      * <p>
      * This works correctly only if the rows available in the cursor have the
      * following columns in this exact order:
-     *      ENTRY_ID, ENTRY_DATE, ENTRY_PHOTO, ENTRY_MOOD, NOTE_ID, NOTE_TEXT,
-     *      NOTE_TIME
+     *      DAY_ID, DAY_DATE, DAY_PHOTO, ENTRY_MOOD_ID, ENTRY_ID, ENTRY_NOTE,
+     *      ENTRY_TIME
      * (it's basically the Entry table joined with the Note one)
      * 
      * @param cur The Cursor containing the rows with the Entry data
@@ -155,7 +154,7 @@ public class DB implements DBInterface {
             }
             // Get all the Notes (if any)
             ArrayList<Note> note_list = new ArrayList<Note>();
-            if (!cur.isNull(4)) {  // Notes are available only if NOTE_ID!=NULL
+            if (!cur.isNull(4)) {  // Notes are available only if ENTRY_ID!=NULL
                 do {
                     // Parse the time from the database string
                     Calendar note_time = Calendar.getInstance();
@@ -170,8 +169,8 @@ public class DB implements DBInterface {
                     note_time.set(Calendar.DATE, entry_date.get(Calendar.DATE));
                     // Create the Note and add it to the list
                     Note note = new Note(
-                            cur.getLong(4),     // NOTE_ID
-                            cur.getString(5),   // NOTE_TEXT
+                            cur.getLong(4),     // ENTRY_ID
+                            cur.getString(5),   // ENTRY_NOTE
                             note_time
                             );
                     note_list.add(note);
@@ -203,18 +202,18 @@ public class DB implements DBInterface {
         String date_string = date_format.format(day.getTime());
         // Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
-                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
-                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
-                            Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
-                            Notes_TABLE + "." + NOTE_TIME   +
-                " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
-                            " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
-                " WHERE " + Entry_TABLE + "." + ENTRY_DATE + "=?" +
-                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
+                "SELECT " + Day_TABLE + "." + DAY_ID + ", " +
+                        Day_TABLE + "." + DAY_DATE + ", " +
+                        Day_TABLE + "." + DAY_PHOTO + ", " +
+                        Day_TABLE + "." + ENTRY_MOOD_ID + ", " +
+                        Entry_TABLE + "." + ENTRY_ID + ", " +
+                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
+                        Entry_TABLE + "." + ENTRY_TIME +
+                " FROM " + Day_TABLE + " LEFT OUTER JOIN " + Entry_TABLE +
+                            " ON " + Day_TABLE + "." + DAY_ID + "=" +
+                        Entry_TABLE + "." + ENTRY_DAY_ID +
+                " WHERE " + Day_TABLE + "." + DAY_DATE + "=?" +
+                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " ASC ",
                 new String[] {date_string}
         );
 
@@ -231,18 +230,18 @@ public class DB implements DBInterface {
         raiseConnectionExceptionIfNotConnected();
         // Query the database
         Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + ENTRY_ID    + ", " +
-                            Entry_TABLE + "." + ENTRY_DATE  + ", " +
-                            Entry_TABLE + "." + ENTRY_PHOTO + ", " +
-                            Entry_TABLE + "." + ENTRY_MOOD  + ", " +
-                            Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
-                            Notes_TABLE + "." + NOTE_TIME   +
-                " FROM " + Entry_TABLE + " LEFT OUTER JOIN " + Notes_TABLE +
-                            " ON " + Entry_TABLE + "." + ENTRY_ID + "=" +
-                                     Notes_TABLE + "." + NOTE_ENTRY_ID +
-                " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?"+
-                " ORDER BY " + Notes_TABLE + "." + NOTE_TIME + " ASC ",
+                "SELECT " + Day_TABLE + "." + DAY_ID + ", " +
+                        Day_TABLE + "." + DAY_DATE + ", " +
+                        Day_TABLE + "." + DAY_PHOTO + ", " +
+                        Day_TABLE + "." + ENTRY_MOOD_ID + ", " +
+                        Entry_TABLE + "." + ENTRY_ID + ", " +
+                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
+                        Entry_TABLE + "." + ENTRY_TIME +
+                " FROM " + Day_TABLE + " LEFT OUTER JOIN " + Entry_TABLE +
+                            " ON " + Day_TABLE + "." + DAY_ID + "=" +
+                        Entry_TABLE + "." + ENTRY_DAY_ID +
+                " WHERE " + Day_TABLE + "." + DAY_ID + "=?"+
+                " ORDER BY " + Entry_TABLE + "." + ENTRY_TIME + " ASC ",
                 new String[] {Long.toString(id)}
         );
 
@@ -275,8 +274,8 @@ public class DB implements DBInterface {
         // Insert the new Entry
         else {
             ContentValues cv = new ContentValues();
-            cv.put(ENTRY_DATE, date_format.format(day.getTime()));
-            long newEntryId = db.insert(Entry_TABLE, null, cv);
+            cv.put(DAY_DATE, date_format.format(day.getTime()));
+            long newEntryId = db.insert(Day_TABLE, null, cv);
             return getEntry(newEntryId);
         }
     }
@@ -292,7 +291,7 @@ public class DB implements DBInterface {
         // Check if the Entry is todays Entry and can be deleted
         if (entry.canBeDeleted()) {
             //Deletes the selected entry
-            db.delete(Entry_TABLE, ENTRY_ID + "=?",
+            db.delete(Day_TABLE, DAY_ID + "=?",
                     new String [] {String.valueOf(entry.getId())});
         }
         else {
@@ -329,9 +328,9 @@ public class DB implements DBInterface {
 
         // Select all the days stored in the database (they are UNIQUE)
         Cursor cur = db.rawQuery(
-                "SELECT " + Entry_TABLE + "." + ENTRY_DATE +
-                " FROM " + Entry_TABLE +
-                " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
+                "SELECT " + Day_TABLE + "." + DAY_DATE +
+                " FROM " + Day_TABLE +
+                " ORDER BY " + Day_TABLE + "." + DAY_DATE + " DESC",
                 null
         );
 
@@ -369,10 +368,10 @@ public class DB implements DBInterface {
             // Insert the Note in the database
             Calendar now = Calendar.getInstance();
             ContentValues cv = new ContentValues();
-            cv.put(NOTE_ENTRY_ID, entry.getId());
-            cv.put(NOTE_TEXT, note_text);
-            cv.put(NOTE_TIME, time_format.format(now.getTime()));
-            long id = db.insert(Notes_TABLE, null, cv);
+            cv.put(ENTRY_DAY_ID, entry.getId());
+            cv.put(ENTRY_NOTE, note_text);
+            cv.put(ENTRY_TIME, time_format.format(now.getTime()));
+            long id = db.insert(Entry_TABLE, null, cv);
 
             //Create the Note object to return
             return new Note(id, note_text, now);
@@ -392,20 +391,20 @@ public class DB implements DBInterface {
 
         // Query the database for the note
         Cursor cur = db.rawQuery(
-                "SELECT " + Notes_TABLE + "." + NOTE_ID     + ", " +
-                            Notes_TABLE + "." + NOTE_TEXT   + ", " +
-                            Notes_TABLE + "." + NOTE_TIME   + ", " +
-                            Entry_TABLE + "." + ENTRY_DATE  +
-                " FROM " + Notes_TABLE + " INNER JOIN " + Entry_TABLE +
-                        " ON " + Notes_TABLE + "." + NOTE_ENTRY_ID + "=" +
-                                 Entry_TABLE + "." + ENTRY_ID +
-                " WHERE " + Notes_TABLE + "." + NOTE_ID + "=?",
+                "SELECT " + Entry_TABLE + "." + ENTRY_ID + ", " +
+                        Entry_TABLE + "." + ENTRY_NOTE + ", " +
+                        Entry_TABLE + "." + ENTRY_TIME + ", " +
+                        Day_TABLE + "." + DAY_DATE +
+                " FROM " + Entry_TABLE + " INNER JOIN " + Day_TABLE +
+                        " ON " + Entry_TABLE + "." + ENTRY_DAY_ID + "=" +
+                        Day_TABLE + "." + DAY_ID +
+                " WHERE " + Entry_TABLE + "." + ENTRY_ID + "=?",
                 new String[] {Long.toString(id)}
         );
 
         // If a Note with the given id exists return it
         if (cur.moveToFirst()) {
-            // Compute the Note time from ENTRY_DATE and NOTE_TIME
+            // Compute the Note time from DAY_DATE and ENTRY_TIME
             Calendar note_time = Calendar.getInstance();
             Calendar entry_date = Calendar.getInstance();
             try {
@@ -420,9 +419,9 @@ public class DB implements DBInterface {
 
             // Create and return the Note
             Note n = new Note(
-                    cur.getLong(0),     // NOTE_ID
-                    cur.getString(1),   // NOTE_TEXT
-                    note_time           // ENTRY_DATE + NOTE_TIME
+                    cur.getLong(0),     // ENTRY_ID
+                    cur.getString(1),   // ENTRY_NOTE
+                    note_time           // DAY_DATE + ENTRY_TIME
             );
             cur.close();
             return n;
@@ -451,8 +450,8 @@ public class DB implements DBInterface {
         if (note.canBeUpdated(sharedPreferences)) {
             // Update the Note
             ContentValues cv = new ContentValues();
-            cv.put(NOTE_TEXT, new_note_text);
-            long id = db.update(Notes_TABLE, cv, NOTE_ID + "=?",
+            cv.put(ENTRY_NOTE, new_note_text);
+            long id = db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
                     new String []{String.valueOf(note.getId())}
             );
 
@@ -480,7 +479,7 @@ public class DB implements DBInterface {
         // Check if the Note can be deleted
         if (note.canBeDeleted(sharedPreferences)) {
             //Deletes the selected row from the Notes table in the database
-            db.delete(Notes_TABLE, NOTE_ID + "=?",
+            db.delete(Entry_TABLE, ENTRY_ID + "=?",
                     new String [] {String.valueOf(note.getId())});
         }
         else {
@@ -500,8 +499,8 @@ public class DB implements DBInterface {
         if (entry.canBeUpdated()) {
             // Update the Mood of the Entry
             ContentValues cv = new ContentValues();
-            cv.put(ENTRY_MOOD, mood.getId());
-            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+            cv.put(ENTRY_MOOD_ID, mood.getId());
+            db.update(Day_TABLE, cv, DAY_ID + "=?",
                     new String [] {String.valueOf(entry.getId())}
             );
         }
@@ -523,8 +522,8 @@ public class DB implements DBInterface {
         if (entry.canBeUpdated()) {
             // Set to NULL the Mood Column of entry
             ContentValues cv = new ContentValues();
-            cv.putNull(ENTRY_MOOD);
-            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+            cv.putNull(ENTRY_MOOD_ID);
+            db.update(Day_TABLE, cv, DAY_ID + "=?",
                     new String []{String.valueOf(entry.getId())}
             );
         }
@@ -602,8 +601,8 @@ public class DB implements DBInterface {
 
         // Update the path to the file in the database
         ContentValues cv = new ContentValues();
-        cv.put(ENTRY_PHOTO, file.getAbsolutePath());
-        db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+        cv.put(DAY_PHOTO, file.getAbsolutePath());
+        db.update(Day_TABLE, cv, DAY_ID + "=?",
                 new String []{String.valueOf(entry.getId())}
         );
 
@@ -626,8 +625,8 @@ public class DB implements DBInterface {
             thumb.delete();
             // Remove the photo from the database
             ContentValues cv = new ContentValues();
-            cv.putNull(ENTRY_PHOTO);
-            db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
+            cv.putNull(DAY_PHOTO);
+            db.update(Day_TABLE, cv, DAY_ID + "=?",
                     new String []{String.valueOf(entry.getId())}
             );
         }
@@ -646,10 +645,10 @@ public class DB implements DBInterface {
 
         // Query the photos
         Cursor cur = db.rawQuery(
-            "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
-            " FROM " + Entry_TABLE +
-            " WHERE " + Entry_TABLE + "." + ENTRY_PHOTO + " IS NOT NULL " + 
-            " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
+            "SELECT " + Day_TABLE + "." + DAY_PHOTO +
+            " FROM " + Day_TABLE +
+            " WHERE " + Day_TABLE + "." + DAY_PHOTO + " IS NOT NULL " +
+            " ORDER BY " + Day_TABLE + "." + DAY_DATE + " DESC",
             null
         );
 
@@ -675,11 +674,11 @@ public class DB implements DBInterface {
         ArrayList<Photo> photos = new ArrayList<Photo>();
         // Query the database
         Cursor cur = db.rawQuery(
-            "SELECT " + Entry_TABLE + "." + ENTRY_PHOTO +
-            " FROM " + Entry_TABLE +
-            " WHERE " + Entry_TABLE + "." + ENTRY_DATE + " BETWEEN =? AND =? " +
-            " AND " + Entry_TABLE + "." + ENTRY_PHOTO + " IS NOT NULL " + 
-            " ORDER BY " + Entry_TABLE + "." + ENTRY_DATE + " DESC",
+            "SELECT " + Day_TABLE + "." + DAY_PHOTO +
+            " FROM " + Day_TABLE +
+            " WHERE " + Day_TABLE + "." + DAY_DATE + " BETWEEN =? AND =? " +
+                " AND " + Day_TABLE + "." + DAY_PHOTO + " IS NOT NULL " +
+            " ORDER BY " + Day_TABLE + "." + DAY_DATE + " DESC",
             new String[] {date_format.format(from.getTime()),
                           date_format.format(to.getTime()) }
         );
@@ -723,35 +722,37 @@ public class DB implements DBInterface {
         @Override
         public void onCreate(SQLiteDatabase db) {
             // SQL statements used to create the tables
-            String newMoodTable =
-                    "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
-                    MOOD_ID     + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    MOOD_NAME   + " TEXT" +
-                    " );";
-            String newEntryTable = 
-                    "CREATE TABLE IF NOT EXISTS " + Entry_TABLE + " ( " +
-                    ENTRY_ID    + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    ENTRY_DATE  + " TEXT UNIQUE NOT NULL," +
-                    ENTRY_PHOTO + " TEXT," +
-                    ENTRY_MOOD  + " INTEGER, " +
-                    "CONSTRAINT fk_Mood FOREIGN KEY(" + ENTRY_MOOD + ")" +
-                    "REFERENCES " + Mood_TABLE + "(" + MOOD_ID + ")" +
-                    " );";
+            String createMoodTable =
+                "CREATE TABLE IF NOT EXISTS " + Mood_TABLE + " ( " +
+                MOOD_ID     + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                MOOD_NAME   + " TEXT" +
+                " );";
+
+            String createDayTable =
+                "CREATE TABLE IF NOT EXISTS " + Day_TABLE + " ( " +
+                    DAY_ID      + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    DAY_DATE    + " TEXT UNIQUE NOT NULL," +
+                    DAY_PHOTO   + " TEXT" +
+                " );";
             
-            String newNotesTable =
-                    "CREATE TABLE IF NOT EXISTS " + Notes_TABLE + " ( " +
-                    NOTE_ID         + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    NOTE_TEXT       + " TEXT NOT NULL," +
-                    NOTE_TIME       + " TEXT NOT NULL," +
-                    NOTE_ENTRY_ID   + " INTEGER NOT NULL," +
-                    "CONSTRAINT fk_Notes FOREIGN KEY(" + NOTE_ENTRY_ID + ") " +
-                        "REFERENCES " + Entry_TABLE + "(" + ENTRY_ID + ")" +
-                    " );";
+            String createEntryTable =
+                "CREATE TABLE IF NOT EXISTS " + Entry_TABLE + " ( " +
+                    ENTRY_ID        + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    ENTRY_TIME      + " TEXT NOT NULL," +
+                    ENTRY_NOTE      + " TEXT NOT NULL," +
+                    ENTRY_MOOD_ID   + " INTEGER, " +
+                    ENTRY_DAY_ID    + " INTEGER NOT NULL," +
+                " CONSTRAINT fk_Entry_Days FOREIGN KEY(" + ENTRY_DAY_ID + ") " +
+                    " REFERENCES " + Day_TABLE + "(" + DAY_ID + ")" +
+                    " ON DELETE CASCADE, " +
+                " CONSTRAINT fk_Entry_Mood FOREIGN KEY(" + ENTRY_MOOD_ID + ") " +
+                    " REFERENCES " + Mood_TABLE + "(" + MOOD_ID + ")" +
+                " );";
             
             // Run all the CREATE TABLE ...
-            db.execSQL(newMoodTable);
-            db.execSQL(newEntryTable);
-            db.execSQL(newNotesTable);
+            db.execSQL(createMoodTable);
+            db.execSQL(createDayTable);
+            db.execSQL(createEntryTable);
             
             // Insert all the basic Moods
             for (String[] mood : MOODS_DB_VERSION_1) {
@@ -776,6 +777,6 @@ public class DB implements DBInterface {
                 db.execSQL("PRAGMA foreign_keys=ON;");
             }
         }
-    }
+    }  // openHelper
 
 }

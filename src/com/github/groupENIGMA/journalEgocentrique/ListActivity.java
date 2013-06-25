@@ -289,7 +289,7 @@ public class ListActivity extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.newEntry:
-	            selectedDay = dataBase.createEntry();
+	            selectedDay = dataBase.createDay();
 	            Log.e("New Day", selectedDay.getId() + "");//debug
 	            daysList = dataBase.getDays();
 	    	    ListView list = (ListView)findViewById(R.id.list);

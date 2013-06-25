@@ -71,24 +71,24 @@ public interface DBInterface {
     public Day getDay(long id);
 
     /**
-     * Creates the Day for today and inserts it into the database
+     * Creates a Day with the date set to today and inserts it into the database
      *
      * @return the newly created Day
-     * @throws InvalidOperationException if an Day for today already exists.
+     * @throws InvalidOperationException if a Day for today already exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Day createEntry();
+    public Day createDay();
 
     /**
-     * Creates the Day for the given day and inserts it into the database
+     * Creates the Day with the given date and inserts it into the database
      *
      * @return the newly created Day
-     * @throws InvalidOperationException if an Day for day already exists.
+     * @throws InvalidOperationException if a Day for date already exists.
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Day createEntry(Calendar day);
+    public Day createDay(Calendar date);
     
     /**
      * Deletes the given Day

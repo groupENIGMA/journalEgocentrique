@@ -255,29 +255,30 @@ public class DB implements DBInterface {
      * {@inheritDoc}
      */
     @Override
-    public Day createEntry() {
-        Calendar day = Calendar.getInstance();
-        return createEntry(day);
+    public Day createDay() {
+        Calendar today = Calendar.getInstance();
+        return createDay(today);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Day createEntry(Calendar day) {
+    public Day createDay(Calendar date) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Throw InvalidOperationException if an Day for day already exists
-        if (existsEntry(day)) {
+        // Throw InvalidOperationException if a Day with the given date already
+        // exists
+        if (existsEntry(date)) {
             throw new InvalidOperationException();
         }
         // Insert the new Day
         else {
             ContentValues cv = new ContentValues();
-            cv.put(DAY_DATE, date_format.format(day.getTime()));
-            long newEntryId = db.insert(Day_TABLE, null, cv);
-            return getDay(newEntryId);
+            cv.put(DAY_DATE, date_format.format(date.getTime()));
+            long newDayId = db.insert(Day_TABLE, null, cv);
+            return getDay(newDayId);
         }
     }
 

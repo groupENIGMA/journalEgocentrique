@@ -158,22 +158,21 @@ public interface DBInterface {
     public Entry getEntry(long id);
     
     /**
-     * Updates the text note of the given Entry
+     * Sets the text note of the given Entry and updates the database copy
      * <p>
      * Each Entry has a "grace period" during which it can be updated: calling
      * this method on a Entry after the end of the grace period will result
      * in an error.
      *
-     * @param note the Node you want to update
+     *
+     * @param entry the Entry you want to update
      * @param new_note_text the new text of the note
-     * @return the new version of the Entry
      * @throws InvalidOperationException When note's grace period is already
      *         ended
-     * @throws DatabaseError when an error occurs parsing a date to Date_format
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Entry updateNote(Entry note, String new_note_text);
+    public void setEntryNote(Entry entry, String new_note_text);
     
     /**
      * Deletes the given Entry from the database

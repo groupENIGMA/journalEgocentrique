@@ -466,7 +466,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Entry updateNote(Entry note, String new_note_text)  {
+    public void setEntryNote(Entry entry, String new_note_text)  {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
@@ -477,15 +477,15 @@ public class DB implements DBInterface {
         );
 
         // Check if the Entry can be updated
-        if (note.canBeUpdated(sharedPreferences)) {
+        if (entry.canBeUpdated(sharedPreferences)) {
             // Update the Entry
             ContentValues cv = new ContentValues();
             cv.put(ENTRY_NOTE, new_note_text);
             long id = db.update(Entry_TABLE, cv, ENTRY_ID + "=?",
-                    new String []{String.valueOf(note.getId())}
+                    new String []{String.valueOf(entry.getId())}
             );
-
-            return new Entry(id, new_note_text, note.getTime());
+            // Update the given object
+            entry.setNote(new_note_text);
         }
         else {
             // The Entry can't be updated

@@ -65,7 +65,7 @@ public class WriteNote extends Activity {
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
         if(updating){
-            dataBase.updateNote(selectedNote, message);
+            dataBase.setEntryNote(selectedNote, message);
         }
         else{
             dataBase.insertEntry(selectedDay, message, null);

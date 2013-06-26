@@ -3,6 +3,7 @@ package com.github.groupENIGMA.journalEgocentrique;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
@@ -79,6 +80,22 @@ public class WriteNote extends Activity {
             dataBase.deleteEntry(selectedNote);
         }
         startActivity(new Intent(this, ListActivity.class));
+    }
+    
+    public void setMood(View view){
+        // Save the text
+        EditText text = (EditText) findViewById(R.id.editNote);
+        String message = text.getText().toString();
+        if(updating){
+            dataBase.setEntryNote(selectedNote, message);
+        }
+        else{
+            selectedNote = dataBase.insertEntry(selectedDay, message, null);
+        }
+    	Intent intent = new Intent(this, MoodActivity.class);
+    	Log.d("AAA", (selectedNote == null) + "");
+    	intent.putExtra("EntryId", selectedNote.getId());
+    	startActivity(intent);
     }
 
     @Override

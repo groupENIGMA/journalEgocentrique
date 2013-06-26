@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,7 +18,6 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,7 +64,6 @@ public class ListActivity extends Activity {
     	int height = display.getHeight();
     	ListView list = (ListView)findViewById(R.id.list);
     	ImageView photo = (ImageView)findViewById(R.id.dailyPhoto);
-    	ImageView mood = (ImageView)findViewById(R.id.emoticon);
     	ListView notes = (ListView)findViewById(R.id.notes);
     	FrameLayout frame = (FrameLayout)findViewById(R.id.frameLayout);
     	// Set the ListView size
@@ -84,11 +81,6 @@ public class ListActivity extends Activity {
     	param.width = width/2;
     	param.height = height/2;
     	photo.setLayoutParams(param);
-    	// Set the mood
-    	param = (FrameLayout.LayoutParams)mood.getLayoutParams();
-    	param.width = width/2;
-    	param.height = height/3;
-    	mood.setLayoutParams(param);
     	// Set the notes
     	param = (FrameLayout.LayoutParams)notes.getLayoutParams();
     	param.width = width/4;
@@ -164,10 +156,12 @@ public class ListActivity extends Activity {
     private void displayNotes(ListView list) {
         // Display the Notes
         List<Entry> notes = selectedDay.getEntries();
-        ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
+/*        ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
                 this, R.layout.row, R.id.textViewList, notes
         );
-        list.setAdapter(arrayAdapter);
+        list.setAdapter(arrayAdapter);*/
+        EntryAdapter entryAdapter = new EntryAdapter(this, R.layout.row_image, notes);
+        list.setAdapter(entryAdapter);
 
         // Add the onLongClickListener that activates the WriteNote activity
         // that can be used to update the Entry text

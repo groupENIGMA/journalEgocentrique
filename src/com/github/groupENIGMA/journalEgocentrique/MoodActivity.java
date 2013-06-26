@@ -30,7 +30,7 @@ public class MoodActivity extends Activity {
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	            database.setMood(myEntry, (Mood)imgAdapter.getItem(position));
+	            database.setEntryMood(myEntry, (Mood)imgAdapter.getItem(position));
 	            Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 	            startActivity(intent);
 	        }

@@ -13,7 +13,15 @@ public class Photo implements PhotoInterface {
     
     private String path;
     private String thumb_path;
-    
+
+    /**
+     * Creates a Photo
+     * <p>
+     * This constructor should be used only by a {@link DBInterface}
+     * implementation
+     *
+     * @param path
+     */
     public Photo(String path){
         this.path = path;
         thumb_path = createThumb();
@@ -27,7 +35,7 @@ public class Photo implements PhotoInterface {
      */
     private String createThumb(){
         if(getPath() != null){
-    	Bitmap img = BitmapFactory.decodeFile(this.getPath());
+        Bitmap img = BitmapFactory.decodeFile(this.getPath());
         Bitmap thumb = Bitmap.createScaledBitmap(img, 85, 85, false);
 
         //Gets the path and the directory name where the Photo is going to be saved
@@ -62,26 +70,12 @@ public class Photo implements PhotoInterface {
     }
 
     @Override
-    public boolean canBeUpdated() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean canBeDeleted() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public String getPath() {
-        
         return path;
     }
 
     @Override
     public String getPathThumb() {
-        // TODO Auto-generated method stub
         return thumb_path;
     }
 }

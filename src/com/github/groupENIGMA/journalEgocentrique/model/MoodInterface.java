@@ -4,9 +4,9 @@ import android.content.Context;
 
 /**
  * This class is used by {@link DBInterface} to model the moods that can
- * be associated with an Entry.
+ * be associated with an Day.
  * <p>
- * You shouldn't create new instance of this object using directly its
+ * You shouldn't create new instances of this object using directly its
  * constructors: you should only use the instances returned by
  * the {@link DBInterface}
  * 

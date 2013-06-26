@@ -9,6 +9,9 @@ public class Mood implements MoodInterface {
 
     /**
      * Create a new Mood with the given id
+     * <p>
+     * This constructor should be used only by a {@link DBInterface}
+     * implementation
      * 
      * @param id The mood id
      */

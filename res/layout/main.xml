@@ -39,13 +39,6 @@
             android:layout_gravity="right" >
         </ListView>
 
-        <ImageView
-            android:id="@+id/emoticon"
-            android:layout_width="490dp"
-            android:layout_height="162dp"
-            android:layout_gravity="bottom"
-            android:contentDescription="@string/emoticon"
-            android:src="@drawable/ic_launcher" />
     </FrameLayout>
 
 </RelativeLayout>

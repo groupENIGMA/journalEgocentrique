@@ -16,7 +16,7 @@
     <string name="album_name">Daily</string>
     <string name="title_activity_gallery">Gallery</string>
     <string name="title_activity_image">JournalEgocentrique</string>
-    <string name="newEntry">New entry</string>
+    <string name="newDay">New day</string>
     <string name="newNote">New note</string>
     <string name="settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
@@ -31,7 +31,8 @@
     <string name="defaultImage">Set default image</string>
     <string name="size">Font size</string>
     <string name="font">Font type</string>
-    <string name="update">Update interval for mood and notes</string>
+    <string name="update">Update interval for mood and entries</string>
+    <string name="mood">Set mood</string>
     
     <string-array name="textFont">
         <item>default</item>

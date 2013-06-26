@@ -43,4 +43,13 @@
         android:onClick="saveNote"
         android:text="@string/done" />
 
+    <Button
+        android:id="@+id/mood"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button"
+        android:layout_alignLeft="@+id/button"
+        android:onClick="setMood"
+        android:text="@string/mood" />
+
 </RelativeLayout>

@@ -108,10 +108,13 @@ public class Entry implements EntryInterface {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Entry note = (Entry) o;
+        Entry entry = (Entry) o;
 
-        if (id != note.id) return false;
-        if (!this.note.equals(note.note)) return false;
+        if (id != entry.id) return false;
+        if (mood != null ? !mood.equals(entry.mood) : entry.mood != null)
+            return false;
+        if (!note.equals(entry.note)) return false;
+        if (!time.equals(entry.time)) return false;
 
         return true;
     }
@@ -119,7 +122,9 @@ public class Entry implements EntryInterface {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + time.hashCode();
         result = 31 * result + note.hashCode();
+        result = 31 * result + (mood != null ? mood.hashCode() : 0);
         return result;
     }
 }

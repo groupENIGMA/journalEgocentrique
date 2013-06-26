@@ -34,7 +34,7 @@ public class WriteNote extends Activity {
             // Creating a new note
             updating = false;
             selectedDay = dataBase.getDay(
-                    intent.getLong(ListActivity.EXTRA_WRITENOTE_EntryId)
+                    intent.getLong(ListActivity.EXTRA_WRITENOTE_DayId)
             );
         }
         else {

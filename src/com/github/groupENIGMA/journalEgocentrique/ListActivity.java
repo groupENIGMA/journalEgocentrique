@@ -32,7 +32,7 @@ import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 public class ListActivity extends Activity {
 
     public final static String EXTRA_WRITENOTE_NoteId = "NoteId";
-    public final static String EXTRA_WRITENOTE_EntryId = "EntryId";
+    public final static String EXTRA_WRITENOTE_DayId = "EntryId";
     public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
@@ -124,7 +124,7 @@ public class ListActivity extends Activity {
     }
 
     /**
-     * Display the list of all Days having an associated Day
+     * Display the list of all Dates having an associated Day
      * It is also created a OnItemClickListener that at the click will display
      * the details of the day.
      *
@@ -208,13 +208,11 @@ public class ListActivity extends Activity {
         if(selectedDay == null){
             ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
             img.setImageResource(R.drawable.ic_launcher);
-            img = (ImageView)findViewById(R.id.emoticon);
-            img.setImageResource(R.drawable.ic_launcher);
         }
         /*
          * Day selected: display its images (if any) or the default ones
          * If the Day is editable also add the listeners that activate
-         * MoodActivity and PhotoActivity.to change the Mood and Photo
+         * PhotoActivity to change the Photo
          */
         else{
             boolean editable = selectedDay.canBeUpdated();
@@ -225,11 +223,6 @@ public class ListActivity extends Activity {
             	img.setImageResource(R.drawable.ic_launcher);
             //	dataBase.setPhoto(selectedDay, ((BitmapDrawable)img.getDrawable()).getBitmap());
             }
-            ImageView mood = (ImageView)findViewById(R.id.emoticon);
-            if(selectedDay.getMood() == null)
-                mood.setImageResource(R.drawable.ic_launcher);
-            else
-                mood.setImageResource((selectedDay.getMood().getEmoteId(getApplicationContext())));
             if(editable){
                 img.setOnTouchListener(new OnTouchListener()
                 {
@@ -239,18 +232,6 @@ public class ListActivity extends Activity {
                         // qui carica la vista per la fotoCamera
                         Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
                         intent.putExtra(EXTRA_MESSAGE, selectedDay.getId());
-                        startActivity(intent);
-                        return false;
-                    }
-                });
-                mood.setOnTouchListener(new OnTouchListener()
-                {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event)
-                    {
-                        // qui carica la vista per il moood
-                        Intent intent = new Intent(getApplicationContext(), MoodActivity.class);//ho messo MoodActivity.class
-                        intent.putExtra("EntryId", selectedDay.getId());
                         startActivity(intent);
                         return false;
                     }
@@ -288,9 +269,8 @@ public class ListActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-	        case R.id.newEntry:
+	        case R.id.newDay:
 	            selectedDay = dataBase.createDay();
-	            Log.e("New Day", selectedDay.getId() + "");//debug
 	            daysList = dataBase.getDatesList();
 	    	    ListView list = (ListView)findViewById(R.id.list);
 	    	    displayDaysList(list, daysList);
@@ -300,7 +280,7 @@ public class ListActivity extends Activity {
                         getApplicationContext(), WriteNote.class
                 );
                 intent.putExtra(EXTRA_WRITENOTE_NoteId, -1L);
-                intent.putExtra(EXTRA_WRITENOTE_EntryId, selectedDay.getId());
+                intent.putExtra(EXTRA_WRITENOTE_DayId, selectedDay.getId());
                 startActivity(intent);
                 return true;
 	        case R.id.settings:

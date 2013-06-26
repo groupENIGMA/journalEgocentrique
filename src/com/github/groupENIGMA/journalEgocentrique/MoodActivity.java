@@ -9,13 +9,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
-import com.github.groupENIGMA.journalEgocentrique.model.Day;
+import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 import com.github.groupENIGMA.journalEgocentrique.model.Mood;
 
 public class MoodActivity extends Activity {
 
 	private DB database;
-	private Day myDay;
+	private Entry myEntry;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,13 +24,13 @@ public class MoodActivity extends Activity {
 		long entryId = intent.getLongExtra("EntryId", 0);
 		database = new DB(getApplicationContext());
 		database.open();
-		myDay = database.getDay(entryId);
+		myEntry = database.getEntry(entryId);
 		GridView grid = (GridView)findViewById(R.id.moodGrid);
 		final MoodAdapter imgAdapter = new MoodAdapter(this);
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	            database.setMood(myDay, (Mood)imgAdapter.getItem(position));
+	            database.setEntryMood(myEntry, (Mood)imgAdapter.getItem(position));
 	            Intent intent = new Intent(getApplicationContext(), ListActivity.class);
 	            startActivity(intent);
 	        }

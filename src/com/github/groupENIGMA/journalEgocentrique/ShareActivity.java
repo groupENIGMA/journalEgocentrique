@@ -38,11 +38,11 @@ public class ShareActivity extends Activity {
 		note = null;
 		
 		displayNotes();
-		createCustomPhoto();
+		displayPhoto();
 	}
 	
 	// Create the union of mood and the photo
-	private void createCustomPhoto(){
+	private void displayPhoto(){
 		// Per ora mette la foto del giorno
 		ImageView img = (ImageView)findViewById(R.id.photoComposite);
 		if(day.getPhoto() != null)

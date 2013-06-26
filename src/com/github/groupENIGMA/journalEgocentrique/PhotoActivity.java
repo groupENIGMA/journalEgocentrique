@@ -40,8 +40,8 @@ public class PhotoActivity extends Activity {
 		final DB data = new DB(getApplicationContext());
 		Intent received = getIntent();
 		data.open();
-		final long entryId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
-		day = data.getDay(entryId);
+		final long dayId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
+		day = data.getDay(dayId);
 		Photo tmp = day.getPhoto();
 		final File tmpImg = new File(tempPath);
 		if(tmpImg.exists())

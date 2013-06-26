@@ -22,3 +22,4 @@ project.properties
 # Android Studio files
 .idea/
 journalEgocentrique.iml
+out/

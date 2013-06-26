@@ -82,7 +82,7 @@ public class Entry implements EntryInterface {
     public boolean canBeUpdated(SharedPreferences preferences) {
         // Get the timeout from the shared preferences
         int hours_timeout = preferences.getInt(
-                AppConstants.PREFERENCES_KEY_NOTE_TIMEOUT,
+                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
                 AppConstants.DEFAULT_NOTE_TIMEOUT
         );
         // Prepare a Calendar set to when the timeout for this Entry expires

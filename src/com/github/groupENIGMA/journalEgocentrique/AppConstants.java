@@ -19,7 +19,7 @@ public class AppConstants {
      * This is the name of the key used to save this time in the
      * SharedPreferences
      */
-    public static final String PREFERENCES_KEY_NOTE_TIMEOUT = "note_timeout";
+    public static final String PREFERENCES_KEY_ENTRY_TIMEOUT = "entry_timeout";
 
     /**
      * The default value for the Entry Timeout

@@ -9,7 +9,6 @@ public class Day implements DayInterface {
     private long id;
     private Calendar date;
     private Photo photo;
-    private Mood mood;
     private ArrayList<Entry> entries;
 
     /**
@@ -75,8 +74,6 @@ public class Day implements DayInterface {
 
         if (id != day.id) return false;
         if (!date.equals(day.date)) return false;
-        if (mood != null ? !mood.equals(day.mood) : day.mood != null)
-            return false;
         if (!entries.equals(day.entries)) return false;
         if (photo != null ? !photo.equals(day.photo) : day.photo != null)
             return false;
@@ -89,7 +86,6 @@ public class Day implements DayInterface {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + date.hashCode();
         result = 31 * result + (photo != null ? photo.hashCode() : 0);
-        result = 31 * result + (mood != null ? mood.hashCode() : 0);
         result = 31 * result + entries.hashCode();
         return result;
     }

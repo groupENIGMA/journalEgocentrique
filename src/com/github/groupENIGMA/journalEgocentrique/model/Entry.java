@@ -1,42 +1,33 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
-import java.util.ArrayList;
+import android.content.SharedPreferences;
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
+
 import java.util.Calendar;
-import java.util.List;
 
 public class Entry implements EntryInterface {
 
     private long id;
-    private Calendar date;
-    private Photo photo;
+    private Calendar time;
+    private String note;
     private Mood mood;
-    private ArrayList<Note> notes;
 
     /**
-     * Creates an Entry
+     * Create a new Entry with the given id, note and mood
      * <p>
-     * This constructor should be used only by a DBInterface implementation
-     * 
-     * @param id The unique id used by SQlite to identify the Entry
-     * @param date The date of Entry
-     * @param photo The photo for the Entry (can be null if the Entry doesn't
-     * have one)
-     * @param mood The mood of the Entry (can be null)
-     * @param notes The list containing all the Notes of the Entry (can be
-     * an empty List if the Entry doesn't have a Note)
+     * This constructor should be used only by a {@link DBInterface}
+     * implementation
+     *
+     * @param id the Entry id
+     * @param time the Calendar with date and time of Entry creation
+     * @param note the text note of the Entry
+     * @param mood the Mood of the Entry
      */
-    protected Entry(long id, Calendar date, Photo photo, Mood mood,
-            List<Note> notes) {
+    protected Entry(long id, Calendar time, String note, Mood mood) {
         this.id = id;
-        this.date = date;
-        this.photo = photo;
+        this.time = time;
+        this.note = note;
         this.mood = mood;
-        this.notes = (ArrayList<Note>) notes;
-    }
-
-    @Override
-    public Calendar getDay() {
-        return this.date;
     }
 
     @Override
@@ -45,37 +36,71 @@ public class Entry implements EntryInterface {
     }
 
     @Override
+    public Calendar getTime() {
+        return this.time;
+    }
+
+    @Override
+    public String getNote() {
+        return this.note;
+    }
+
+    /**
+     * Sets the text note of the Entry
+     * <p>
+     * Should be called only by {@link DBInterface} implementations.
+     * Only updates the object field, not the Entry saved the database.
+     * If you are looking for a method to update an Entry object and its copy in
+     * the database use {@link DBInterface#setEntryNote(Entry, String)}
+     *
+     * @param note The new note
+     */
+    protected void setNote(String note) {
+        this.note = note;
+    }
+
+    @Override
     public Mood getMood() {
         return this.mood;
     }
 
-    @Override
-    public Photo getPhoto() {
-        return this.photo;
+    /**
+     * Sets the Mood of the Entry
+     * <p>
+     * Should be called only by {@link DBInterface} implementations.
+     * Only updates the object field, not the Entry saved the database.
+     * If you are looking for a method to update an Entry object and its copy in
+     * the database use {@link DBInterface#setEntryMood(Entry, Mood)}
+     *
+     * @param mood The new mood. If you want to remove the mood you can use null
+     */
+    protected void setMood(Mood mood) {
+        this.mood = mood;
     }
 
     @Override
-    public List<Note> getNotes() {
-        return this.notes;
-    }
-
-    @Override
-    public boolean canBeDeleted() {
-        return canBeUpdated();
-    }
-
-    @Override
-    public boolean canBeUpdated() {
-        Calendar today = Calendar.getInstance();
-        // An Entry can be modified only during the day it was created
-        if (today.get(Calendar.YEAR) == date.get(Calendar.YEAR) &&
-                today.get(Calendar.MONTH) == date.get(Calendar.MONTH) &&
-                today.get(Calendar.DATE) == date.get(Calendar.DATE)) {
-            return true;
+    public boolean canBeUpdated(SharedPreferences preferences) {
+        // Get the timeout from the shared preferences
+        int hours_timeout = preferences.getInt(
+                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
+                AppConstants.DEFAULT_NOTE_TIMEOUT
+        );
+        // Prepare a Calendar set to when the timeout for this Entry expires
+        Calendar timeout = (Calendar) getTime().clone();
+        timeout.add(Calendar.HOUR, hours_timeout);
+        // Is the timeout expired?
+        Calendar rightNow = Calendar.getInstance();
+        if (rightNow.compareTo(timeout) >= 0) {
+            return false;  // An expired Entry can't be updated
         }
         else {
-            return false;
+            return true;
         }
+    }
+
+    @Override
+    public String toString() {
+        return getNote();
     }
 
     @Override
@@ -86,12 +111,10 @@ public class Entry implements EntryInterface {
         Entry entry = (Entry) o;
 
         if (id != entry.id) return false;
-        if (!date.equals(entry.date)) return false;
         if (mood != null ? !mood.equals(entry.mood) : entry.mood != null)
             return false;
-        if (!notes.equals(entry.notes)) return false;
-        if (photo != null ? !photo.equals(entry.photo) : entry.photo != null)
-            return false;
+        if (!note.equals(entry.note)) return false;
+        if (!time.equals(entry.time)) return false;
 
         return true;
     }
@@ -99,10 +122,9 @@ public class Entry implements EntryInterface {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + date.hashCode();
-        result = 31 * result + (photo != null ? photo.hashCode() : 0);
+        result = 31 * result + time.hashCode();
+        result = 31 * result + note.hashCode();
         result = 31 * result + (mood != null ? mood.hashCode() : 0);
-        result = 31 * result + notes.hashCode();
         return result;
     }
 }

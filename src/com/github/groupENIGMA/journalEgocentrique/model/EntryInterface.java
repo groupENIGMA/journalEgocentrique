@@ -1,13 +1,12 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
+import android.content.SharedPreferences;
 import java.util.Calendar;
-import java.util.List;
 
 /**
- * This class is used by {@link DBInterface} to model a daily
- * Entry of the diary.
+ * This class is used by {@link DBInterface} to model an Entry of the Diary.
  * <p>
- * You shouldn't create new instance of this object using directly its
+ * You shouldn't create new instances of this object using directly its
  * constructors: you should only use the instances returned by
  * the {@link DBInterface}
  * 
@@ -17,55 +16,40 @@ import java.util.List;
  */
 public interface EntryInterface {
 
-    /**
-     * Returns the day of the Entry
-     * 
-     * @return the day of the entry
-     */
-    public Calendar getDay();
-
-    /**
-     * Returns the unique id that identifies an Entry
-     * 
-     * @return the id
+    /** Returns the unique id of the Entry
+     *
+     * @return the unique id of the Entry
      */
     public long getId();
 
-    /**
-     * Returns the Mood associated with the Entry
-     * 
-     * @return the Mood if the Entry has a Mood set,
-     *         otherwise return null
+    /** Returns the date and time of when the Entry was created
+     *
+     * @return the Calendar of when the Entry was created
+     */
+    public Calendar getTime();
+
+    /** Returns the text note of the Entry.
+     *
+     * @return the text of the Entry
+     */
+    public String getNote();
+
+    /** Returns the Mood of the Entry
+     *
+     * @return the Mood (null if not set)
      */
     public Mood getMood();
 
     /**
-     * Returns the Photo associated with the Entry
-     * 
-     * @return the Photo if the Entry has a Photo set
-     *         otherwise return null
+     * Checks if the Entry can be updated.
+     * <p>
+     * A Entry can be updated only during a grace period set by the final
+     * user in the SharedPreferences
+     *
+     * @param preferences the shared preferences file where the Entry grace
+     *        period is saved.
+     * @return true if the Entry can be updated, false otherwise
      */
-    public Photo getPhoto();
-    
-    /**
-     * Returns a List of all the notes associates with the Entry
-     * 
-     * @return the List of Notes if at least one note is set,
-     *         otherwise return an empty List
-     */
-    public List<Note> getNotes();
+    public boolean canBeUpdated(SharedPreferences preferences);
 
-    /**
-     * Checks if the Entry can be deleted 
-     * 
-     * @return true if the Entry can be deleted, false otherwise
-     */
-    public boolean canBeDeleted();
-
-    /**
-     * Checks if the Entry can be modified 
-     * 
-     * @return true if the Entry can be modified, false otherwise
-     */
-    public boolean canBeUpdated();
 }

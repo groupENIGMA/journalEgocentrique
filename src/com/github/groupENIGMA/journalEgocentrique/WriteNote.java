@@ -10,15 +10,15 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
-import com.github.groupENIGMA.journalEgocentrique.model.Note;
 
 public class WriteNote extends Activity {
 
     private DB dataBase;
     private boolean updating;
-    private Entry selectedEntry;
-    private Note selectedNote;
+    private Day selectedDay;
+    private Entry selectedNote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,22 +28,22 @@ public class WriteNote extends Activity {
         // Open the connection to the database
         dataBase = new DB(getApplicationContext());
         dataBase.open();
-        // Check if we are updating or creating a Note
+        // Check if we are updating or creating a Entry
         Bundle intent = getIntent().getExtras();
         long noteId = intent.getLong(ListActivity.EXTRA_WRITENOTE_NoteId);
         if ( noteId == -1L) {
             // Creating a new note
             updating = false;
-            selectedEntry = dataBase.getEntry(
-                    intent.getLong(ListActivity.EXTRA_WRITENOTE_EntryId)
+            selectedDay = dataBase.getDay(
+                    intent.getLong(ListActivity.EXTRA_WRITENOTE_DayId)
             );
         }
         else {
-            // Updating an existing Note
+            // Updating an existing Entry
             updating = true;
-            selectedNote = dataBase.getNote(noteId);
+            selectedNote = dataBase.getEntry(noteId);
             EditText text = (EditText) findViewById(R.id.editNote);
-            text.append(selectedNote.getText());
+            text.append(selectedNote.getNote());
         }
     }
     
@@ -66,10 +66,10 @@ public class WriteNote extends Activity {
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
         if(updating){
-            dataBase.updateNote(selectedNote, message);
+            dataBase.setEntryNote(selectedNote, message);
         }
         else{
-            dataBase.insertNote(selectedEntry, message);
+            dataBase.insertEntry(selectedDay, message, null);
         }
         // Return to ListActivity
         startActivity(new Intent(this, ListActivity.class));
@@ -77,9 +77,25 @@ public class WriteNote extends Activity {
 
     public void deleteNote(View view){
         if(selectedNote != null) {
-            dataBase.deleteNote(selectedNote);
+            dataBase.deleteEntry(selectedNote);
         }
         startActivity(new Intent(this, ListActivity.class));
+    }
+    
+    public void setMood(View view){
+        // Save the text
+        EditText text = (EditText) findViewById(R.id.editNote);
+        String message = text.getText().toString();
+        if(updating){
+            dataBase.setEntryNote(selectedNote, message);
+        }
+        else{
+            selectedNote = dataBase.insertEntry(selectedDay, message, null);
+        }
+    	Intent intent = new Intent(this, MoodActivity.class);
+    	Log.d("AAA", (selectedNote == null) + "");
+    	intent.putExtra("EntryId", selectedNote.getId());
+    	startActivity(intent);
     }
 
     @Override

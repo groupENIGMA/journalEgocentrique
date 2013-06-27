@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
  
     <ImageView
-        android:id="@+id/img"
+        android:id="@+id/EntryMoodEmote"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="left"
@@ -12,10 +13,10 @@
         android:src="@drawable/ic_launcher" />
  
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/EntryNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/img"
-        android:layout_toRightOf="@+id/img" />
+        android:layout_alignTop="@+id/EntryMoodEmote"
+        android:layout_toRightOf="@+id/EntryMoodEmote" />
  
 </RelativeLayout>

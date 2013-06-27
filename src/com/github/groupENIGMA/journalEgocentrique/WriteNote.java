@@ -30,12 +30,12 @@ public class WriteNote extends Activity {
         dataBase.open();
         // Check if we are updating or creating a Entry
         Bundle intent = getIntent().getExtras();
-        long noteId = intent.getLong(MainActivity.EXTRA_WRITENOTE_NoteId);
+        long noteId = intent.getLong(MainActivity.EXTRA_WRITE_NOTE_NoteId);
         if ( noteId == -1L) {
             // Creating a new note
             updating = false;
             selectedDay = dataBase.getDay(
-                    intent.getLong(MainActivity.EXTRA_WRITENOTE_DayId)
+                    intent.getLong(MainActivity.EXTRA_WRITE_NOTE_DayId)
             );
         }
         else {

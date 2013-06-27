@@ -27,19 +27,20 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
 	
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-    	View rowView = convertView;
-    	if(rowView == null){
-    		   // This a new view we inflate the new layout
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.row_image, parent, false);
-    	}
+        View rowView = convertView;
+        if(rowView == null){
+            // This a new view we inflate the new layout
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            rowView = inflater.inflate(R.layout.main_row_entry, parent, false);
+        }
         // Now we can fill the layout with the right values
-        TextView tv = (TextView) rowView.findViewById(R.id.name);
+        TextView tv = (TextView) rowView.findViewById(R.id.EntryNote);
         tv.setText(entries.get(position).getNote());
-        ImageView img = (ImageView)rowView.findViewById(R.id.img);
-    	if(entries.get(position).getMood() != null){
-    		img.setImageResource(entries.get(position).getMood().getEmoteId(context));
-    	}
-    	return rowView;
+        ImageView img = (ImageView)rowView.findViewById(R.id.EntryMoodEmote);
+        if(entries.get(position).getMood() != null){
+            img.setImageResource(entries.get(position).getMood().getEmoteId(context));
+        }
+        return rowView;
     }
 }

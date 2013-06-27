@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 
 import android.view.*;
 
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,20 +21,19 @@ import android.view.View.OnTouchListener;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class MainActivity extends Activity {
 
-    public final static String EXTRA_WRITENOTE_NoteId = "NoteId";
-    public final static String EXTRA_WRITENOTE_DayId = "EntryId";
-    public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+    public final static String EXTRA_WRITE_NOTE_NoteId = "NoteId";
+    public final static String EXTRA_WRITE_NOTE_DayId = "EntryId";
+    public final static String EXTRA_PHOTO_ACTIVITY_DayId = "DayId";
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
 
@@ -44,6 +41,10 @@ public class MainActivity extends Activity {
     private DaysArrayAdapter daysListArrayAdapter;
     private Day selectedDay = null;
     private SharedPreferences sharedPreferences;
+
+    // Views for the Detail Section of the UI
+    ListView entryListView;
+    ImageView dailyPhotoHeader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,28 +58,20 @@ public class MainActivity extends Activity {
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 MODE_PRIVATE
         );
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         // Open database connection
         dataBase.open();
         // Display the list of days with an Entry
-        displayDaysList();
-
+        displayMasterLayout();
+        // Prepare the Detail Layout
+        prepareDetailLayout();
 
         // Display the last viewed Day (if any)
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedDay = dataBase.getDay(id);
-            // Display the Photo and Mood Image
-            displayImages();
-            // Display the Notes
-            ListView notesListView = (ListView)findViewById(R.id.notes);
-            displayNotes(notesListView);
+            displayDetailLayout();
         }
         else {
             selectedDay = null;
@@ -91,12 +84,21 @@ public class MainActivity extends Activity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Database connection must be reopened if the app was previously
+        // "paused" with onPause()
+        if (!dataBase.isOpen()) {
+            dataBase.open();
+        }
+    }
+
     /**
-     * Display the list of all Dates having an associated Day
-     * It is also created a OnItemClickListener that at the click will display
-     * the details of the day.
+     * Display the "Master" section of the UI (the list of Days)
      */
-    private void displayDaysList(){
+    private void displayMasterLayout() {
         // Get the ListView that display the days
         ListView daysListView = (ListView)findViewById(R.id.daysList);
 
@@ -117,104 +119,113 @@ public class MainActivity extends Activity {
                 selectedDay = dataBase.getDay(
                         (Calendar) adapter.getItemAtPosition(position)
                 );
-                // Refresh notes and images
-                displayImages();
-                // Display the Notes
-                ListView notesListView = (ListView)findViewById(R.id.notes);
-                displayNotes(notesListView);
-                // Adds the header with the photos
-                View headerView = ((LayoutInflater) getApplicationContext()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE))
-                        .inflate(R.layout.main_detail_photos, null, false);
-                notesListView.addHeaderView(headerView);
+                // Display the Detail of the selected day
+                displayDetailLayout();
             }
         };
         daysListView.setOnItemClickListener(clickListener);
     }
 
     /**
-     * Displays the Notes of the selectedDay
+     * Prepare the "Detail" section of the UI (Daily photo + Entry)
      *
-     * @param list The ListView that will be used to display the Day
+     * This is in a separate method from displayDetailLayout because
+     * addHeaderView can be called only once per ListView
      */
-    private void displayNotes(ListView list) {
-        // Display the Notes
-        List<Entry> notes = selectedDay.getEntries();
-/*        ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
-                this, R.layout.row, R.id.textViewList, notes
-        );
-        list.setAdapter(arrayAdapter);*/
-        EntryAdapter entryAdapter = new EntryAdapter(this, R.layout.row_image, notes);
-        list.setAdapter(entryAdapter);
-
-        // Add the onLongClickListener that activates the WriteNote activity
-        // that can be used to update the Entry text
-        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
-
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapter, View view,
-                int position, long id) {
-                // Enable the onLongClickListener only if the Entry can be
-                // updated.
-                Entry selectedNote = (Entry) adapter.getItemAtPosition(position);
-                if (selectedNote.canBeUpdated(sharedPreferences)) {
-                    Intent intent = new Intent(
-                            getApplicationContext(), WriteNote.class
-                    );
-                    intent.putExtra(
-                            EXTRA_WRITENOTE_NoteId, selectedNote.getId()
-                    );
-                    startActivity(intent);
-                    return true;
-                }
-                // The Entry can't be updated
-                else {
-                    return false;
-                }
-            }
-        };
-        list.setOnItemLongClickListener(clickListener);
+    private void prepareDetailLayout() {
+        // Get the ListView
+        entryListView = (ListView) findViewById(R.id.EntryList);
+        // Get the View with the daily Photo
+        LayoutInflater inflater = LayoutInflater.from(this);
+        dailyPhotoHeader = (ImageView) inflater
+                .inflate(R.layout.main_detail_photo_header, null, false);
+        // Add the header with the DailyPhoto to the detailView
+        entryListView.addHeaderView(dailyPhotoHeader);
     }
 
     /**
-     * Sets the correct image for photo and mood selected by the user.
+     * Display the "Detail" section of the UI (Daily photo + Entry)
      */
-    private void displayImages(){
-        /*
-        * No selected entry; display the default images
-        */
-        if(selectedDay == null){
-            ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
-            img.setImageResource(R.drawable.ic_launcher);
-        }
-        /*
-         * Day selected: display its images (if any) or the default ones
-         * If the Day is editable also add the listeners that activate
-         * PhotoActivity to change the Photo
-         */
-        else{
-            boolean editable = selectedDay.canBeUpdated();
-            ImageView img = (ImageView) findViewById(R.id.dailyPhoto);
-            if(selectedDay.getPhoto() != null)
-                img.setImageURI(Uri.parse(selectedDay.getPhoto().getPath()));
-            else{
-            	img.setImageResource(R.drawable.ic_launcher);
-            //	dataBase.setPhoto(selectedDay, ((BitmapDrawable)img.getDrawable()).getBitmap());
+    private void displayDetailLayout() {
+        // The Detail section will be displayed only when there's a Day selected
+        if (selectedDay != null) {
+            // Get the list of Entry for the selectedDay
+            List<Entry> entries = selectedDay.getEntries();
+
+            // Prepare the custom ArrayAdapter
+            EntryAdapter entryAdapter = new EntryAdapter(
+                    this, R.layout.main_row_entry, entries
+            );
+
+            // If available, display the Photo in the header
+            Photo dailyPhoto = selectedDay.getPhoto();
+            if (dailyPhoto != null) {
+                String photoPath = dailyPhoto.getPathThumb();
+                dailyPhotoHeader.setImageURI(Uri.parse(photoPath));
             }
-            if(editable){
-                img.setOnTouchListener(new OnTouchListener()
+
+            // If the selected Day can be updated add the listener that starts
+            // the PhotoActivity (to take a new Photo)
+            if (selectedDay.canBeUpdated()) {
+                dailyPhotoHeader.setOnTouchListener(new OnTouchListener()
                 {
                     @Override
                     public boolean onTouch(View v, MotionEvent event)
                     {
-                        // qui carica la vista per la fotoCamera
-                        Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);//ho messo PhotoActivity.class
-                        intent.putExtra(EXTRA_MESSAGE, selectedDay.getId());
+                        // Start the PhotoActivity
+                        Intent intent = new Intent(
+                                getApplicationContext(),
+                                PhotoActivity.class
+                        );
+                        intent.putExtra(
+                                EXTRA_PHOTO_ACTIVITY_DayId,
+                                selectedDay.getId()
+                        );
                         startActivity(intent);
                         return false;
                     }
                 });
             }
+            // The Photo can't be updated
+            else {
+                // TODO
+                // A Toast saying something like: "You can't change this photo"
+                // or something similar
+
+                // Remove this when the Toast is ready
+                dailyPhotoHeader.setOnTouchListener(null);
+            }
+
+            // Set the custom ArrayAdapter to the detailView
+            entryListView.setAdapter(entryAdapter);
+
+            // Add the onLongClickListener that activates the WriteNote activity
+            // that can be used to update the Entry text
+            OnItemClickListener clickListener = new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> adapter, View view,
+                                               int position, long id) {
+                    // Enable the onLongClickListener only if the Entry can be
+                    // updated.
+                    Entry selectedEntry = (Entry) adapter
+                            .getItemAtPosition(position);
+                    if (selectedEntry.canBeUpdated(sharedPreferences)) {
+                        Intent intent = new Intent(
+                                getApplicationContext(), WriteNote.class
+                        );
+                        intent.putExtra(
+                                EXTRA_WRITE_NOTE_NoteId, selectedEntry.getId()
+                        );
+                        startActivity(intent);
+                    }
+                    // The Entry can't be updated
+                    else {
+                        // TODO display a Toast with the error
+                    }
+                }
+            };
+            entryListView.setOnItemClickListener(clickListener);
         }
     }
 
@@ -267,8 +278,8 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(
                         getApplicationContext(), WriteNote.class
                 );
-                intent.putExtra(EXTRA_WRITENOTE_NoteId, -1L);
-                intent.putExtra(EXTRA_WRITENOTE_DayId, selectedDay.getId());
+                intent.putExtra(EXTRA_WRITE_NOTE_NoteId, -1L);
+                intent.putExtra(EXTRA_WRITE_NOTE_DayId, selectedDay.getId());
                 startActivity(intent);
                 return true;
 	        case R.id.settings:

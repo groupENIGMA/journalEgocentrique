@@ -32,7 +32,7 @@ import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 
-public class ListActivity extends Activity {
+public class MainActivity extends Activity {
 
     public final static String EXTRA_WRITENOTE_NoteId = "NoteId";
     public final static String EXTRA_WRITENOTE_DayId = "EntryId";

@@ -48,7 +48,7 @@ public class GalleryActivity extends Activity {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	    	case R.id.main:
-	    		Intent main = new Intent(getApplicationContext(), ListActivity.class);
+	    		Intent main = new Intent(getApplicationContext(), MainActivity.class);
 	    		startActivity(main);
 	    		return true;
 	    	case R.id.settings:

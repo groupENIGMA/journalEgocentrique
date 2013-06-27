@@ -40,7 +40,7 @@ public class PhotoActivity extends Activity {
 		final DB data = new DB(getApplicationContext());
 		Intent received = getIntent();
 		data.open();
-		final long dayId = received.getLongExtra(ListActivity.EXTRA_MESSAGE, 0);
+		final long dayId = received.getLongExtra(MainActivity.EXTRA_MESSAGE, 0);
 		day = data.getDay(dayId);
 		Photo tmp = day.getPhoto();
 		final File tmpImg = new File(tempPath);
@@ -65,7 +65,7 @@ public class PhotoActivity extends Activity {
 		
 		/*
 		 * Al click di accept salva l'immagine associandola alla corretta Day,
-		 * poi ritorna alla ListActivity
+		 * poi ritorna alla MainActivity
 		 */
 		Button accept = (Button)findViewById(R.id.accept);
 		accept.setOnClickListener(new OnClickListener() {
@@ -73,7 +73,7 @@ public class PhotoActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				data.setDayPhoto(day, mImageBitmap);
-				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 				data.close();
 				if(tmpImg.exists())
 					tmpImg.delete();
@@ -82,14 +82,14 @@ public class PhotoActivity extends Activity {
 		});
 		
 		/*
-		 * Al click di delete non salva l'immagine attuale e torna alla ListActivity
+		 * Al click di delete non salva l'immagine attuale e torna alla MainActivity
 		 */
 		Button delete = (Button)findViewById(R.id.delete);
 		delete.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(), ListActivity.class);
+				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 				data.close();
 				if(tmpImg.exists())
 					tmpImg.delete();

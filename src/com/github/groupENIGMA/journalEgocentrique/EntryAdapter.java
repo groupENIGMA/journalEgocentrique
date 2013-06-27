@@ -31,7 +31,7 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
     	if(rowView == null){
     		   // This a new view we inflate the new layout
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.row_image, parent, false);
+            rowView = inflater.inflate(resource, parent, false);
     	}
         // Now we can fill the layout with the right values
         TextView tv = (TextView) rowView.findViewById(R.id.name);

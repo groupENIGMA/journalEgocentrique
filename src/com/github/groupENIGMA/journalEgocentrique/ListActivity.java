@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -22,6 +25,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -165,31 +169,46 @@ public class ListActivity extends Activity {
 
         // Add the onLongClickListener that activates the WriteNote activity
         // that can be used to update the Entry text
-        OnItemLongClickListener clickListener = new OnItemLongClickListener() {
+        OnItemClickListener clickListener = new OnItemClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapter, View view,
+            public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {
                 // Enable the onLongClickListener only if the Entry can be
                 // updated.
-                Entry selectedNote = (Entry) adapter.getItemAtPosition(position);
+                final Entry selectedNote = (Entry) adapter.getItemAtPosition(position);
                 if (selectedNote.canBeUpdated(sharedPreferences)) {
-                    Intent intent = new Intent(
-                            getApplicationContext(), WriteNote.class
-                    );
-                    intent.putExtra(
-                            EXTRA_WRITENOTE_NoteId, selectedNote.getId()
-                    );
-                    startActivity(intent);
-                    return true;
-                }
-                // The Entry can't be updated
-                else {
-                    return false;
+                	AlertDialog.Builder build = new AlertDialog.Builder(ListActivity.this);
+                	build.setMessage("Select the action");
+                	build.setNegativeButton("Delete note", new OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int id) {
+							dataBase.deleteEntry(selectedNote);
+							Toast toast = Toast.makeText(getApplicationContext(), "Deleted", Toast.LENGTH_LONG);
+							toast.show();
+							// fare refresh schermata!
+						}	
+                	});
+                	build.setPositiveButton("Update note", new OnClickListener(){
+                		
+                		@Override
+                		public void onClick(DialogInterface dialog, int id){
+                			Intent intent = new Intent(
+                                    getApplicationContext(), WriteNote.class
+                            );
+                            intent.putExtra(
+                                    EXTRA_WRITENOTE_NoteId, selectedNote.getId()
+                            );
+                            startActivity(intent);
+                		}
+                	});
+                	AlertDialog alert = build.create();
+                	alert.show();
                 }
             }
         };
-        list.setOnItemLongClickListener(clickListener);
+        list.setOnItemClickListener(clickListener);
     }
 
     /**

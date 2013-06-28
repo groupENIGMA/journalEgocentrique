@@ -234,7 +234,11 @@ public class MainActivity extends Activity {
                                         "Deleted",
                                         Toast.LENGTH_LONG);
                                 toast.show();
-                                // fare refresh schermata!
+                                Intent intent = new Intent(
+                                        getApplicationContext(),
+                                        MainActivity.class
+                                );
+                                startActivity(intent);
                             }
                         });
 

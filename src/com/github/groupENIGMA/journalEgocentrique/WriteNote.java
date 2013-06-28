@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -24,7 +22,6 @@ public class WriteNote extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_note);
-        setView();
         // Open the connection to the database
         dataBase = new DB(getApplicationContext());
         dataBase.open();
@@ -46,21 +43,11 @@ public class WriteNote extends Activity {
             text.append(selectedNote.getNote());
         }
     }
-    
-    /**
-     * Sets dinamically proportioned the size of the EditText
-     */
-    private void setView(){
-    	Display display = getWindowManager().getDefaultDisplay();
-    	int width = display.getWidth();
-    	int height = display.getHeight();
-    	EditText text = (EditText)findViewById(R.id.editNote);
-    	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)text.getLayoutParams();
-    	params.height = height;
-    	params.width = width/2;
-    	text.setLayoutParams(params);
-    }
 
+    /**
+     * Save the current note.
+     * @param view
+     */
     public void saveNote(View view) {
         // Save the text
         EditText text = (EditText) findViewById(R.id.editNote);
@@ -74,14 +61,12 @@ public class WriteNote extends Activity {
         // Return to MainActivity
         startActivity(new Intent(this, MainActivity.class));
     }
-
-    public void deleteNote(View view){
-        if(selectedNote != null) {
-            dataBase.deleteEntry(selectedNote);
-        }
-        startActivity(new Intent(this, MainActivity.class));
-    }
     
+    /**
+     * Sets a mood for the current note launching an intent
+     * to MoodActivity.
+     * @param view
+     */
     public void setMood(View view){
         // Save the text
         EditText text = (EditText) findViewById(R.id.editNote);

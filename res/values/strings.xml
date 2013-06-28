@@ -41,24 +41,16 @@
     </string-array>
     
     <string-array name="textSize">
-        <item>8</item>
-        <item>10</item>
-        <item>12</item>
-        <item>14</item>
-        <item>16</item>
-        <item>18</item>
-        <item>20</item>
+        <item>micro</item>
+        <item>small</item>
+        <item>medium</item>
+        <item>large</item>
     </string-array>
     
     <string-array name="updateInterval">
         <item>1</item>
         <item>2</item>
         <item>4</item>
-        <item>6</item>
-        <item>10</item>
-        <item>14</item>
-        <item>18</item>
-        <item>24</item>
     </string-array>
 
 

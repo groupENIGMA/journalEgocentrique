@@ -95,10 +95,10 @@ public class PhotoActivity extends Activity {
 	 *  The button must be enabled ONLY IF the actual image isn't the default avatar
 	 */
 	public void removeImage(View view){
-		DB data = new DB(getApplicationContext());
-		data.open();
 		data.removePhoto(day);
 		actualImg.setImageResource(R.drawable.ic_launcher);
+		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+		startActivity(intent);
 	}
 	
 	/**
@@ -108,7 +108,6 @@ public class PhotoActivity extends Activity {
 	public void accept(View view){
 		data.setDayPhoto(day, mImageBitmap);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-		data.close();
 		if(tmpImg.exists())
 			tmpImg.delete();
 		startActivity(intent);

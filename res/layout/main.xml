@@ -3,21 +3,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:baselineAligned="false">
+    android:baselineAligned="false"
+    android:background="@color/light_gray">
 
     <!-- Master Layout -->
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:orientation="horizontal"
-            android:background="@android:color/darker_gray"
-            android:baselineAligned="false">
+            android:background="@color/navy_blue"
+            android:baselineAligned="false"
+            android:shadowColor="@color/black"
+            android:shadowRadius="1">
 
             <TextView
                 android:id="@+id/ListDaysHeaderTitle"
@@ -29,7 +33,9 @@
                 android:textColor="@android:color/white"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                android:shadowColor="@color/light_blue"
+                android:shadowRadius="1">
             </TextView>
 
             <LinearLayout
@@ -62,13 +68,16 @@
     <LinearLayout
         android:layout_height="match_parent"
         android:layout_width="0dp"
-        android:layout_weight="3">
+        android:layout_weight="3"
+        android:layout_marginLeft="0dp">
 
         <ListView
             android:id="@+id/EntryList"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_width="match_parent"
-            android:layout_margin="@dimen/activity_horizontal_margin" >
+            android:layout_margin="@dimen/activity_horizontal_margin"
+            android:divider="@null"
+            android:dividerHeight="10dp">
         </ListView>
 
     </LinearLayout>

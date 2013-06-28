@@ -2,7 +2,8 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@color/white">
  
     <ImageView
         android:id="@+id/EntryMoodEmote"
@@ -10,12 +11,14 @@
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:paddingLeft="0dip"
+        android:padding="@dimen/MainActivityHeaderContentPadding"
         android:src="@drawable/ic_launcher" />
  
     <TextView
         android:id="@+id/EntryNote"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="@dimen/MainActivityHeaderContentPadding"
         android:layout_alignTop="@+id/EntryMoodEmote"
         android:layout_toRightOf="@+id/EntryMoodEmote" />
  

@@ -7,14 +7,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Display;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -41,37 +39,30 @@ public class ShareActivity extends Activity {
 		displayPhoto();
 	}
 	
-	// Create the union of mood and the photo
+	/**
+	 * Display the day-photo that can be sent
+	 */
 	private void displayPhoto(){
-		// Per ora mette la foto del giorno
 		ImageView img = (ImageView)findViewById(R.id.photoComposite);
 		if(day.getPhoto() != null)
 			img.setImageURI(Uri.parse(day.getPhoto().getPath()));
-	 	Display display = getWindowManager().getDefaultDisplay();
-    	int width = display.getWidth();
-    	int height = display.getHeight();
-    	RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)img.getLayoutParams();
-    	params.height = height/2;
-    	params.width = width/2;
-    	img.setLayoutParams(params);
 	}
 	
-	// Creates the list of the notes. Only the selected will be sended.
+	/** 
+	 * Creates the list of the notes. Only the selected will be sent.
+	 */
 	private void displayNotes(){
-	 	Display display = getWindowManager().getDefaultDisplay();
-    	int width = display.getWidth();
 		List<Entry> notes = day.getEntries();
         ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
                 this, R.layout.row, R.id.textViewList, notes
         );
         ListView list = (ListView)findViewById(R.id.notes);
         list.setAdapter(arrayAdapter);
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams)list.getLayoutParams();
-        params.width = width /2;
-        list.setLayoutParams(params);
 
-        // Add the onLongClickListener that permits to choose the
-        // note that will be sent
+        /*
+         *  Add the onLongClickListener that permits to choose the
+         *  note that will be sent
+        */
         OnItemClickListener clickListener = new OnItemClickListener() {
 
             @Override
@@ -84,8 +75,9 @@ public class ShareActivity extends Activity {
         list.setOnItemClickListener(clickListener);
     }
 
-	// Start the intent for sharing the composite photo and the selected note.
-	// This method is invocated when the user press on SHARE! button
+	/** Start the intent for sharing the composite photo and the selected note.
+	 *	This method is called when the user press on SHARE! button
+	 */
 	public void share(View view){
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("*/*");
@@ -94,7 +86,7 @@ public class ShareActivity extends Activity {
 		share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
 		File tmp = new File(day.getPhoto().getPath());
 		if(tmp != null)
-			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));// per ora ho messo la photo poi vediamo di cambiare con la custom photo
+			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));
 		startActivity(Intent.createChooser(share, "Share to..."));
 	}
 }

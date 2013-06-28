@@ -2,9 +2,12 @@
 <resources>
     <color name="navy_blue">#2c3e50</color>
     <color name="orange_red">#fc4349</color>
-    <color name="light_gray">#fff7f7f7</color>
+    <color name="light_gray">#fff4f4f4</color>
     <color name="light_blue">#6dbcdb</color>
     <color name="white">#ffffff</color>
+
+    <color name="shadow_gray_end">#ffcdcdcd</color>
+    <color name="shadow_gray_start">#ffe6e6e6</color>
 
     <color name="black">#000000</color>
 </resources>

@@ -93,6 +93,8 @@ public class MainActivity extends Activity {
         if (!dataBase.isOpen()) {
             dataBase.open();
         }
+        displayDetailLayout();
+
     }
 
     /**

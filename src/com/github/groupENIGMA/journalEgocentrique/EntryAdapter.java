@@ -32,7 +32,7 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
             // This a new view we inflate the new layout
             LayoutInflater inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.main_row_entry, parent, false);
+            rowView = inflater.inflate(resource, parent, false);
         }
         // Now we can fill the layout with the right values
         TextView tv = (TextView) rowView.findViewById(R.id.EntryNote);
@@ -41,6 +41,8 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         if(entries.get(position).getMood() != null){
             img.setImageResource(entries.get(position).getMood().getEmoteId(context));
         }
+        else
+        	img.setImageResource(R.drawable.ic_launcher);
         return rowView;
     }
 }

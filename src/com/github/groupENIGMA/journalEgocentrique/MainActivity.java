@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,8 @@ public class MainActivity extends Activity {
     public final static String EXTRA_WRITE_NOTE_NoteId = "NoteId";
     public final static String EXTRA_WRITE_NOTE_DayId = "EntryId";
     public final static String EXTRA_PHOTO_ACTIVITY_DayId = "DayId";
+    public final static String EXTRA_SETTINGS_TextSize = "text_size";
+    public final static String EXTRA_SETTINGS_TextFont = "text_font";
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
 
@@ -42,6 +45,8 @@ public class MainActivity extends Activity {
     private DaysArrayAdapter daysListArrayAdapter;
     private Day selectedDay = null;
     private SharedPreferences sharedPreferences;
+    private int textSize = R.array.textSize;
+    private Typeface textFont;
 
     // Views for the Detail Section of the UI
     ListView entryListView;
@@ -59,7 +64,14 @@ public class MainActivity extends Activity {
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 MODE_PRIVATE
         );
-
+        Intent settings = getIntent();
+        if(settings != null){
+        	textSize = settings.getIntExtra(EXTRA_SETTINGS_TextSize, 12);
+        	String font = settings.getStringExtra(EXTRA_SETTINGS_TextFont);
+        	if(font != null)
+        		textFont = Typeface.create(settings.getStringExtra(EXTRA_SETTINGS_TextFont), Typeface.NORMAL);
+        }
+        
         // Open database connection
         dataBase.open();
         // Display the list of days with an Entry
@@ -155,7 +167,7 @@ public class MainActivity extends Activity {
 
             // Prepare the custom ArrayAdapter
             EntryAdapter entryAdapter = new EntryAdapter(
-                    this, R.layout.main_row_entry, entries
+                    this, R.layout.main_row_entry, entries, textSize, textFont
             );
 
             // If available, display the Photo in the header

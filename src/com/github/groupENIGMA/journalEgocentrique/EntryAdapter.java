@@ -3,6 +3,7 @@ package com.github.groupENIGMA.journalEgocentrique;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +18,16 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
 	private Context context;
 	private List<Entry> entries;
 	private int resource;
+	private int textSize;
+	private Typeface font;
 	
-	public EntryAdapter(Context context, int resource, List<Entry> entries){
+	public EntryAdapter(Context context, int resource, List<Entry> entries, int textSize, Typeface font){
 		super(context, resource, entries);
 		this.context = context;
 		this.entries = entries;
 		this.resource = resource;
+		this.textSize = textSize;
+		this.font = font;
 	}
 	
     @Override
@@ -37,6 +42,8 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         // Now we can fill the layout with the right values
         TextView tv = (TextView) rowView.findViewById(R.id.EntryNote);
         tv.setText(entries.get(position).getNote());
+        tv.setTextSize(textSize);
+        tv.setTypeface(font);
         ImageView img = (ImageView)rowView.findViewById(R.id.EntryMoodEmote);
         if(entries.get(position).getMood() != null){
             img.setImageResource(entries.get(position).getMood().getEmoteId(context));

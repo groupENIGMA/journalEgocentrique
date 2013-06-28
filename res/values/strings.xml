@@ -35,16 +35,16 @@
     <string name="mood">Set mood</string>
     
     <string-array name="textFont">
-        <item>default</item>
-        <item>sans_serif</item>
-        <item>monospace</item>
+        <item>DEFAULT_BOLD</item>
+        <item>SERIF</item>
+        <item>MONOSPACE</item>
     </string-array>
     
     <string-array name="textSize">
-        <item>micro</item>
-        <item>small</item>
-        <item>medium</item>
-        <item>large</item>
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
     </string-array>
     
     <string-array name="updateInterval">

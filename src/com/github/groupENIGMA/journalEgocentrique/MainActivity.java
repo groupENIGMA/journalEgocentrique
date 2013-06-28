@@ -165,6 +165,8 @@ public class MainActivity extends Activity {
                 String photoPath = dailyPhoto.getPathThumb();
                 dailyPhotoHeader.setImageURI(Uri.parse(photoPath));
             }
+            else
+            	dailyPhotoHeader.setImageResource(R.drawable.ic_launcher);
 
             // If the selected Day can be updated add the listener that starts
             // the PhotoActivity (to take a new Photo)

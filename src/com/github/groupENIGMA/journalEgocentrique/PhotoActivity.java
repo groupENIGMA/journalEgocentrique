@@ -37,7 +37,6 @@ public class PhotoActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
-		setView();
 		actualImg = (ImageView)findViewById(R.id.photo);
 		data = new DB(getApplicationContext());
 		Intent received = getIntent();
@@ -54,33 +53,16 @@ public class PhotoActivity extends Activity {
 			actualImg.setImageURI(Uri.parse(tmp.getPath()));
 	}
 	
-    /**
-     * Sets dinamically proportioned the size of the Entries, Images and Notes
-     */
-    private void setView(){
-    	Display display = getWindowManager().getDefaultDisplay();
-    	int width = display.getWidth();
-    	int height = display.getHeight();
-    	
-    	ImageView photo = (ImageView)findViewById(R.id.photo);
-    	LinearLayout list = (LinearLayout)findViewById(R.id.linear_layout);
-    	Button button = (Button)findViewById(R.id.button);
-    	
-    	// Set the photo
-    	FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)photo.getLayoutParams();
-    	params.width = width * 3 / 4;
-    	photo.setLayoutParams(params);
-    	// Set the list
-    	params = (FrameLayout.LayoutParams)list.getLayoutParams();
-    	params.width = width/6;
-    	list.setLayoutParams(params);
-	}
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		handleCameraPhoto(data);
 	}
 	
+	/**
+	 * Takes and displays the camera's photo.
+	 * It also save in a temporary file this photo. 
+	 * @param intent Intent received from the Camera Activity
+	 */
 	private void handleCameraPhoto(Intent intent) {
 	    Bundle extras = intent.getExtras();
 	    mImageBitmap = (Bitmap) extras.get("data");
@@ -146,6 +128,9 @@ public class PhotoActivity extends Activity {
 		startActivityForResult(intent, CAMERA_REQUEST);
 	}
 	
+	/**
+	 * Close the connection at the database
+	 */
 	protected void onPause(){
 		super.onPause();
 		data.close();

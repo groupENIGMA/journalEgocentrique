@@ -61,4 +61,9 @@
         <item>24</item>
     </string-array>
 
+
+    <!-- MainActivity -->
+    <string name="ListDaysHeaderTitle">Days</string>
+    <string name="ListDaysAddEntry">Add</string>
+
 </resources>

@@ -47,4 +47,16 @@ public class AppConstants {
      */
     public static final String EXTERNAL_STORAGE_PHOTO_DIR =
             "JournalEgocentrique Photos";
+
+    /**
+     * Photo filename prefix.
+     * The final filename will be: prefix + id + ".jpg"
+     */
+    public static final String PHOTO_FILENAME_PREFIX = "";
+
+    /**
+     * Thumb filename prefix.
+     * The final filename will be: prefix + id + ".jpg"
+     */
+    public static final String THUMB_FILENAME_PREFIX = "thumb_";
 }

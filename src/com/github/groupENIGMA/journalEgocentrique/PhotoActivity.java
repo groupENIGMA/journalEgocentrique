@@ -25,9 +25,11 @@ import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 public class PhotoActivity extends Activity {
 
 	private static final int CAMERA_REQUEST = 1; 
+	private DB data;
 	private ImageView actualImg;
 	private Bitmap mImageBitmap;
 	private Day day;
+	private File tmpImg;
 	private String tempPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
 			File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR + "~temp.jpg";
 	
@@ -37,7 +39,7 @@ public class PhotoActivity extends Activity {
 		setContentView(R.layout.activity_photo);
 		setView();
 		actualImg = (ImageView)findViewById(R.id.photo);
-		final DB data = new DB(getApplicationContext());
+		data = new DB(getApplicationContext());
 		Intent received = getIntent();
 		data.open();
 		final long dayId = received.getLongExtra(
@@ -45,59 +47,11 @@ public class PhotoActivity extends Activity {
         );
 		day = data.getDay(dayId);
 		Photo tmp = day.getPhoto();
-		final File tmpImg = new File(tempPath);
+		tmpImg = new File(tempPath);
 		if(tmpImg.exists())
 			actualImg.setImageURI(Uri.parse(tempPath));
 		else if(tmp != null)
 			actualImg.setImageURI(Uri.parse(tmp.getPath()));
-		
-		/*
-		 * Al click di takePicture lancia la fotocamera di sistema
-		 */
-		Button takePicture = (Button)findViewById(R.id.take_picture);
-		takePicture.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-			//	data.close();
-				startActivityForResult(intent, CAMERA_REQUEST);
-			}
-		});
-		
-		/*
-		 * Al click di accept salva l'immagine associandola alla corretta Day,
-		 * poi ritorna alla MainActivity
-		 */
-		Button accept = (Button)findViewById(R.id.accept);
-		accept.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				data.setDayPhoto(day, mImageBitmap);
-				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-				data.close();
-				if(tmpImg.exists())
-					tmpImg.delete();
-				startActivity(intent);
-			}
-		});
-		
-		/*
-		 * Al click di delete non salva l'immagine attuale e torna alla MainActivity
-		 */
-		Button delete = (Button)findViewById(R.id.delete);
-		delete.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-				data.close();
-				if(tmpImg.exists())
-					tmpImg.delete();
-				startActivity(intent);
-			}
-		});
 	}
 	
     /**
@@ -159,13 +113,42 @@ public class PhotoActivity extends Activity {
         }
 	}
 	
-	// Remove the daily photo and sets the default avatar
-	// The button must be enabled ONLY IF the actual image isn't the default avatar
+	/**
+	 *  Remove the daily photo and sets the default avatar
+	 *  The button must be enabled ONLY IF the actual image isn't the default avatar
+	 */
 	public void removeImage(View view){
 		DB data = new DB(getApplicationContext());
 		data.open();
 		data.removePhoto(day);
 		actualImg.setImageResource(R.drawable.ic_launcher);
+	}
+	
+	/**
+	 * Accept the displayed photo as the new day-photo.
+	 * @param view
+	 */
+	public void accept(View view){
+		data.setDayPhoto(day, mImageBitmap);
+		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+		data.close();
+		if(tmpImg.exists())
+			tmpImg.delete();
+		startActivity(intent);
+	}
+	
+	/**
+	 * Launch an Intent to the default Camera application
+	 * to take another picture
+	 */
+	public void takePicture(View view){
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		startActivityForResult(intent, CAMERA_REQUEST);
+	}
+	
+	protected void onPause(){
+		super.onPause();
+		data.close();
 	}
 
 }

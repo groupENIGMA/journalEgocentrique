@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.*;
 
 import android.view.Menu;
@@ -93,8 +94,6 @@ public class MainActivity extends Activity {
         if (!dataBase.isOpen()) {
             dataBase.open();
         }
-        displayDetailLayout();
-
     }
 
     /**
@@ -165,8 +164,10 @@ public class MainActivity extends Activity {
                 String photoPath = dailyPhoto.getPathThumb();
                 dailyPhotoHeader.setImageURI(Uri.parse(photoPath));
             }
-            else
-            	dailyPhotoHeader.setImageResource(R.drawable.ic_launcher);
+            // Display the default image
+            else {
+                dailyPhotoHeader.setImageResource(R.drawable.ic_launcher);
+            }
 
             // If the selected Day can be updated add the listener that starts
             // the PhotoActivity (to take a new Photo)

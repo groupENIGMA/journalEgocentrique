@@ -129,5 +129,12 @@ public class PhotoActivity extends Activity {
 		super.onPause();
 		data.close();
 	}
+	
+	protected void onResume(){
+		super.onResume();
+        if (!data.isOpen()) {
+            data.open();
+        }
+	}
 
 }

@@ -10,22 +10,20 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.util.Log;
-import android.view.*;
-
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-
 import android.view.View.OnTouchListener;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -195,12 +193,15 @@ public class MainActivity extends Activity {
             }
             // The Photo can't be updated
             else {
-                // TODO
-                // A Toast saying something like: "You can't change this photo"
-                // or something similar
-
-                // Remove this when the Toast is ready
-                dailyPhotoHeader.setOnTouchListener(null);
+                dailyPhotoHeader.setOnTouchListener(new OnTouchListener(){
+                	
+    				public boolean onTouch(View v, MotionEvent event) {
+    					Toast.makeText(getApplicationContext(),
+    							"The photo can't be updated", Toast.LENGTH_SHORT)
+    							.show();
+					return true;
+				}
+			});
             }
 
             // Set the custom ArrayAdapter to the detailView
@@ -217,6 +218,7 @@ public class MainActivity extends Activity {
                     // updated.
                     final Entry selectedEntry = (Entry) adapter
                             .getItemAtPosition(position);
+                    Log.d("entry", selectedEntry.getNote());
                     if (selectedEntry.canBeUpdated(sharedPreferences)) {
                         AlertDialog.Builder build = new AlertDialog.Builder(
                                 MainActivity.this
@@ -256,7 +258,7 @@ public class MainActivity extends Activity {
                     }
                     // The Entry can't be updated
                     else {
-                        // TODO display a Toast with the error
+                        Toast.makeText(getApplicationContext(), "The entry can't be updated", Toast.LENGTH_LONG).show();
                     }
                 }
             };

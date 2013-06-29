@@ -54,7 +54,7 @@ public class ShareActivity extends Activity {
 	private void displayNotes(){
 		List<Entry> notes = day.getEntries();
         ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
-                this, R.layout.row, R.id.textViewList, notes
+                this, R.layout.row_main_day, R.id.textViewList, notes
         );
         ListView list = (ListView)findViewById(R.id.notes);
         list.setAdapter(arrayAdapter);

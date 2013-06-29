@@ -30,7 +30,7 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the row layout
+        // Get the row_main_day layout
         View rowView = convertView;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context

@@ -6,6 +6,11 @@ package com.github.groupENIGMA.journalEgocentrique;
 public class AppConstants {
 
     /**
+     * Format used to display the dates
+     */
+    public static final String DISPLAY_DATE_FORMAT = "d MMMMMMMMMM y";
+
+    /**
      * SharedPreferences file name
      */
     public static final String SHARED_PREFERENCES_FILENAME =

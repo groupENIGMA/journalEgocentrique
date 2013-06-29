@@ -24,7 +24,7 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
         super(context, resource, days);
         this.context = context;
         this.resource = resource;
-        this.dayFormat = new SimpleDateFormat("d MMMMMMMMMM y");
+        this.dayFormat = new SimpleDateFormat(AppConstants.DISPLAY_DATE_FORMAT);
         list = days;
     }
 

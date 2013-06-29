@@ -1,5 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
@@ -18,12 +19,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -94,12 +91,6 @@ public class MainActivity extends Activity {
         }
         else {
             selectedDay = null;
-        }
-
-        // If the Entry for today already exists disable the AddEntry button
-        if (dataBase.existsDay()) {
-            Button addEntry = (Button)findViewById(R.id.ListDaysAddEntryButton);
-            addEntry.setEnabled(false);
         }
     }
 
@@ -176,6 +167,17 @@ public class MainActivity extends Activity {
                     this, R.layout.main_row_entry, entries, textSize, textFont
             );
 
+            // Display the selected Day in the header
+            SimpleDateFormat sdf = new SimpleDateFormat(
+                    AppConstants.DISPLAY_DATE_FORMAT
+            );
+            TextView detailHeaderTitle = (TextView) findViewById(
+                    R.id.MainDetailTitle
+            );
+            detailHeaderTitle.setText(
+                    sdf.format(selectedDay.getDate().getTime())
+            );
+
             // If available, display the Photo in the header
             Photo dailyPhoto = selectedDay.getPhoto();
             if (dailyPhoto != null) {
@@ -223,7 +225,7 @@ public class MainActivity extends Activity {
             // Set the custom ArrayAdapter to the detailView
             entryListView.setAdapter(entryAdapter);
 
-            // Add the onLongClickListener that activates the WriteEntry activity
+            // Add the clickListener that activates the WriteEntry activity
             // that can be used to update the Entry text
             OnItemClickListener clickListener = new OnItemClickListener() {
 
@@ -318,13 +320,7 @@ public class MainActivity extends Activity {
      * @param view as required by android:onClick xml attribute. Not used.
      */
     public void addTodayEntry(View view) {
-        // New Entry in the database
-        selectedDay = dataBase.createDay();
-        // Entry to the beginning of the displayed list
-        daysListArrayAdapter.insert(selectedDay.getDate(), 0);
-        // Disable the ListDaysAddEntryButton
-        Button addEntry = (Button)findViewById(R.id.ListDaysAddEntryButton);
-        addEntry.setEnabled(false);
+
     }
 
     @Override
@@ -347,12 +343,21 @@ public class MainActivity extends Activity {
         MenuItem addEntry = menu.findItem(R.id.newEntry);
         MenuItem deleteDay = menu.findItem(R.id.deleteDay);
         if (selectedDay.canBeUpdated()) {
+
             addEntry.setEnabled(true);
             deleteDay.setEnabled(true);
         }
         else {
             addEntry.setEnabled(false);
             deleteDay.setEnabled(false);
+        }
+        // Enable or disable the "Add Day",
+        MenuItem addDay = menu.findItem(R.id.newDay);
+        if (dataBase.existsDay()) {
+            addDay.setEnabled(false);
+        }
+        else {
+            addDay.setEnabled(true);
         }
         return true;
     }
@@ -361,6 +366,11 @@ public class MainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
+            case R.id.newDay:
+                // New Entry in the database
+                selectedDay = dataBase.createDay();
+                // Entry to the beginning of the displayed list
+                daysListArrayAdapter.insert(selectedDay.getDate(), 0);
             case R.id.newEntry:
                 Intent intent = new Intent(
                         getApplicationContext(), WriteEntry.class

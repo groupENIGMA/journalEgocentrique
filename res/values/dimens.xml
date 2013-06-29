@@ -5,7 +5,7 @@
     <dimen name="activity_vertical_margin">10dp</dimen>
 
     <!-- MainActivity -->
-    <dimen name="ListDaysHeaderTitleSize">30sp</dimen>
+    <dimen name="MainHeadersTitle">30sp</dimen>
     <dimen name="ListDaysHeaderTitleLeftMargin">20dp</dimen>
     <dimen name="MainActivityHeaderContentPadding">5dp</dimen>
 </resources>

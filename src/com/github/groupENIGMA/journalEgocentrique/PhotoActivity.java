@@ -6,6 +6,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -92,8 +93,12 @@ public class PhotoActivity extends Activity {
         // If the user took a new Photo save it
         if (resultCode == RESULT_OK ) {
             Log.v(TAG_LOG, "Photo correctly returned by Camera App!");
-            // Update the preview with the new Photo
-            photoPreviewView.setImageURI(Uri.fromFile(new File(tmpPhotoPath)));
+            // Update the preview with the new Photo.
+            // I'm using setImageBitmap instead of setImageURI because the
+            // former doesn't always works on some devices
+            photoPreviewView.setImageBitmap(
+                    BitmapFactory.decodeFile(tmpPhotoPath)
+            );
         }
         else if (resultCode == RESULT_CANCELED) {
             // Don't save the photo
@@ -194,6 +199,5 @@ public class PhotoActivity extends Activity {
                 Log.v(TAG_LOG, "tmpDir successfully created!");
             }
         }
-
     }
 }

@@ -342,8 +342,7 @@ public class MainActivity extends Activity {
         // option menu based on the selectedDay
         MenuItem addEntry = menu.findItem(R.id.newEntry);
         MenuItem deleteDay = menu.findItem(R.id.deleteDay);
-        if (selectedDay.canBeUpdated()) {
-
+        if (selectedDay != null && selectedDay.canBeUpdated()) {
             addEntry.setEnabled(true);
             deleteDay.setEnabled(true);
         }
@@ -371,6 +370,8 @@ public class MainActivity extends Activity {
                 selectedDay = dataBase.createDay();
                 // Entry to the beginning of the displayed list
                 daysListArrayAdapter.insert(selectedDay.getDate(), 0);
+                displayDetailLayout();
+                return true;
             case R.id.newEntry:
                 Intent intent = new Intent(
                         getApplicationContext(), WriteEntry.class

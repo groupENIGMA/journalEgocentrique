@@ -16,6 +16,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
@@ -572,7 +573,7 @@ public class DB implements DBInterface {
     /**
      * {@inheritDoc}
      */
-    public Photo setDayPhoto(Day day, Bitmap btmp) {
+    public Photo setDayPhoto(Day day, String tmpPhotoPath) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
@@ -581,41 +582,60 @@ public class DB implements DBInterface {
             throw new InvalidOperationException();
         }
 
-        //Gets the path and the directory name where the Photo is going to be saved
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File photoDir = new File(
-                path + File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR
-        );
-        //Creates the file
-        String fileName = "Photo_" + day.getId() + ".jpg";
-        File file = new File (photoDir, fileName);
-        //Delete if already exists
-        if (file.exists ()) {
-            file.delete ();
-        }
+        // Get the Path to the Photo directory
+        String photoDirPath = Environment.getExternalStorageDirectory()
+                .getAbsolutePath() + File.separator +
+                AppConstants.EXTERNAL_STORAGE_PHOTO_DIR;
+        File photoDir = new File(photoDirPath);
+        // Create the dir if it doesn't exist
         if (! photoDir.exists()){
-            photoDir.mkdirs();
+            if (!photoDir.mkdirs()) {
+                // Throw an exception if unable to open/create the dir
+                // in the External Storage
+                throw new DatabaseError();
+            }
         }
-        //Writes the file with the picture in the selected path
+
+        // Move the full resolution photo to its final location
+        File tmpPhoto = new File(tmpPhotoPath);
+        String photoPath = photoDirPath + File.separator +
+                AppConstants.PHOTO_FILENAME_PREFIX + day.getId() + ".jpg";
+        File photo = new File(photoPath);
+        if (!tmpPhoto.renameTo(photo)) {
+            // Throw an exception if unable to move the photo
+            throw new DatabaseError();
+        }
+
+        // Save the thumbnail
+        String thumbPhotoPath = photoDir + File.separator +
+                AppConstants.THUMB_FILENAME_PREFIX + day.getId() + ".jpg";
+        File thumbPhoto = new File (thumbPhotoPath);
+        // Resize the original image
+        Bitmap fullResBitmap = BitmapFactory.decodeFile(photoPath);
+        Bitmap thumbBitmap = Bitmap.createScaledBitmap(
+                fullResBitmap,
+                85,  // TODO use a value saved in dimens.xml
+                85,
+                false
+        );
+        // Save the thumb to disk
         try {
-            file.createNewFile();
-            FileOutputStream out = new FileOutputStream(file);
-            btmp.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            FileOutputStream out = new FileOutputStream(thumbPhoto);
+            thumbBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
-
         } catch (Exception e) {
-               e.printStackTrace();
+            throw new DatabaseError();
         }
 
-        // Update the path to the file in the database
+        // Saves photo and thumb path to the database
         ContentValues cv = new ContentValues();
-        cv.put(DAY_PHOTO, file.getAbsolutePath());
+        cv.put(DAY_PHOTO, photoPath);
         db.update(Day_TABLE, cv, DAY_ID + "=?",
                 new String []{String.valueOf(day.getId())}
         );
 
-        return new Photo(file.getAbsolutePath());
+        return new Photo(photoPath, thumbPhotoPath);
     }
 
     /**

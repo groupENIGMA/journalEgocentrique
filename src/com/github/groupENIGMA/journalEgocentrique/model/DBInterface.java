@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.database.SQLException;
-import android.graphics.Bitmap;
 
 /**
  * This class acts as the Model for the Application.
@@ -214,17 +213,19 @@ public interface DBInterface {
     
     /**
      * Sets the Photo for the given Day
-     * 
      *
      * @param day the Day to be updated
-     * @param btmp the Bitmap file of the taken picture
+     * @param tmpPhotoPath the absolute path to the photo that will used
+     *        for day. The file available at this path will be MOVED to the
+     *        final photo location.
      * @return the newly created Photo object
-     * 
+     *
      * @throws InvalidOperationException if the Day's photo can't be inserted
+     * @throws DatabaseError if unable to save the photo to ExternalStorage
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public Photo setDayPhoto(Day day, Bitmap btmp);
+    public Photo setDayPhoto(Day day, String tmpPhotoPath);
     
     /**
      * Deletes the photo of the given day from db and external storage
@@ -234,6 +235,8 @@ public interface DBInterface {
      * @param day
      * @throws InvalidOperationException When deleting a Photo that can't be
      *         deleted.
+     * @throws DatabaseError When an error occurs saving the Photo file to
+     *         ExternalStorage
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */

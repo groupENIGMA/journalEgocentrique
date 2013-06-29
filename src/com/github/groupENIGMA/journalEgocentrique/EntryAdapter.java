@@ -21,7 +21,8 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
 	private int textSize;
 	private Typeface font;
 	
-	public EntryAdapter(Context context, int resource, List<Entry> entries, int textSize, Typeface font){
+	public EntryAdapter(Context context, int resource, List<Entry> entries,
+                        int textSize, Typeface font) {
 		super(context, resource, entries);
 		this.context = context;
 		this.entries = entries;
@@ -48,8 +49,9 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
         if(entries.get(position).getMood() != null){
             img.setImageResource(entries.get(position).getMood().getEmoteId(context));
         }
-        else
-        	img.setImageResource(R.drawable.mood_emote_default);
+        else {
+            img.setImageResource(R.drawable.mood_emote_default);
+        }
         return rowView;
     }
 }

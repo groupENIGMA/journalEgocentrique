@@ -73,12 +73,20 @@ public class MainActivity extends Activity {
         // Prepare the Detail Layout
         prepareDetailLayout();
 
+        // Get the preferences values for textSize, textFont and timeout
+        textSize = sharedPreferences.getInt(EXTRA_SETTINGS_TextSize, 12);
+        textFont = Typeface.create(
+                sharedPreferences.getString(EXTRA_SETTINGS_TextFont, null),
+                Typeface.ITALIC
+        );
+        timeout = sharedPreferences.getInt(
+                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
+                AppConstants.DEFAULT_NOTE_TIMEOUT
+        );
+        Log.d("timeout", timeout+"");
+
         // Display the last viewed Day (if any) and the text size and font
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
-       		textSize = sharedPreferences.getInt(EXTRA_SETTINGS_TextSize, 12);
-       		textFont = Typeface.create(sharedPreferences.getString(EXTRA_SETTINGS_TextFont, null), Typeface.ITALIC);
-       	timeout = sharedPreferences.getInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, AppConstants.DEFAULT_NOTE_TIMEOUT);
-       	Log.d("timeout", timeout+"");
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedDay = dataBase.getDay(id);
@@ -182,11 +190,9 @@ public class MainActivity extends Activity {
             // If the selected Day can be updated add the listener that starts
             // the PhotoActivity (to take a new Photo)
             if (selectedDay.canBeUpdated()) {
-                dailyPhotoHeader.setOnClickListener(new OnClickListener()
-                {
+                dailyPhotoHeader.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick(View v)
-                    {
+                    public void onClick(View v) {
                         // Start the PhotoActivity
                         Intent intent = new Intent(
                                 getApplicationContext(),
@@ -202,20 +208,20 @@ public class MainActivity extends Activity {
             }
             // The Photo can't be updated
             else {
-                dailyPhotoHeader.setOnClickListener(new OnClickListener(){
-                	
-    				public void onClick(View v) {
-    					Toast.makeText(getApplicationContext(),
-    							"The photo can't be updated", Toast.LENGTH_SHORT)
-    							.show();
-				}
-			});
+                dailyPhotoHeader.setOnClickListener(new OnClickListener() {
+
+                    public void onClick(View v) {
+                        Toast.makeText(getApplicationContext(),
+                                "The photo can't be updated", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
             }
 
             // Set the custom ArrayAdapter to the detailView
             entryListView.setAdapter(entryAdapter);
 
-            // Add the onLongClickListener that activates the WriteNote activity
+            // Add the onLongClickListener that activates the WriteEntry activity
             // that can be used to update the Entry text
             OnItemClickListener clickListener = new OnItemClickListener() {
 
@@ -256,7 +262,7 @@ public class MainActivity extends Activity {
                             public void onClick(DialogInterface dialog, int id){
                                 Intent intent = new Intent(
                                         getApplicationContext(),
-                                        WriteNote.class
+                                        WriteEntry.class
                                 );
                                 intent.putExtra(
                                         EXTRA_WRITE_NOTE_NoteId,
@@ -329,7 +335,7 @@ public class MainActivity extends Activity {
 	    switch (item.getItemId()) {
             case R.id.newNote:
                 Intent intent = new Intent(
-                        getApplicationContext(), WriteNote.class
+                        getApplicationContext(), WriteEntry.class
                 );
                 intent.putExtra(EXTRA_WRITE_NOTE_NoteId, -1L);
                 intent.putExtra(EXTRA_WRITE_NOTE_DayId, selectedDay.getId());

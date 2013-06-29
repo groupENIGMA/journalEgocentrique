@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.github.groupENIGMA.journalEgocentrique.WriteNote"
+            android:name=".WriteEntry"
             android:label="@string/title_activity_write_note" >
         </activity>
         <activity

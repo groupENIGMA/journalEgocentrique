@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".WriteEntry"
-            android:label="@string/title_activity_write_note" >
+            android:label="@string/title_activity_write_note"
+            android:windowSoftInputMode="adjustResize">
         </activity>
         <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.PhotoActivity"

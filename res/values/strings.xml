@@ -32,7 +32,7 @@
     <string name="size">Font size</string>
     <string name="font">Font type</string>
     <string name="update">Update interval for mood and entries</string>
-    <string name="mood">Set mood</string>
+    <string name="mood">Change mood</string>
     
     <string-array name="textFont">
         <item>DEFAULT_BOLD</item>

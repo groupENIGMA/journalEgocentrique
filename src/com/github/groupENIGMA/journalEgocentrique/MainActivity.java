@@ -161,7 +161,7 @@ public class MainActivity extends Activity {
             // If available, display the Photo in the header
             Photo dailyPhoto = selectedDay.getPhoto();
             if (dailyPhoto != null) {
-                String photoPath = dailyPhoto.getPathThumb();
+                String photoPath = dailyPhoto.getPath();
                 dailyPhotoHeader.setImageURI(Uri.parse(photoPath));
             }
             // Display the default image

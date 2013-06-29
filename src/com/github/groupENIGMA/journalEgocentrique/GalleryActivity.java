@@ -35,6 +35,24 @@ public class GalleryActivity extends Activity {
 			}
 		});
 	}
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Database connection must be reopened if the app was previously
+        // "paused" with onPause()
+        if (!database.isOpen()) {
+            database.open();
+        }
+    }
+
+    /**
+     * Close the database connection before closing the Activity
+     */
+    protected void onPause(){
+        super.onPause();
+        database.close();
+    }
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
@@ -57,13 +75,5 @@ public class GalleryActivity extends Activity {
 	    		return true;
 	    }
 	    return false;
-	}
-	
-	/**
-	 * Close the database connection before closing the Activity
-	 */
-	protected void onPause(){
-		super.onPause();
-		database.close();
 	}
 }

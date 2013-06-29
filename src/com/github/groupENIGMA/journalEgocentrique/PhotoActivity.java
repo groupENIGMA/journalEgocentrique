@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import android.widget.Toast;
@@ -71,6 +72,14 @@ public class PhotoActivity extends Activity {
         }
         // or, if none of the two above are available, the default Photo will be
         // rendered by the xml
+        else {
+            // Disable the setDefault and Save button.
+            // They are useless when there's already the default Image
+            Button setDefault = (Button) findViewById(R.id.setDefault);
+            setDefault.setEnabled(false);
+            Button save = (Button) findViewById(R.id.save_photo);
+            save.setEnabled(false);
+        }
     }
 
     @Override
@@ -99,6 +108,12 @@ public class PhotoActivity extends Activity {
             photoPreviewView.setImageBitmap(
                     BitmapFactory.decodeFile(tmpPhotoPath)
             );
+            // Enable the setDefault and Save button.
+            // They can be disabled if previously there was the default Image
+            Button setDefault = (Button) findViewById(R.id.setDefault);
+            setDefault.setEnabled(true);
+            Button save = (Button) findViewById(R.id.save_photo);
+            save.setEnabled(true);
         }
         else if (resultCode == RESULT_CANCELED) {
             // Don't save the photo
@@ -120,6 +135,11 @@ public class PhotoActivity extends Activity {
 	 *  The button must be enabled ONLY IF the actual image isn't the default avatar
 	 */
 	public void removeImage(View view){
+        // Remove the tmpPhoto if needed
+        File tmpPhoto = new File(tmpPhotoPath);
+        if (tmpPhoto.exists()) {
+            tmpPhoto.delete();
+        }
 		dataBase.removePhoto(day);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);

@@ -355,8 +355,38 @@ public class MainActivity extends Activity {
 	        	return true;
 	        case R.id.deleteEntry:
 	        	if(selectedDay != null){
-	        		dataBase.deleteDay(selectedDay);
-	        		selectedDay = null;
+                    AlertDialog.Builder build = new AlertDialog.Builder(
+                            MainActivity.this
+                    );
+                    build.setMessage("Are you sure?");
+                    build.setNegativeButton("Delete Day", new DialogInterface.OnClickListener(){
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+        	        		dataBase.deleteDay(selectedDay);
+        	        		selectedDay = null;
+                            Toast toast = Toast.makeText(
+                                    getApplicationContext(),
+                                    "Deleted",
+                                    Toast.LENGTH_LONG);
+                            toast.show();
+                            Intent intent = new Intent(
+                                    getApplicationContext(),
+                                    MainActivity.class
+                            );
+                            startActivity(intent);
+                        }
+                    });
+
+                    build.setPositiveButton("Don't delete", new DialogInterface.OnClickListener(){
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int id){
+                        	// Nothing
+                        }
+                    });
+                    AlertDialog alert = build.create();
+                    alert.show();;
 	        		return true;
 	        	}
 	        case R.id.gallery:

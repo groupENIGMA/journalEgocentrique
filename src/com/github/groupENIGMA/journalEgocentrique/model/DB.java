@@ -647,17 +647,21 @@ public class DB implements DBInterface {
         
         // Check if the Photo can be deleted
         if (day.canBeUpdated()) {
-            // Remove the photo and his thumb from external storage
-            File photo = new File(day.getPhoto().getPath());
-            photo.delete();
-            File thumb = new File(day.getPhoto().getPathThumb());
-            thumb.delete();
-            // Remove the photo from the database
-            ContentValues cv = new ContentValues();
-            cv.putNull(DAY_PHOTO);
-            db.update(Day_TABLE, cv, DAY_ID + "=?",
-                    new String []{String.valueOf(day.getId())}
-            );
+            // Check if the day has a Photo
+            Photo photo = day.getPhoto();
+            if (photo != null) {
+                // Delete the photo from external storage
+                File photoFile = new File(photo.getPath());
+                photoFile.delete();
+                File thumbFile = new File(photo.getPathThumb());
+                thumbFile.delete();
+                // Remove the photo from the database
+                ContentValues cv = new ContentValues();
+                cv.putNull(DAY_PHOTO);
+                db.update(Day_TABLE, cv, DAY_ID + "=?",
+                        new String []{String.valueOf(day.getId())}
+                );
+            }
         }
         else {
             // The Photo can't be deleted

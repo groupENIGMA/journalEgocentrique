@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
     private int textSize = R.array.textSize;
     private Typeface textFont;
     private String font;
+    private int timeout;
 
     // Views for the Detail Section of the UI
     ListView entryListView;
@@ -77,15 +78,19 @@ public class MainActivity extends Activity {
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         Intent settings = getIntent();
        	textSize = settings.getIntExtra(EXTRA_SETTINGS_TextSize, -1);
-       	Log.d("size",textSize+"");
        	if(textSize == -1)
        		textSize = pref.getInt(EXTRA_SETTINGS_TextSize, 12);
        	font = settings.getStringExtra(EXTRA_SETTINGS_TextFont);
-       	Log.d("Font", font+"");
        	if(font != null)
        		textFont = Typeface.create(settings.getStringExtra(EXTRA_SETTINGS_TextFont), Typeface.ITALIC);
        	else
        		textFont = Typeface.create(pref.getString(EXTRA_SETTINGS_TextFont, null), Typeface.ITALIC);
+       	timeout = settings.getIntExtra(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, AppConstants.DEFAULT_NOTE_TIMEOUT);
+       	Log.d("timeout", timeout+"");
+        // Save the timeout extra
+       	SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
+        edit.commit();
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedDay = dataBase.getDay(id);
@@ -231,7 +236,7 @@ public class MainActivity extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> adapter, View view,
                                                int position, long id) {
-                    // Enable the onLongClickListener only if the Entry can be
+                    // Enable the onClickListener only if the Entry can be
                     // updated.
                     final Entry selectedEntry = (Entry) adapter
                             .getItemAtPosition(position);

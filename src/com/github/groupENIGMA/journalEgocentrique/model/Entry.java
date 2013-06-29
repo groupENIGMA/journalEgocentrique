@@ -1,9 +1,11 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
-import android.content.SharedPreferences;
-import com.github.groupENIGMA.journalEgocentrique.AppConstants;
-
 import java.util.Calendar;
+
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 public class Entry implements EntryInterface {
 
@@ -90,8 +92,9 @@ public class Entry implements EntryInterface {
         timeout.add(Calendar.HOUR, hours_timeout);
         // Is the timeout expired?
         Calendar rightNow = Calendar.getInstance();
+    	Log.d("compare", hours_timeout+"");
         if (rightNow.compareTo(timeout) >= 0) {
-            return false;  // An expired Entry can't be updated
+        	return false;  // An expired Entry can't be updated
         }
         else {
             return true;

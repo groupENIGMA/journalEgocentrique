@@ -2,6 +2,7 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,11 +14,19 @@ public class Settings extends Activity {
 
 	private int textSize = -1;
 	private String fontType = null;
+	private int timeout = -1;
+	private SharedPreferences pref;
+	private final String TEXT_SIZE = "text_size";
+	private final String TEXT_FONT  = "text_font";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
+		pref = getPreferences(MODE_PRIVATE);
+		textSize = pref.getInt(TEXT_SIZE, -1);
+		fontType = pref.getString(TEXT_FONT, null);
+		timeout = pref.getInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, -1);
 		setAdapters();
 	}
 	
@@ -29,6 +38,10 @@ public class Settings extends Activity {
 		final ArrayAdapter<CharSequence> fontAdapter = ArrayAdapter.createFromResource(this, R.array.textFont, android.R.layout.simple_spinner_item);
 		fontAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		font.setAdapter(fontAdapter);
+		if(font != null){
+			int spinnerPos = fontAdapter.getPosition(fontType);
+			font.setSelection(spinnerPos);
+		}
 		   // Set the listener
         OnItemSelectedListener fontListener = new OnItemSelectedListener() {
 
@@ -49,6 +62,10 @@ public class Settings extends Activity {
 		Spinner size = (Spinner)findViewById(R.id.textSize);
 		final ArrayAdapter<CharSequence> sizeAdapter = ArrayAdapter.createFromResource(this, R.array.textSize, android.R.layout.simple_spinner_dropdown_item);
 		size.setAdapter(sizeAdapter);
+		if(textSize != -1){
+			int spinnerPos = sizeAdapter.getPosition(String.valueOf(textSize));
+			size.setSelection(spinnerPos);
+		}
 		   // Set the listener
         OnItemSelectedListener sizeListener = new OnItemSelectedListener() {
 
@@ -66,15 +83,46 @@ public class Settings extends Activity {
         size.setOnItemSelectedListener(sizeListener);
 		
 		Spinner updateInterval = (Spinner)findViewById(R.id.updateInterval);
-		ArrayAdapter<CharSequence> updateAdapter = ArrayAdapter.createFromResource(this, R.array.updateInterval, android.R.layout.simple_spinner_dropdown_item);
+		final ArrayAdapter<CharSequence> updateAdapter = ArrayAdapter.createFromResource(this, R.array.updateInterval, android.R.layout.simple_spinner_dropdown_item);
 		updateInterval.setAdapter(updateAdapter);
-		//TODO-Listener alle liste che permettano di modificare realmente l'aspetto
+		if(timeout != -1){
+			int spinnerPos = updateAdapter.getPosition(String.valueOf(timeout));
+			updateInterval.setSelection(spinnerPos);
+		}
+
+		// Set the listener
+		OnItemSelectedListener updateListener = new OnItemSelectedListener() {
+			
+			@Override
+			public void onItemSelected(AdapterView<?> adapter, View view,
+					int position, long id) {
+				timeout = Integer.parseInt(updateAdapter.getItem(position).toString());
+			}
+			
+			@Override
+			public void onNothingSelected(AdapterView<?> adapter) {
+				// Nothing to do
+			}
+		};
+		updateInterval.setOnItemSelectedListener(updateListener);
 	}
 	
 	public void send(View view){
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-    	intent.putExtra(MainActivity.EXTRA_SETTINGS_TextFont, fontType);
-    	intent.putExtra(MainActivity.EXTRA_SETTINGS_TextSize, textSize);
+    	SharedPreferences.Editor edit = pref.edit();
+    	if(fontType != null){
+    		intent.putExtra(MainActivity.EXTRA_SETTINGS_TextFont, fontType);
+    		edit.putString(TEXT_FONT, fontType);
+    	}
+    	if(textSize != -1){
+    		intent.putExtra(MainActivity.EXTRA_SETTINGS_TextSize, textSize);
+    		edit.putInt(TEXT_SIZE, textSize);
+    	}
+    	if(timeout != -1){
+    		intent.putExtra(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
+    		edit.putInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
+    	}
+    	edit.commit();
     	startActivity(intent);
 	}
 }

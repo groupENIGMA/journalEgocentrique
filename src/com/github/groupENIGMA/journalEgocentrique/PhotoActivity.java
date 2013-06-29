@@ -96,7 +96,7 @@ public class PhotoActivity extends Activity {
 	 */
 	public void removeImage(View view){
 		data.removePhoto(day);
-		actualImg.setImageResource(R.drawable.ic_launcher);
+		actualImg.setImageResource(R.drawable.default_day_image);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
 	}

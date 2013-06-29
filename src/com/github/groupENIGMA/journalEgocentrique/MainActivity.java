@@ -177,7 +177,7 @@ public class MainActivity extends Activity {
             }
             // Display the default image
             else {
-                dailyPhotoHeader.setImageResource(R.drawable.ic_launcher);
+                dailyPhotoHeader.setImageResource(R.drawable.default_day_image);
             }
 
             // If the selected Day can be updated add the listener that starts

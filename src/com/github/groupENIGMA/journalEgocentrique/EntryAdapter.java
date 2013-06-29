@@ -49,7 +49,7 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
             img.setImageResource(entries.get(position).getMood().getEmoteId(context));
         }
         else
-        	img.setImageResource(R.drawable.ic_launcher);
+        	img.setImageResource(R.drawable.mood_emote_default);
         return rowView;
     }
 }

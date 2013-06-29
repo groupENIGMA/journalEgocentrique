@@ -1,12 +1,4 @@
 package com.github.groupENIGMA.journalEgocentrique;
-/*
-Chiamare con
-
-     ImageZoomView image = (ImageZoomView) findViewById(R.id.image);
-    Bitmap bitmap = BitmapFactory.decodeStream(is);
-    image.setImageBitmap(bitmap);
-*/
-
 
 import android.content.Context;
 import android.graphics.Bitmap;

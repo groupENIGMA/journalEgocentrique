@@ -18,64 +18,51 @@ public class Photo implements PhotoInterface {
      * Creates a Photo
      * <p>
      * This constructor should be used only by a {@link DBInterface}
-     * implementation
+     * implementation.
      *
-     * @param path
+     * @param photo_path The absolute path to the photo file.
+     * @param thumb_path The absolute path to the thumb file
      */
-    public Photo(String path){
+    public Photo(String photo_path, String thumb_path) {
         this.path = path;
-        thumb_path = createThumb();
+        this.thumb_path = thumb_path;
     }
 
     /**
-     * Create the thumbnail of the Photo
-     * This method is called when it's created a new Photo object
-     * 
-     * @return the path of thumbnail of this one
+     * Creates a Photo
+     * <p>
+     * This constructor should be used only by a {@link DBInterface}
+     * implementation.
+     *
+     * @param photo_path The absolute path to the photo file. The thumb_path
+     *        will be calculated from this and using the prefixes
+     *        {@link AppConstants#PHOTO_FILENAME_PREFIX} and
+     *        {@link AppConstants#THUMB_FILENAME_PREFIX}
      */
-    private String createThumb(){
-        if(getPath() != null){
-        Bitmap img = BitmapFactory.decodeFile(this.getPath());
-        Bitmap thumb = Bitmap.createScaledBitmap(img, 85, 85, false);
+    public Photo(String photo_path) {
+        this.path = photo_path;
 
-        //Gets the path and the directory name where the Photo is going to be saved
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath();
-        File photoDir = new File(
-                path + File.separator + AppConstants.EXTERNAL_STORAGE_PHOTO_DIR
-        );
-        //Creates the file
-        String fileName = getPath().substring(0, getPath().length() - 4) + "thumb.jpeg";
-        File file = new File (fileName);
-        //Delete if already exists
-        if (file.exists ()) {
-            file.delete ();
-        }
-        if (! photoDir.exists()){
-            photoDir.mkdirs();
-        }
-        //Writes the file with the picture in the selected path
-        try {
-            file.createNewFile();
-            FileOutputStream out = new FileOutputStream(file);
-            thumb.compress(Bitmap.CompressFormat.JPEG, 90, out);
-            out.flush();
-            out.close();
+        // Split the filename from the path to the photoDir
+        int lastSeparator = photo_path.lastIndexOf(File.separator);
+        String dirPath = photo_path.substring(0, lastSeparator+1);
+        String fileName = photo_path.substring(lastSeparator+1);
 
-        } catch (Exception e) {
-               e.printStackTrace();
-        }
-        return file.getAbsolutePath();
-        }
-        return null;
+        // Extract the Day's id from the filename
+        int idStartIndex = AppConstants.PHOTO_FILENAME_PREFIX.length();
+        String dayIdAndExtension = fileName.substring(idStartIndex);
+
+        // Calculate the thumb path
+        this.thumb_path =
+            dirPath + AppConstants.THUMB_FILENAME_PREFIX + dayIdAndExtension;
     }
 
     @Override
     public String getPath() {
-        return path;
+        return this.path;
     }
 
     @Override
     public String getPathThumb() {
-        return thumb_path;
+        return this.thumb_path;
     }
 }

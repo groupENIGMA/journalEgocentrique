@@ -7,44 +7,48 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context=".PhotoActivity" >
 
     <ImageView
         android:id="@+id/photo"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:contentDescription="@string/bigImage"
         android:layout_weight="3"
         android:src="@drawable/ic_launcher" />
 
     <LinearLayout
         android:id="@+id/linear_layout"
-        android:layout_width="0dp"
-        android:layout_weight="1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="vertical" >
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp">
 
         <Button
-            android:id="@+id/take_picture"
-            android:layout_width="fill_parent"
+            android:id="@+id/button_take_picture"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="takePicture"
-            android:text="@string/take_picture" />
+            android:text="@string/PhotoActivity_ButtonText_TakePicture" />
 
         <Button
-            android:id="@+id/accept"
-            android:layout_width="fill_parent"
+            android:id="@+id/save_photo"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="accept"
-            android:text="@string/accept" />
+            android:text="@string/PhotoActivity_ButtonText_SavePhoto" />
 
         <Button
-            android:id="@+id/defaultImage"
-            android:layout_width="fill_parent"
+            android:id="@+id/setDefault"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:onClick="removeImage"
-            android:text="@string/defaultImage" />
+            android:text="@string/PhotoActivity_ButtonText_SetDefault" />
     </LinearLayout>
 
 </LinearLayout>

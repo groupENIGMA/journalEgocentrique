@@ -322,6 +322,12 @@ public class MainActivity extends Activity {
         addEntry.setEnabled(false);
     }
 
+    @Override
+    public void onBackPressed(){
+    	super.onBackPressed();
+    	moveTaskToBack(true);
+    }
+    
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu){
 		MenuInflater inflater = getMenuInflater();

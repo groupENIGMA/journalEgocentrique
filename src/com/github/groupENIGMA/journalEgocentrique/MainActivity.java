@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
     private SharedPreferences sharedPreferences;
     private int textSize = R.array.textSize;
     private Typeface textFont;
+    private String font;
 
     // Views for the Detail Section of the UI
     ListView entryListView;
@@ -64,13 +65,6 @@ public class MainActivity extends Activity {
                 AppConstants.SHARED_PREFERENCES_FILENAME,
                 MODE_PRIVATE
         );
-        Intent settings = getIntent();
-        if(settings != null){
-        	textSize = settings.getIntExtra(EXTRA_SETTINGS_TextSize, 12);
-        	String font = settings.getStringExtra(EXTRA_SETTINGS_TextFont);
-        	if(font != null)
-        		textFont = Typeface.create(settings.getStringExtra(EXTRA_SETTINGS_TextFont), Typeface.NORMAL);
-        }
         
         // Open database connection
         dataBase.open();
@@ -79,8 +73,19 @@ public class MainActivity extends Activity {
         // Prepare the Detail Layout
         prepareDetailLayout();
 
-        // Display the last viewed Day (if any)
+        // Display the last viewed Day (if any) and the text size and font
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        Intent settings = getIntent();
+       	textSize = settings.getIntExtra(EXTRA_SETTINGS_TextSize, -1);
+       	Log.d("size",textSize+"");
+       	if(textSize == -1)
+       		textSize = pref.getInt(EXTRA_SETTINGS_TextSize, 12);
+       	font = settings.getStringExtra(EXTRA_SETTINGS_TextFont);
+       	Log.d("Font", font+"");
+       	if(font != null)
+       		textFont = Typeface.create(settings.getStringExtra(EXTRA_SETTINGS_TextFont), Typeface.ITALIC);
+       	else
+       		textFont = Typeface.create(pref.getString(EXTRA_SETTINGS_TextFont, null), Typeface.ITALIC);
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedDay = dataBase.getDay(id);
@@ -295,6 +300,10 @@ public class MainActivity extends Activity {
         else {
             edit.putLong(PREF_SELECTED_ENTRY, selectedDay.getId());
         }
+        // Save the text size
+        edit.putInt(EXTRA_SETTINGS_TextSize, textSize);
+        // Save the text font
+        edit.putString(EXTRA_SETTINGS_TextFont, font);
         edit.commit();
         // Close database connection
         dataBase.close();

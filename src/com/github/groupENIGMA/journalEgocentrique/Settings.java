@@ -2,7 +2,6 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,8 +11,8 @@ import android.widget.Spinner;
 
 public class Settings extends Activity {
 
-	private int textSize;
-	private String fontType;
+	private int textSize = -1;
+	private String fontType = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +73,8 @@ public class Settings extends Activity {
 	
 	public void send(View view){
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-    	intent.putExtra(MainActivity.EXTRA_SETTINGS_TextSize, textSize);
     	intent.putExtra(MainActivity.EXTRA_SETTINGS_TextFont, fontType);
+    	intent.putExtra(MainActivity.EXTRA_SETTINGS_TextSize, textSize);
     	startActivity(intent);
 	}
 }

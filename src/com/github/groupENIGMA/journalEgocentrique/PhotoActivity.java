@@ -121,7 +121,6 @@ public class PhotoActivity extends Activity {
 	 */
 	public void removeImage(View view){
 		dataBase.removePhoto(day);
-		photoPreviewView.setImageResource(R.drawable.ic_launcher);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
 	}
@@ -135,6 +134,19 @@ public class PhotoActivity extends Activity {
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
 	}
+
+    /**
+     * Removes the unsaved tmp photo when back is pressed
+     */
+    @Override
+    public void onBackPressed() {
+        File tmpPhoto = new File(tmpPhotoPath);
+        if (tmpPhoto.exists()) {
+            tmpPhoto.delete();
+        }
+        super.onBackPressed();
+    }
+
 
     /**
      * Launch an Intent to the default Camera application

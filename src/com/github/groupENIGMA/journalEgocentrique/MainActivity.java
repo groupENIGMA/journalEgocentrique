@@ -15,9 +15,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -172,10 +171,10 @@ public class MainActivity extends Activity {
             // If the selected Day can be updated add the listener that starts
             // the PhotoActivity (to take a new Photo)
             if (selectedDay.canBeUpdated()) {
-                dailyPhotoHeader.setOnTouchListener(new OnTouchListener()
+                dailyPhotoHeader.setOnClickListener(new OnClickListener()
                 {
                     @Override
-                    public boolean onTouch(View v, MotionEvent event)
+                    public void onClick(View v)
                     {
                         // Start the PhotoActivity
                         Intent intent = new Intent(
@@ -187,19 +186,17 @@ public class MainActivity extends Activity {
                                 selectedDay.getId()
                         );
                         startActivity(intent);
-                        return false;
                     }
                 });
             }
             // The Photo can't be updated
             else {
-                dailyPhotoHeader.setOnTouchListener(new OnTouchListener(){
+                dailyPhotoHeader.setOnClickListener(new OnClickListener(){
                 	
-    				public boolean onTouch(View v, MotionEvent event) {
+    				public void onClick(View v) {
     					Toast.makeText(getApplicationContext(),
     							"The photo can't be updated", Toast.LENGTH_SHORT)
     							.show();
-					return true;
 				}
 			});
             }

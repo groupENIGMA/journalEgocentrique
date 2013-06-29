@@ -58,4 +58,10 @@
     <string name="ListDaysHeaderTitle">Days</string>
     <string name="ListDaysAddEntry">Add</string>
 
+
+    <!-- PhotoActivity -->
+    <string name="PhotoActivity_ButtonText_TakePicture">New Photo</string>
+    <string name="PhotoActivity_ButtonText_SavePhoto">Save</string>
+    <string name="PhotoActivity_ButtonText_SetDefault">Set Default Image</string>
+
 </resources>

@@ -211,9 +211,11 @@ public class MainActivity extends Activity {
                 dailyPhotoHeader.setOnClickListener(new OnClickListener() {
 
                     public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(),
-                                "The photo can't be updated", Toast.LENGTH_SHORT)
-                                .show();
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "The photo can't be updated",
+                                Toast.LENGTH_SHORT
+                        ).show();
                     }
                 });
             }
@@ -232,7 +234,6 @@ public class MainActivity extends Activity {
                     // updated.
                     final Entry selectedEntry = (Entry) adapter
                             .getItemAtPosition(position);
-                    Log.d("entry", selectedEntry.getNote());
                     if (selectedEntry.canBeUpdated(sharedPreferences)) {
                         AlertDialog.Builder build = new AlertDialog.Builder(
                                 MainActivity.this
@@ -276,7 +277,11 @@ public class MainActivity extends Activity {
                     }
                     // The Entry can't be updated
                     else {
-                        Toast.makeText(getApplicationContext(), "The entry can't be updated", Toast.LENGTH_LONG).show();
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "The entry can't be updated",
+                                Toast.LENGTH_LONG
+                        ).show();
                     }
                 }
             };
@@ -334,12 +339,29 @@ public class MainActivity extends Activity {
 		inflater.inflate(R.menu.option, menu);
 		return true;
 	}
-	
-	@Override
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Enable or disable the "Add Entry" and "Delete Day" items in the
+        // option menu based on the selectedDay
+        MenuItem addEntry = menu.findItem(R.id.newEntry);
+        MenuItem deleteDay = menu.findItem(R.id.deleteDay);
+        if (selectedDay.canBeUpdated()) {
+            addEntry.setEnabled(true);
+            deleteDay.setEnabled(true);
+        }
+        else {
+            addEntry.setEnabled(false);
+            deleteDay.setEnabled(false);
+        }
+        return true;
+    }
+
+    @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
-            case R.id.newNote:
+            case R.id.newEntry:
                 Intent intent = new Intent(
                         getApplicationContext(), WriteEntry.class
                 );
@@ -348,11 +370,14 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 return true;
 	        case R.id.settings:
-	        	Intent settings = new Intent(getApplicationContext(), Settings.class);
+	        	Intent settings = new Intent(
+                        getApplicationContext(),
+                        Settings.class
+                );
 	        	startActivity(settings);
 	        	return true;
-	        case R.id.deleteEntry:
-	        	if(selectedDay != null){
+	        case R.id.deleteDay:
+	            if(selectedDay != null){
                     AlertDialog.Builder build = new AlertDialog.Builder(
                             MainActivity.this
                     );
@@ -361,8 +386,8 @@ public class MainActivity extends Activity {
 
                         @Override
                         public void onClick(DialogInterface dialog, int id) {
-        	        		dataBase.deleteDay(selectedDay);
-        	        		selectedDay = null;
+                            dataBase.deleteDay(selectedDay);
+                            selectedDay = null;
                             Toast toast = Toast.makeText(
                                     getApplicationContext(),
                                     "Deleted",
@@ -384,15 +409,21 @@ public class MainActivity extends Activity {
                         }
                     });
                     AlertDialog alert = build.create();
-                    alert.show();;
-	        		return true;
-	        	}
+                    alert.show();
+	                return true;
+	            }
 	        case R.id.gallery:
-	        	Intent gallery = new Intent(getApplicationContext(), GalleryActivity.class);
+	        	Intent gallery = new Intent(
+                        getApplicationContext(),
+                        GalleryActivity.class
+                );
 	        	startActivity(gallery);
 	        	return true;
 	        case R.id.share:
-	        	Intent share = new Intent(getApplicationContext(), ShareActivity.class);
+	        	Intent share = new Intent(
+                        getApplicationContext(),
+                        ShareActivity.class
+                );
 	        	share.putExtra("EntryId", selectedDay.getId());
 	        	startActivity(share);
                 return true;

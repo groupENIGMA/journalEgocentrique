@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/newDay"
-        android:title="@string/newDay"/>
     <item
-        android:id="@+id/newNote"
-        android:title="@string/newNote"/>
+        android:id="@+id/newEntry"
+        android:title="@string/newEntry"/>
     <item
-        android:id="@+id/deleteEntry"
-        android:title="@string/deleteEntry"/>
+        android:id="@+id/deleteDay"
+        android:title="@string/deleteDay"/>
     <item
         android:id="@+id/gallery"
         android:title="@string/gallery"/>
@@ -18,6 +16,5 @@
     <item
         android:id="@+id/share"
         android:title="@string/share"/>
-    
 
 </menu>

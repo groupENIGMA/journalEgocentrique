@@ -76,21 +76,10 @@ public class MainActivity extends Activity {
 
         // Display the last viewed Day (if any) and the text size and font
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
-        Intent settings = getIntent();
-       	textSize = settings.getIntExtra(EXTRA_SETTINGS_TextSize, -1);
-       	if(textSize == -1)
-       		textSize = pref.getInt(EXTRA_SETTINGS_TextSize, 12);
-       	font = settings.getStringExtra(EXTRA_SETTINGS_TextFont);
-       	if(font != null)
-       		textFont = Typeface.create(settings.getStringExtra(EXTRA_SETTINGS_TextFont), Typeface.ITALIC);
-       	else
-       		textFont = Typeface.create(pref.getString(EXTRA_SETTINGS_TextFont, null), Typeface.ITALIC);
-       	timeout = settings.getIntExtra(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, AppConstants.DEFAULT_NOTE_TIMEOUT);
+       		textSize = sharedPreferences.getInt(EXTRA_SETTINGS_TextSize, 12);
+       		textFont = Typeface.create(sharedPreferences.getString(EXTRA_SETTINGS_TextFont, null), Typeface.ITALIC);
+       	timeout = sharedPreferences.getInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, AppConstants.DEFAULT_NOTE_TIMEOUT);
        	Log.d("timeout", timeout+"");
-        // Save the timeout extra
-       	SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
-        edit.commit();
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
         if(id != -1) {
             selectedDay = dataBase.getDay(id);

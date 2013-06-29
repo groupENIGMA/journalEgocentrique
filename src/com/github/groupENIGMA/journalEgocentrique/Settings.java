@@ -23,7 +23,10 @@ public class Settings extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
-		pref = getPreferences(MODE_PRIVATE);
+		pref = getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                MODE_PRIVATE
+        );
 		textSize = pref.getInt(TEXT_SIZE, -1);
 		fontType = pref.getString(TEXT_FONT, null);
 		timeout = pref.getInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, -1);
@@ -110,18 +113,12 @@ public class Settings extends Activity {
 	public void send(View view){
     	Intent intent = new Intent(getApplicationContext(), MainActivity.class);
     	SharedPreferences.Editor edit = pref.edit();
-    	if(fontType != null){
-    		intent.putExtra(MainActivity.EXTRA_SETTINGS_TextFont, fontType);
+    	if(fontType != null)
     		edit.putString(TEXT_FONT, fontType);
-    	}
-    	if(textSize != -1){
-    		intent.putExtra(MainActivity.EXTRA_SETTINGS_TextSize, textSize);
+    	if(textSize != -1)
     		edit.putInt(TEXT_SIZE, textSize);
-    	}
-    	if(timeout != -1){
-    		intent.putExtra(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
+    	if(timeout != -1)
     		edit.putInt(AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, timeout);
-    	}
     	edit.commit();
     	startActivity(intent);
 	}

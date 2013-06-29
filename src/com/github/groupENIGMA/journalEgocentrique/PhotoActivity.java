@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import android.widget.Toast;
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Photo;
@@ -94,10 +95,18 @@ public class PhotoActivity extends Activity {
             // Update the preview with the new Photo
             photoPreviewView.setImageURI(Uri.fromFile(new File(tmpPhotoPath)));
         }
+        else if (resultCode == RESULT_CANCELED) {
+            // Don't save the photo
+            Log.v(TAG_LOG, "Camera app closed without taking a new Photo!");
+        }
         else {
             Log.e(TAG_LOG, resultCode + "");
-            Log.e(TAG_LOG, "Photo correctly returned by Camera App!");
-            // TODO Display Error Toast
+            Log.e(TAG_LOG, "The Camera app didn't save the Photo!");
+            Toast.makeText(
+                    getApplicationContext(),
+                    getString(R.string.PhotoActivity_ExternalStorageError),
+                    Toast.LENGTH_SHORT
+            ).show();
         }
     }
 	
@@ -135,8 +144,11 @@ public class PhotoActivity extends Activity {
                 tmpPhotoFile.createNewFile();
             }
             catch (IOException e) {
-                // TODO manage this exception
-                // Toast and return to MainActivity
+                Toast.makeText(
+                        getApplicationContext(),
+                        getString(R.string.PhotoActivity_ExternalStorageError),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         }
         // Start the Camera app
@@ -172,8 +184,11 @@ public class PhotoActivity extends Activity {
         // Create the photoDir and tmpPhotoDir if they doesn't exists
         else {
             if(!tmpDir.mkdirs()) {
-                // TODO manage this thing
-                // Toast and return to MainActivity
+                Toast.makeText(
+                        getApplicationContext(),
+                        getString(R.string.PhotoActivity_ExternalStorageError),
+                        Toast.LENGTH_SHORT
+                ).show();
             }
             else {
                 Log.v(TAG_LOG, "tmpDir successfully created!");

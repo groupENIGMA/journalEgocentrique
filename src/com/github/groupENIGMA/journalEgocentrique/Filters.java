@@ -36,7 +36,7 @@ public class Filters extends Activity {
 		final ArrayAdapter<CharSequence> filterAdapter = ArrayAdapter.createFromResource(this, R.array.periodFilter, android.R.layout.simple_spinner_item);
 		filterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		filter.setAdapter(filterAdapter);
-		if( filter != null || !filter.equals("None")){
+		if( filter != null ){
 			int spinnerPos = filterAdapter.getPosition(filterPeriod);
 			filter.setSelection(spinnerPos);
 		}
@@ -60,7 +60,7 @@ public class Filters extends Activity {
 	public void send(View view){
     	Intent intent = new Intent(getApplicationContext(), GalleryActivity.class);
     	SharedPreferences.Editor edit = pref.edit();
-    	if( ! filterPeriod.equals("None"))
+    	if( filterPeriod != null)
     		edit.putString(FILTER, filterPeriod);
     	edit.commit();
     	startActivity(intent);

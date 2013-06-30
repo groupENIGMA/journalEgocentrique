@@ -39,8 +39,13 @@ public class GalleryAdapter extends BaseAdapter{
             if(filter.equals("Month")){
         		from.add(Calendar.MONTH, -1);
         	}
-            // Get only the filtered photos list
-            photos = database.getPhotos(from, today);   	
+            if(filter.equals("None")){
+            	photos = database.getPhotos();
+            }
+            else{
+            	// Get only the filtered photos list
+                photos = database.getPhotos(from, today);  
+            }   	
         }
         // ... or get all the photos
         else {

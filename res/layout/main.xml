@@ -14,48 +14,22 @@
         android:orientation="vertical"
         android:background="@color/white">
 
-        <LinearLayout
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:background="@color/navy_blue"
-            android:baselineAligned="false"
-            android:shadowColor="@color/black"
-            android:shadowRadius="1">
+        <!-- Header with "Days" text and Add Day button -->
 
-            <TextView
+        <TextView
                 android:id="@+id/ListDaysHeaderTitle"
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
+                android:background="@color/navy_blue"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="@string/ListDaysHeaderTitle"
-                android:textSize="@dimen/ListDaysHeaderTitleSize"
+                android:textSize="@dimen/MainHeadersTitle"
                 android:textStyle="bold"
                 android:textColor="@android:color/white"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:layout_weight="1"
                 android:shadowColor="@color/light_blue"
                 android:shadowRadius="1">
-            </TextView>
-
-            <LinearLayout
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_weight="0.5"
-                android:gravity="center"
-                android:layout_gravity="center">
-                <Button
-                    android:id="@+id/ListDaysAddEntryButton"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:gravity="center"
-                    android:layout_gravity="center"
-                    android:text="@string/ListDaysAddEntry"
-                    android:onClick="addTodayEntry">
-                </Button>
-            </LinearLayout>
-
-        </LinearLayout>
+        </TextView>
 
         <ListView
                 android:id="@+id/daysList"
@@ -69,7 +43,23 @@
         android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_weight="3"
+        android:orientation="vertical"
         android:layout_marginLeft="0dp">
+
+        <TextView
+                android:id="@+id/MainDetailTitle"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:background="@color/navy_blue"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text=""
+                android:textSize="@dimen/MainHeadersTitle"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:shadowColor="@color/light_blue"
+                android:shadowRadius="1">
+        </TextView>
 
         <ListView
             android:id="@+id/EntryList"

@@ -13,7 +13,7 @@ import android.view.View.OnTouchListener;
 import android.widget.ImageView;
 
 public class ImageZoomView extends ImageView implements OnTouchListener {
-    private float MAX_SCALE = 2f;
+    private float MAX_SCALE = 0.5f;
 
     private Matrix mMatrix;
     private final float[] mMatrixValues = new float[9];

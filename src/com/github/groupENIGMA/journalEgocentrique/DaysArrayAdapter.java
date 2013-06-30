@@ -24,13 +24,13 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
         super(context, resource, days);
         this.context = context;
         this.resource = resource;
-        this.dayFormat = new SimpleDateFormat("d MMMMMMMMMM y");
+        this.dayFormat = new SimpleDateFormat(AppConstants.DISPLAY_DATE_FORMAT);
         list = days;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the row layout
+        // Get the row_main_day layout
         View rowView = convertView;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context

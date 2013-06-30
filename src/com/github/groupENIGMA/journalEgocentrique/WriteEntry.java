@@ -2,6 +2,7 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +17,8 @@ public class WriteEntry extends Activity {
     private DB dataBase;
     private boolean updating;
     private Day selectedDay;
-    private Entry selectedNote;
+    private Entry selectedEntry;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +40,15 @@ public class WriteEntry extends Activity {
         else {
             // Updating an existing Entry
             updating = true;
-            selectedNote = dataBase.getEntry(noteId);
+            selectedEntry = dataBase.getEntry(noteId);
             EditText text = (EditText) findViewById(R.id.editNote);
-            text.append(selectedNote.getNote());
+            text.append(selectedEntry.getNote());
         }
+        // Open the shared preferences file
+        sharedPreferences = getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                MODE_PRIVATE
+        );
     }
 
     /**
@@ -53,7 +60,7 @@ public class WriteEntry extends Activity {
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
         if(updating){
-            dataBase.setEntryNote(selectedNote, message);
+            dataBase.setEntryNote(selectedEntry, message);
         }
         else{
             dataBase.insertEntry(selectedDay, message, null);
@@ -72,14 +79,13 @@ public class WriteEntry extends Activity {
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
         if(updating){
-            dataBase.setEntryNote(selectedNote, message);
+            dataBase.setEntryNote(selectedEntry, message);
         }
         else{
-            selectedNote = dataBase.insertEntry(selectedDay, message, null);
+            selectedEntry = dataBase.insertEntry(selectedDay, message, null);
         }
     	Intent intent = new Intent(this, MoodActivity.class);
-    	Log.d("AAA", (selectedNote == null) + "");
-    	intent.putExtra("EntryId", selectedNote.getId());
+    	intent.putExtra("EntryId", selectedEntry.getId());
     	startActivity(intent);
     }
 
@@ -89,6 +95,14 @@ public class WriteEntry extends Activity {
         // Reopen the database connection if it was closed
         if (!dataBase.isOpen()) {
             dataBase.open();
+        }
+        // If the selectedDay or selectedEntry "expired" when the Activity
+        // was suspended return to the main Activity
+        if ((selectedDay != null && !selectedDay.canBeUpdated()) ||
+                (selectedEntry != null && updating &&
+                        !selectedEntry.canBeUpdated(sharedPreferences))) {
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
         }
     }
 

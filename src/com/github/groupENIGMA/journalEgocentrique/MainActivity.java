@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
                 AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
                 AppConstants.DEFAULT_NOTE_TIMEOUT
         );
-        Log.d("timeout", timeout+"");
 
         // Display the last viewed Day (if any) and the text size and font
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
@@ -246,11 +245,11 @@ public class MainActivity extends Activity {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
                                 dataBase.deleteEntry(selectedEntry);
-                                Toast toast = Toast.makeText(
+                                Toast.makeText(
                                         getApplicationContext(),
                                         "Deleted",
-                                        Toast.LENGTH_LONG);
-                                toast.show();
+                                        Toast.LENGTH_SHORT
+                                ).show();
                                 Intent intent = new Intent(
                                         getApplicationContext(),
                                         MainActivity.class
@@ -282,7 +281,7 @@ public class MainActivity extends Activity {
                         Toast.makeText(
                                 getApplicationContext(),
                                 "The entry can't be updated",
-                                Toast.LENGTH_LONG
+                                Toast.LENGTH_SHORT
                         ).show();
                     }
                 }
@@ -399,11 +398,11 @@ public class MainActivity extends Activity {
                         public void onClick(DialogInterface dialog, int id) {
                             dataBase.deleteDay(selectedDay);
                             selectedDay = null;
-                            Toast toast = Toast.makeText(
+                            Toast.makeText(
                                     getApplicationContext(),
                                     "Deleted",
-                                    Toast.LENGTH_LONG);
-                            toast.show();
+                                    Toast.LENGTH_SHORT
+                            ).show();
                             Intent intent = new Intent(
                                     getApplicationContext(),
                                     MainActivity.class

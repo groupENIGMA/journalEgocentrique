@@ -2,6 +2,7 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,9 @@ public class GalleryActivity extends Activity {
 
 	private DB database;
 	public final static String EXTRA_MESSAGE = "com.github.groupENIGMA.journalEgocentrique.MESSAGE";
+	public final static String EXTRA_FILTERS_FilterPeriod = "filter_period";
+	private SharedPreferences sharedPreferences;
+	private String filterPeriod;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -24,8 +28,15 @@ public class GalleryActivity extends Activity {
 		setContentView(R.layout.activity_gallery);
 		database = new DB(getApplicationContext());
 		database.open();
+		
+		// Open the shared preferences file
+        sharedPreferences = getSharedPreferences(
+                AppConstants.SHARED_PREFERENCES_FILENAME,
+                MODE_PRIVATE
+        );
+        filterPeriod = sharedPreferences.getString(EXTRA_FILTERS_FilterPeriod, "None");
 		GridView grid = (GridView)findViewById(R.id.galleryGrid);
-		final GalleryAdapter imgAdapter = new GalleryAdapter(this);
+		final GalleryAdapter imgAdapter = new GalleryAdapter(this, filterPeriod);
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id){
@@ -51,9 +62,9 @@ public class GalleryActivity extends Activity {
 	    		Intent main = new Intent(getApplicationContext(), MainActivity.class);
 	    		startActivity(main);
 	    		return true;
-	    	case R.id.settings:
-	    		Intent settings = new Intent(getApplicationContext(), Settings.class);
-	    		startActivity(settings);
+	    	case R.id.filters:
+	    		Intent filters = new Intent(getApplicationContext(), Filters.class);
+	    		startActivity(filters);
 	    		return true;
 	    }
 	    return false;

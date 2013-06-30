@@ -42,8 +42,6 @@ public class MainActivity extends Activity {
     private SharedPreferences sharedPreferences;
     private int textSize = R.array.textSize;
     private Typeface textFont;
-    private String font;
-    private int timeout;
 
     // Views for the Detail Section of the UI
     ListView entryListView;
@@ -74,10 +72,6 @@ public class MainActivity extends Activity {
         textFont = Typeface.create(
                 sharedPreferences.getString(EXTRA_SETTINGS_TextFont, null),
                 Typeface.ITALIC
-        );
-        timeout = sharedPreferences.getInt(
-                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
-                AppConstants.DEFAULT_NOTE_TIMEOUT
         );
 
         // Display the last viewed Day (if any) and the text size and font
@@ -305,23 +299,8 @@ public class MainActivity extends Activity {
         else {
             edit.putLong(PREF_SELECTED_ENTRY, selectedDay.getId());
         }
-        // Save the text size
-        edit.putInt(EXTRA_SETTINGS_TextSize, textSize);
-        // Save the text font
-        edit.putString(EXTRA_SETTINGS_TextFont, font);
-        edit.commit();
         // Close database connection
         dataBase.close();
-    }
-
-    /**
-     * Adds an Entry for today to the database and to the displayed list.
-     * Used by ListDaysAddEntryButton in main.xml
-     *
-     * @param view as required by android:onClick xml attribute. Not used.
-     */
-    public void addTodayEntry(View view) {
-
     }
 
     @Override

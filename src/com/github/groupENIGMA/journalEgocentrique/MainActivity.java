@@ -299,6 +299,7 @@ public class MainActivity extends Activity {
         else {
             edit.putLong(PREF_SELECTED_ENTRY, selectedDay.getId());
         }
+        edit.commit();
         // Close database connection
         dataBase.close();
     }

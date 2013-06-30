@@ -20,7 +20,7 @@
                 android:id="@+id/ListDaysHeaderTitle"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
-                android:background="@color/navy_blue"
+                android:background="@drawable/main_days_title_box"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:text="@string/ListDaysHeaderTitle"

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Left White Border -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/white"/>
+        </shape>
+    </item>
+
+    <!-- Rectangle "Days" -->
+    <item android:right="1dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/navy_blue"/>
+        </shape>
+    </item>
+</layer-list>

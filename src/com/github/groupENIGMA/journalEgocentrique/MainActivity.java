@@ -117,7 +117,7 @@ public class MainActivity extends Activity {
 
         // Create and set the custom ArrayAdapter DaysArrayAdapter
         daysListArrayAdapter = new DaysArrayAdapter(
-                this, R.layout.row_main_day, daysList
+                this, R.layout.main_row_day, daysList
         );
         daysListView.setAdapter(daysListArrayAdapter);
 

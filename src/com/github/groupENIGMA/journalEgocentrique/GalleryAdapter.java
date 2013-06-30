@@ -1,5 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
@@ -18,11 +19,33 @@ public class GalleryAdapter extends BaseAdapter{
     private List<Photo> photos;
     private DB database;
 
-    public GalleryAdapter(Context c) {
+    public GalleryAdapter(Context c, String filter) {
         mContext = c;
         database = new DB(c);
         database.open();
-        photos = database.getPhotos();
+        
+        // Get only the filtered images...
+        if( filter != null ){
+        	Calendar today = Calendar.getInstance();
+            Calendar from = Calendar.getInstance();   
+            
+            // Choose the right filter
+            if(filter.equals("3Days")){
+            	from.add(Calendar.DAY_OF_WEEK, -3);
+            }
+            if(filter.equals("Week")){
+        		from.add(Calendar.WEEK_OF_YEAR, -1);
+        	}
+            if(filter.equals("Month")){
+        		from.add(Calendar.MONTH, -1);
+        	}
+            // Get only the filtered photos list
+            photos = database.getPhotos(from, today);   	
+        }
+        // ... or get all the photos
+        else {
+        	photos = database.getPhotos();
+        }
     }
 
     public int getCount() {

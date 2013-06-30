@@ -709,7 +709,7 @@ public class DB implements DBInterface {
         Cursor cur = db.rawQuery(
             "SELECT " + Day_TABLE + "." + DAY_PHOTO +
             " FROM " + Day_TABLE +
-            " WHERE " + Day_TABLE + "." + DAY_DATE + " BETWEEN =? AND =? " +
+            " WHERE " + Day_TABLE + "." + DAY_DATE + " BETWEEN ? AND ? " +
                 " AND " + Day_TABLE + "." + DAY_PHOTO + " IS NOT NULL " +
             " ORDER BY " + Day_TABLE + "." + DAY_DATE + " DESC",
             new String[] {date_format.format(from.getTime()),

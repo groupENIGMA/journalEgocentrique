@@ -89,6 +89,12 @@ public class PhotoActivity extends Activity {
         if (!dataBase.isOpen()) {
             dataBase.open();
         }
+        // If the day "expired" when the Activity was suspended return to the
+        // main Activity
+        if (day != null && !day.canBeUpdated()) {
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
+        }
     }
 
     @Override

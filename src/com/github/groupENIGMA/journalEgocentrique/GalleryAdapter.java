@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,29 +24,30 @@ public class GalleryAdapter extends BaseAdapter{
         mContext = c;
         database = new DB(c);
         database.open();
-        
+
         // Get only the filtered images...
         if( filter != null ){
         	Calendar today = Calendar.getInstance();
             Calendar from = Calendar.getInstance();   
+            Resources res = c.getResources();
+            String[] values = res.getStringArray(R.array.periodFilter);
             
             // Choose the right filter
-            if(filter.equals("3Days")){
-            	from.add(Calendar.DAY_OF_WEEK, -3);
-            }
-            if(filter.equals("Week")){
-        		from.add(Calendar.WEEK_OF_YEAR, -1);
-        	}
-            if(filter.equals("Month")){
-        		from.add(Calendar.MONTH, -1);
-        	}
-            if(filter.equals("None")){
+            if(filter.equals(values[0]))
             	photos = database.getPhotos();
-            }
             else{
-            	// Get only the filtered photos list
-                photos = database.getPhotos(from, today);  
-            }   	
+            	if(filter.equals(values[1])){
+	            	from.add(Calendar.DAY_OF_WEEK, -3);
+	            }
+	            if(filter.equals(values[2])){
+	        		from.add(Calendar.WEEK_OF_YEAR, -1);
+	        	}
+	            if(filter.equals(values[3])){
+	        		from.add(Calendar.MONTH, -1);
+	        	}
+	            // Get only the filtered photos list
+	            photos = database.getPhotos(from, today);
+            }
         }
         // ... or get all the photos
         else {

@@ -34,6 +34,7 @@
     <string name="size">Font size</string>
     <string name="font">Font type</string>
     <string name="update">Interval for mood and entries updating (in hours)</string>
+    <string name="update_filters">Select the interval for displaying the photos</string>
     <string name="mood">Change mood</string>
     
     <string-array name="textFont">

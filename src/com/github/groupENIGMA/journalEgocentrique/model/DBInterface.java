@@ -3,6 +3,7 @@ package com.github.groupENIGMA.journalEgocentrique.model;
 import java.util.Calendar;
 import java.util.List;
 
+import android.content.SharedPreferences;
 import android.database.SQLException;
 
 /**
@@ -196,10 +197,13 @@ public interface DBInterface {
      * Deletes the given Entry from the database
      *
      * @param entry the Entry to be deleted
+     * @param sharedPreferences The sharedPreferences file where the timeout
+     *        for the Entry is saved
+     * @throws InvalidOperationException If the Entry can't be deleted
      * @throws ConnectionException if called before connecting to the database
      *         with {@link DB#open()}.
      */
-    public void deleteEntry(Entry entry);
+    public void deleteEntry(Entry entry, SharedPreferences sharedPreferences);
     
     /** Returns the list of available Moods.
      * <p>

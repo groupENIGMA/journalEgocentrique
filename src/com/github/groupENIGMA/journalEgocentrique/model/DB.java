@@ -532,12 +532,15 @@ public class DB implements DBInterface {
 
     /**
      * {@inheritDoc}
-     * @param entry
      */
-    public void deleteEntry(Entry entry) {
+    public void deleteEntry(Entry entry, SharedPreferences sharedPreferences) {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
+        // Throw InvalidOperationException if the Entry can't be deleted
+        if (!entry.canBeUpdated(sharedPreferences)) {
+            throw new InvalidOperationException();
+        }
         // Deletes the Entry from database
         db.delete(Entry_TABLE, ENTRY_ID + "=?",
                 new String [] {String.valueOf(entry.getId())});

@@ -12,7 +12,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -244,7 +243,10 @@ public class MainActivity extends Activity {
 
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                dataBase.deleteEntry(selectedEntry);
+                                dataBase.deleteEntry(
+                                        selectedEntry,
+                                        sharedPreferences
+                                );
                                 Toast.makeText(
                                         getApplicationContext(),
                                         "Deleted",

@@ -17,12 +17,12 @@ import android.widget.ListView;
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
+import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class ShareActivity extends Activity {
 
 	private Day day;
 	private DB db;
-	private Entry note;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +32,8 @@ public class ShareActivity extends Activity {
 		db.open();
 		
 		Intent received = getIntent();
-		day = db.getDay(received.getLongExtra("EntryId", 0));
-		note = null;
-		
+		day = db.getDay(received.getLongExtra("EntryId", -1L));
+
 		displayNotes();
 		displayPhoto();
 	}
@@ -43,7 +42,7 @@ public class ShareActivity extends Activity {
 	 * Display the day-photo that can be sent
 	 */
 	private void displayPhoto(){
-		ImageView img = (ImageView)findViewById(R.id.photoComposite);
+		ImageView img = (ImageView)findViewById(R.id.sharePhotoView);
 		if(day.getPhoto() != null)
 			img.setImageURI(Uri.parse(day.getPhoto().getPath()));
 	}
@@ -52,11 +51,11 @@ public class ShareActivity extends Activity {
 	 * Creates the list of the notes. Only the selected will be sent.
 	 */
 	private void displayNotes(){
-		List<Entry> notes = day.getEntries();
+		List<Entry> entries = day.getEntries();
         ArrayAdapter<Entry> arrayAdapter = new ArrayAdapter<Entry>(
-                this, R.layout.main_row_day, R.id.textViewList, notes
+                this, R.layout.activity_share_note_row, entries
         );
-        ListView list = (ListView)findViewById(R.id.notes);
+        ListView list = (ListView)findViewById(R.id.shareNotes);
         list.setAdapter(arrayAdapter);
 
         /*
@@ -68,25 +67,21 @@ public class ShareActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view,
                 int position, long id) {
-                // Set the correct note that will be sent
-                note = (Entry) adapter.getItemAtPosition(position);
+                // Send a Share intent with data from teh selected Entry
+                Entry entry = (Entry) adapter.getItemAtPosition(position);
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("*/*");
+                share.putExtra(Intent.EXTRA_TEXT, entry.getNote());
+                share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
+                // Include the photo if available
+                Photo dailyPhoto = day.getPhoto();
+                if (dailyPhoto != null) {
+                    File tmp = new File(dailyPhoto.getPath());
+                    share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));
+                }
+                startActivity(Intent.createChooser(share, "Share to..."));
             }
         };
         list.setOnItemClickListener(clickListener);
     }
-
-	/** Start the intent for sharing the composite photo and the selected note.
-	 *	This method is called when the user press on SHARE! button
-	 */
-	public void share(View view){
-		Intent share = new Intent(Intent.ACTION_SEND);
-		share.setType("*/*");
-		if(note != null)
-			share.putExtra(Intent.EXTRA_TEXT, note.getNote());
-		share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
-		File tmp = new File(day.getPhoto().getPath());
-		if(tmp != null)
-			share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tmp));
-		startActivity(Intent.createChooser(share, "Share to..."));
-	}
 }

@@ -29,7 +29,7 @@
     <string name="share">Share!</string>
     <string name="title_activity_share">ShareActivity</string>
     <string name="hello_world">Hello world!</string>
-    <string name="chooseNote">Choose the note you want to share</string>
+    <string name="chooseNote">Tap the note you want to share</string>
     <string name="defaultImage">Set default image</string>
     <string name="size">Font size</string>
     <string name="font">Font type</string>
@@ -68,11 +68,12 @@
     <string name="ListDaysHeaderTitle">Days</string>
     <string name="ListDaysAddEntry">Add</string>
 
-
     <!-- PhotoActivity -->
     <string name="PhotoActivity_ButtonText_TakePicture">New Photo</string>
     <string name="PhotoActivity_ButtonText_SavePhoto">Save</string>
     <string name="PhotoActivity_ButtonText_SetDefault">Set Default Image</string>
     <string name="PhotoActivity_ExternalStorageError">Unable to save the Photo</string>
+    <string name="share_header_title">Share</string>
+
 
 </resources>

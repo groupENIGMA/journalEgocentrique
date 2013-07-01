@@ -5,7 +5,16 @@
     <dimen name="activity_vertical_margin">10dp</dimen>
 
     <!-- MainActivity -->
-    <dimen name="MainHeadersTitle">30sp</dimen>
+    <dimen name="HeadersTitle">30sp</dimen>
     <dimen name="ListDaysHeaderTitleLeftMargin">20dp</dimen>
     <dimen name="MainActivityHeaderContentPadding">5dp</dimen>
+
+    <!-- ShareActivity -->
+    <dimen name="ShareNotesSidesPadding">30dp</dimen>
+    <dimen name="ShareNotesDividerHeight">10dp</dimen>
+    <dimen name="ShareNotesTapToShareText">20dp</dimen>
+    <dimen name="ShareNotesTapToShareMargin">10dp</dimen>
+    <dimen name="SharePhotoMaxHeight">300dp</dimen>
+    <dimen name="SharePhotoPadding">10dp</dimen>
+    <dimen name="SharePhotoMargin">15dp</dimen>
 </resources>

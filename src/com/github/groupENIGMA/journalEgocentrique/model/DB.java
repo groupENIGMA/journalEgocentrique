@@ -18,6 +18,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 /**
@@ -72,6 +73,7 @@ public class DB implements DBInterface {
     private SQLiteDatabase db;
     // the Activity or Application that is creating an object from this class.
     private Context context;
+    private SharedPreferences sharedPreferences;
     private openHelper helper;
     // Used to convert Calendar to String and String to Calendar
     private SimpleDateFormat date_format;
@@ -84,6 +86,8 @@ public class DB implements DBInterface {
      */
     public DB(Context context) {
         this.context = context;
+        this.sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(context);
         this.helper = new openHelper(context);  // Creates or open the db
         this.date_format = new SimpleDateFormat(DB_DATE_FORMAT);
         this.time_format = new SimpleDateFormat(DB_TIME_FORMAT);
@@ -472,12 +476,6 @@ public class DB implements DBInterface {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
 
-        // Get the sharedPreferences (for the Entry "grace period")
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                AppConstants.SHARED_PREFERENCES_FILENAME,
-                Context.MODE_PRIVATE
-        );
-
         // Check if the Entry can be updated
         if (entry.canBeUpdated(sharedPreferences)) {
             // Update the database
@@ -501,12 +499,6 @@ public class DB implements DBInterface {
     public void setEntryMood(Entry entry, Mood new_mood)  {
         // Check if the Connection to the DB is open
         raiseConnectionExceptionIfNotConnected();
-
-        // Get the sharedPreferences (for the Entry "grace period")
-        SharedPreferences sharedPreferences = context.getSharedPreferences(
-                AppConstants.SHARED_PREFERENCES_FILENAME,
-                Context.MODE_PRIVATE
-        );
 
         // Check if the Entry can be updated
         if (entry.canBeUpdated(sharedPreferences)) {

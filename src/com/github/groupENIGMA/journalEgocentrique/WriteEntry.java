@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -45,10 +46,7 @@ public class WriteEntry extends Activity {
             text.append(selectedEntry.getNote());
         }
         // Open the shared preferences file
-        sharedPreferences = getSharedPreferences(
-                AppConstants.SHARED_PREFERENCES_FILENAME,
-                MODE_PRIVATE
-        );
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     /**

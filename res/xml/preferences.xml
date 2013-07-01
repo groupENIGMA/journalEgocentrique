@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+            android:title="@string/PreferencesEntryCategory" >
+        <ListPreference
+            android:key="@string/PreferencesKeyFontSize"
+            android:title="@string/PreferencesEntryFontSizeTitle"
+            android:summary="@string/PreferencesEntryFontSizeSummary"
+            android:entries="@array/textSize"
+            android:entryValues="@array/textSize"
+            android:defaultValue="14"/>
+        <ListPreference
+            android:key="@string/PreferencesKeyFontTypeFace"
+            android:title="@string/PreferencesEntryFontTypeFaceTitle"
+            android:summary="@string/PreferencesEntryFontTypeFaceSummary"
+            android:entries="@array/textTypeFaceOptions"
+            android:entryValues="@array/textTypeFaceValues"
+            android:defaultValue="SERIF"/>
+        <ListPreference
+            android:key="@string/PreferencesKeyTimeOut"
+            android:title="@string/PreferencesEntryTimeoutTitle"
+            android:summary="@string/PreferencesEntryTimeoutSummary"
+            android:entries="@array/entryTimeoutOptions"
+            android:entryValues="@array/entryTimeoutValues"
+            android:defaultValue="4"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

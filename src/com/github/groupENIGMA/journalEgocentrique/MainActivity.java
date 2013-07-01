@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,8 +32,6 @@ public class MainActivity extends Activity {
     public final static String EXTRA_WRITE_NOTE_NoteId = "NoteId";
     public final static String EXTRA_WRITE_NOTE_DayId = "EntryId";
     public final static String EXTRA_PHOTO_ACTIVITY_DayId = "DayId";
-    public final static String EXTRA_SETTINGS_TextSize = "text_size";
-    public final static String EXTRA_SETTINGS_TextFont = "text_font";
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
 
@@ -40,8 +39,8 @@ public class MainActivity extends Activity {
     private DaysArrayAdapter daysListArrayAdapter;
     private Day selectedDay = null;
     private SharedPreferences sharedPreferences;
-    private int textSize = R.array.textSize;
-    private Typeface textFont;
+    private int fontSize = R.array.textSize;
+    private Typeface fontTypeFace;
 
     // Views for the Detail Section of the UI
     ListView entryListView;
@@ -55,10 +54,10 @@ public class MainActivity extends Activity {
         dataBase = new DB(getApplicationContext());
 
         // Open the shared preferences file
-        sharedPreferences = getSharedPreferences(
-                AppConstants.SHARED_PREFERENCES_FILENAME,
-                MODE_PRIVATE
+        PreferenceManager.setDefaultValues(
+                this, R.xml.preferences, false
         );
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         
         // Open database connection
         dataBase.open();
@@ -67,11 +66,20 @@ public class MainActivity extends Activity {
         // Prepare the Detail Layout
         prepareDetailLayout();
 
-        // Get the preferences values for textSize, textFont and timeout
-        textSize = sharedPreferences.getInt(EXTRA_SETTINGS_TextSize, 12);
-        textFont = Typeface.create(
-                sharedPreferences.getString(EXTRA_SETTINGS_TextFont, null),
-                Typeface.ITALIC
+        // Get the preferences values for fontSize, fontTypeFace
+        // The cast is needed because PreferenceActivity saves only values as
+        // strings
+        String textSizeAsString = sharedPreferences.getString(
+                getString(R.string.PreferencesKeyFontSize),
+                null
+        );
+        fontSize = Integer.parseInt(textSizeAsString);
+        fontTypeFace = Typeface.create(
+                sharedPreferences.getString(
+                        getString(R.string.PreferencesKeyFontTypeFace),
+                        null
+                ),
+                Typeface.NORMAL
         );
 
         // Display the last viewed Day (if any) and the text size and font
@@ -156,7 +164,7 @@ public class MainActivity extends Activity {
 
             // Prepare the custom ArrayAdapter
             EntryAdapter entryAdapter = new EntryAdapter(
-                    this, R.layout.main_row_entry, entries, textSize, textFont
+                    this, R.layout.main_row_entry, entries, fontSize, fontTypeFace
             );
 
             // Display the selected Day in the header
@@ -361,12 +369,12 @@ public class MainActivity extends Activity {
                 intent.putExtra(EXTRA_WRITE_NOTE_DayId, selectedDay.getId());
                 startActivity(intent);
                 return true;
-	        case R.id.settings:
-	        	Intent settings = new Intent(
+	        case R.id.preferences:
+	        	Intent preferences = new Intent(
                         getApplicationContext(),
-                        Settings.class
+                        Preferences.class
                 );
-	        	startActivity(settings);
+	        	startActivity(preferences);
 	        	return true;
 	        case R.id.deleteDay:
 	            if(selectedDay != null){

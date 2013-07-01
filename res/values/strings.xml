@@ -36,26 +36,7 @@
     <string name="update">Interval for mood and entries updating (in hours)</string>
     <string name="update_filters">Select the interval for displaying the photos</string>
     <string name="mood">Change mood</string>
-    
-    <string-array name="textFont">
-        <item>DEFAULT_BOLD</item>
-        <item>SERIF</item>
-        <item>MONOSPACE</item>
-    </string-array>
-    
-    <string-array name="textSize">
-        <item>14</item>
-        <item>16</item>
-        <item>18</item>
-        <item>20</item>
-    </string-array>
-    
-    <string-array name="updateInterval">
-        <item>1</item>
-        <item>2</item>
-        <item>4</item>
-    </string-array>
-    
+
     <string-array name="periodFilter">
         <item>None</item>
         <item>Last 3 days</item>
@@ -63,6 +44,23 @@
         <item>Last month</item>
     </string-array>
 
+    <!-- Preferences -->
+    <!-- Don't change these -->
+        <string name="PreferencesKeyFontSize">fontSize</string>
+        <string name="PreferencesKeyFontTypeFace">fontTypeFace</string>
+        <!-- The next one must be equal to the one saved in AppConstants -->
+        <string name="PreferencesKeyTimeOut">entryTimeout</string>
+    <!-- -->
+    <string name="PreferencesTitle">Preferences</string>
+    <string name="PreferencesEntryCategory">Entry Settings</string>
+    <string name="PreferencesEntryFontSizeTitle">Font Size</string>
+    <string name="PreferencesEntryFontSizeSummary">Select the font size</string>
+    <string name="PreferencesEntryFontTypeFaceTitle">Font type face</string>
+    <string name="PreferencesEntryFontTypeFaceSummary">Select the font typeface</string>
+    <string name="PreferencesEntryTimeoutTitle">Entry Timeout</string>
+    <string name="PreferencesEntryTimeoutSummary">
+        Note and mood of an Entry can\'t be updated when this timeout expires
+    </string>
 
     <!-- MainActivity -->
     <string name="ListDaysHeaderTitle">Days</string>

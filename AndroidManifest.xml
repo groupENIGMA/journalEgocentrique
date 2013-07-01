@@ -55,8 +55,8 @@
             android:label="@string/title_activity_filters">
         </activity>
         <activity
-            android:name="com.github.groupENIGMA.journalEgocentrique.Settings"
-            android:label="@string/title_activity_settings" >
+            android:name="com.github.groupENIGMA.journalEgocentrique.Preferences"
+            android:label="@string/PreferencesTitle" >
         </activity>
         <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.ShareActivity"

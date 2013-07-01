@@ -21,19 +21,11 @@ public class AppConstants {
      * <p>
      * Each Entry can be modified or deleted for a limited time set by the
      * final user in the settings activity.
-     * This is the name of the key used to save this time in the
-     * SharedPreferences
+     *
+     * The key name must be equal to the one specified as android:key in the
+     * res/xml/preferences.xml file
      */
-    public static final String PREFERENCES_KEY_ENTRY_TIMEOUT = "entry_timeout";
-
-    /**
-     * The default value for the Entry Timeout
-     * <p>
-     * Each Entry can be modified or deleted for a limited time set by the
-     * final user in the settings activity.
-     * This is the default value for this timeout (number of hours).
-     */
-    public static final int DEFAULT_NOTE_TIMEOUT = 3;
+    public static final String PREFERENCES_KEY_ENTRY_TIMEOUT = "entryTimeout";
 
     /**
      * The file name prefix for the Mood images saved in res/drawable

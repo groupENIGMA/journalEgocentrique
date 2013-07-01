@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="textSize">
+        <item>14</item>
+        <item>16</item>
+        <item>18</item>
+        <item>20</item>
+    </string-array>
+
+    <string-array name="textTypeFaceOptions">
+        <item>Bold</item>
+        <item>Serif</item>
+        <item>Monospace</item>
+    </string-array>
+
+    <string-array name="textTypeFaceValues">
+        <item>DEFAULT_BOLD</item>
+        <item>SERIF</item>
+        <item>MONOSPACE</item>
+    </string-array>
+
+    <string-array name="entryTimeoutOptions">
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>4 hours</item>
+        <item>8 hours</item>
+        <item>12 hours</item>
+    </string-array>
+
+    <string-array name="entryTimeoutValues">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>12</item>
+    </string-array>
+</resources>

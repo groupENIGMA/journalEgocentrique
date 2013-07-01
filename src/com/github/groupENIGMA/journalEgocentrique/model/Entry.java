@@ -83,18 +83,19 @@ public class Entry implements EntryInterface {
     @Override
     public boolean canBeUpdated(SharedPreferences preferences) {
         // Get the timeout from the shared preferences
-        int hours_timeout = preferences.getInt(
-                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT,
-                AppConstants.DEFAULT_NOTE_TIMEOUT
+        // The cast is needed because PreferenceActivity saves only values as
+        // strings
+        String timeout_as_string = preferences.getString(
+                AppConstants.PREFERENCES_KEY_ENTRY_TIMEOUT, null
         );
+        int hours_timeout = Integer.parseInt(timeout_as_string);
         // Prepare a Calendar set to when the timeout for this Entry expires
         Calendar timeout = (Calendar) getTime().clone();
         timeout.add(Calendar.HOUR, hours_timeout);
         // Is the timeout expired?
         Calendar rightNow = Calendar.getInstance();
-    	Log.d("compare", hours_timeout+"");
         if (rightNow.compareTo(timeout) >= 0) {
-        	return false;  // An expired Entry can't be updated
+            return false;  // An expired Entry can't be updated
         }
         else {
             return true;

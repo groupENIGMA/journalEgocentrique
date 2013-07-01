@@ -14,8 +14,8 @@
         android:id="@+id/gallery"
         android:title="@string/gallery"/>
     <item
-        android:id="@+id/settings"
-        android:title="@string/settings"/>
+        android:id="@+id/preferences"
+        android:title="@string/PreferencesTitle"/>
     <item
         android:id="@+id/share"
         android:title="@string/share"/>

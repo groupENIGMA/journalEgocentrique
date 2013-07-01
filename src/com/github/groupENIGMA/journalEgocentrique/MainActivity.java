@@ -77,7 +77,7 @@ public class MainActivity extends Activity {
         // Display the last viewed Day (if any) and the text size and font
         SharedPreferences pref = getPreferences(MODE_PRIVATE);
         long id = pref.getLong(PREF_SELECTED_ENTRY, -1L);
-        if(id != -1) {
+        if(id != -1L) {
             selectedDay = dataBase.getDay(id);
             displayDetailLayout();
         }

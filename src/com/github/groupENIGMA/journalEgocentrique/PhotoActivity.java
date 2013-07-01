@@ -2,10 +2,9 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import java.io.File;
 import java.io.IOException;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,8 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-
 import android.widget.Toast;
+
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Photo;
@@ -25,18 +24,16 @@ public class PhotoActivity extends Activity {
 
     private static final String TAG_LOG = "PhotoActivity";
     private static final int CAMERA_REQUEST = 0;
+    private static final String PREF_TEMP_ID = "temp_id";
     private DB dataBase;
-
     private ImageView photoPreviewView;
     private Day day;
     // The folder where all the Photo are saved
     private final String photoDirPath = Environment.getExternalStorageDirectory()
             .getAbsolutePath() + File.separator +
             AppConstants.EXTERNAL_STORAGE_PHOTO_DIR;
-    // A tmp folder where unsaved photo are saved
-    private final String tmpDirPath = photoDirPath + File.separator + ".tmp";
-    // The path to the temp Photo for this Day
-    private String tmpPhotoPath;
+    // The path to the temp Photo
+    private String tmpPhotoPath = photoDirPath + File.separator + "tmp.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +41,19 @@ public class PhotoActivity extends Activity {
         setContentView(R.layout.activity_photo);
         dataBase = new DB(getApplicationContext());
         dataBase.open();
+
+        // Create the photoDir if it doesn't exist
+        File photoDir = new File(photoDirPath);
+        if(!photoDir.exists() && !photoDir.mkdir()) {
+            Toast.makeText(
+                    getApplicationContext(),
+                    getString(R.string.PhotoActivity_ExternalStorageError),
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
+        else {
+            Log.v(TAG_LOG, "photoDir exists!");
+        }
 
         // Get the old photo of the Day (if any)
         Intent received = getIntent();
@@ -53,22 +63,19 @@ public class PhotoActivity extends Activity {
         day = dataBase.getDay(dayId);
         Photo dailyPhoto = day.getPhoto();
 
-        // Calculate the tmpPhotoPath
-        tmpPhotoPath = tmpDirPath + File.separator + day.getId() + ".jpg";
-
-        // Manage the directories
-        managePhotoDirs();
-
         // Display the preview of:
         photoPreviewView = (ImageView)findViewById(R.id.photo);
         // The temp photo
         File tmpPhotoFile = new File(tmpPhotoPath);
-        if(tmpPhotoFile.exists()) {
-            photoPreviewView.setImageURI(Uri.parse(tmpPhotoPath));
+        if(tmpPhotoFile.exists() && isTempPhotoOfDay()) {
+            photoPreviewView.setImageURI(Uri.fromFile(tmpPhotoFile));
         }
         // or the old Daily photo
         else if(dailyPhoto != null) {
             photoPreviewView.setImageURI(Uri.parse(dailyPhoto.getPath()));
+            // Disable the Save button: no need to save again the same photo
+            Button save = (Button) findViewById(R.id.save_photo);
+            save.setEnabled(false);
         }
         // or, if none of the two above are available, the default Photo will be
         // rendered by the xml
@@ -98,13 +105,14 @@ public class PhotoActivity extends Activity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
         dataBase.close();
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
         // If the user took a new Photo save it
         if (resultCode == RESULT_OK ) {
             Log.v(TAG_LOG, "Photo correctly returned by Camera App!");
@@ -120,6 +128,8 @@ public class PhotoActivity extends Activity {
             setDefault.setEnabled(true);
             Button save = (Button) findViewById(R.id.save_photo);
             save.setEnabled(true);
+            // Update the id of saved temp photo
+            updateTempPhotoId();
         }
         else if (resultCode == RESULT_CANCELED) {
             // Don't save the photo
@@ -141,11 +151,7 @@ public class PhotoActivity extends Activity {
 	 *  The button must be enabled ONLY IF the actual image isn't the default avatar
 	 */
 	public void removeImage(View view){
-        // Remove the tmpPhoto if needed
-        File tmpPhoto = new File(tmpPhotoPath);
-        if (tmpPhoto.exists()) {
-            tmpPhoto.delete();
-        }
+        clearTempPhotoId();
 		dataBase.removePhoto(day);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
@@ -156,6 +162,8 @@ public class PhotoActivity extends Activity {
 	 * @param view
 	 */
 	public void accept(View view){
+        // Clear the tempPhotoId (tempPhoto will be moved by DB.setDayPhoto)
+        clearTempPhotoId();
 		dataBase.setDayPhoto(day, tmpPhotoPath);
 		Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 		startActivity(intent);
@@ -166,13 +174,10 @@ public class PhotoActivity extends Activity {
      */
     @Override
     public void onBackPressed() {
-        File tmpPhoto = new File(tmpPhotoPath);
-        if (tmpPhoto.exists()) {
-            tmpPhoto.delete();
-        }
+        // The user discarded any taken photo, clear the temp Photo id
+        clearTempPhotoId();
         super.onBackPressed();
     }
-
 
     /**
      * Launch an Intent to the default Camera application
@@ -204,38 +209,39 @@ public class PhotoActivity extends Activity {
     }
 
     /**
-     * Internal method that, if necessary:
-     *      - creates the tmpDir
-     *      - remove the tmpPhotos of old Days
+     * Checks if the temp photo saved in the External Storage is of Day
+     *
+     * @return true if the saved photo is of day, false if the photo is of
+     *         a previous day
      */
-    private void managePhotoDirs() {
-        // If tmpPhotoDir already exists check if there are unused
-        // tmpPhoto of old Days and remove them
-        File tmpDir = new File(tmpDirPath);
-        if (tmpDir.exists()) {
-            File[] oldTmpPhotos = tmpDir.listFiles();
-            if (oldTmpPhotos != null ) {
-                for ( File oldPhoto: oldTmpPhotos) {
-                    // Keep the tmp File for Today
-                    if (!oldPhoto.getAbsolutePath().equals(tmpPhotoPath)) {
-                        Log.v(TAG_LOG, "removed " + oldPhoto.getAbsolutePath());
-                        oldPhoto.delete();
-                    }
-                }
-            }
-        }
-        // Create the photoDir and tmpPhotoDir if they doesn't exists
-        else {
-            if(!tmpDir.mkdirs()) {
-                Toast.makeText(
-                        getApplicationContext(),
-                        getString(R.string.PhotoActivity_ExternalStorageError),
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
-            else {
-                Log.v(TAG_LOG, "tmpDir successfully created!");
-            }
-        }
+    private boolean isTempPhotoOfDay() {
+        // Get the date of the saved temp photo
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        long tempId = pref.getLong(
+                PREF_TEMP_ID,
+                -1L
+        );
+        return (tempId == day.getId());
+    }
+
+    /**
+     * Sets the id of temp photo saved in the preferences to -1 (temp photo not
+     * valid)
+     */
+    private void clearTempPhotoId() {
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putLong(PREF_TEMP_ID, -1L);
+        edit.commit();
+    }
+
+    /**
+     * Sets the id of temp photo saved in the preferences to day.id
+     */
+    private void updateTempPhotoId() {
+        SharedPreferences pref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putLong(PREF_TEMP_ID, day.getId());
+        edit.commit();
     }
 }

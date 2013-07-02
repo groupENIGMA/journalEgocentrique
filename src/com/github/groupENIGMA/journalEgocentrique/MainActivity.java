@@ -260,7 +260,7 @@ public class MainActivity extends Activity {
                     });
                     if (selectedEntry.canBeUpdated(sharedPreferences)) {
 
-                        build.setNegativeButton("Delete note", new DialogInterface.OnClickListener(){
+                        build.setNegativeButton("Delete", new DialogInterface.OnClickListener(){
 
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
@@ -281,7 +281,7 @@ public class MainActivity extends Activity {
                             }
                         });
 
-                        build.setPositiveButton("Update note", new DialogInterface.OnClickListener(){
+                        build.setPositiveButton("Update", new DialogInterface.OnClickListener(){
 
                             @Override
                             public void onClick(DialogInterface dialog, int id){

@@ -35,11 +35,20 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
     private int mPrevMoveY;
     private GestureDetector mDetector;
 
+    /**
+     * {@inheritDoc}
+     * @param context
+     * @param attr
+     */
     public ImageZoomView (Context context, AttributeSet attr) {
         super(context, attr);
         initialize();
     }
 
+    /**
+     * {@inheritDoc}
+     * @param context
+     */
     public ImageZoomView (Context context) {
         super(context);
         initialize();

@@ -59,6 +59,7 @@ public class GalleryActivity extends Activity {
 
     /**
      * Close the database connection before closing the Activity
+     * {@inheritDoc}
      */
     protected void onPause(){
         super.onPause();

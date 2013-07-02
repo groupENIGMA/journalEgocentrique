@@ -28,7 +28,9 @@ public class Filters extends Activity {
 		setAdapter();
 	}
 	
-	// Set the adapter for displaying the correct filter period
+	/**
+	 *  Set the adapter for displaying the correct filter period
+	 */
 	private void setAdapter(){
 		
 		// Set the filter period
@@ -57,6 +59,12 @@ public class Filters extends Activity {
         filter.setOnItemSelectedListener(filterListener);
 	}
 	
+	/**
+	 * This method is called when the Button is pressed.
+	 * Starts the GalleryActivity that will display the photos
+	 * with the choosen filter.
+	 * @param view
+	 */
 	public void send(View view){
     	Intent intent = new Intent(getApplicationContext(), GalleryActivity.class);
     	SharedPreferences.Editor edit = pref.edit();

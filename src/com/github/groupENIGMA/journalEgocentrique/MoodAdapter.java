@@ -17,6 +17,11 @@ public class MoodAdapter extends BaseAdapter {
     private List<Mood> moods;
     private DB database;
 
+    /**
+     * A custom adapter that displays the moods
+     * that the user can choose
+     * @param c Context in which we operate
+     */
     public MoodAdapter(Context c) {
         mContext = c;
         database = new DB(c);
@@ -24,15 +29,17 @@ public class MoodAdapter extends BaseAdapter {
         moods = database.getAvailableMoods();
     }
 
+    @Override
     public int getCount() {
         return moods.size();
     }
 
+    @Override
     public Object getItem(int position){
         return moods.get(position);
     }
 
-    // create a new ImageView for each item referenced by the Adapter
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes

@@ -19,7 +19,12 @@ public class DaysArrayAdapter extends ArrayAdapter<Calendar> {
     private SimpleDateFormat dayFormat;
     private List<Calendar> list;
 
-
+	/**
+	 * A custom adpater for displaying the days stored in the database
+	 * @param context Context in which we operate
+	 * @param resource The xml file for the disposition
+	 * @param days List of Calendar that will be formatted and displayied
+	 */
     public DaysArrayAdapter(Context context, int resource, List<Calendar> days) {
         super(context, resource, days);
         this.context = context;

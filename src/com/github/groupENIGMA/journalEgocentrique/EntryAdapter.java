@@ -21,6 +21,14 @@ public class EntryAdapter extends ArrayAdapter<Entry> {
 	private int textSize;
 	private Typeface font;
 	
+	/**
+	 * Creates a custom adapter for displaying the entries
+	 * @param context Context in which we operate
+	 * @param resource The xml file for the disposition
+	 * @param entries List of entries that will be displayied
+	 * @param textSize The size of the text
+	 * @param font The type of font of the text
+	 */
 	public EntryAdapter(Context context, int resource, List<Entry> entries,
                         int textSize, Typeface font) {
 		super(context, resource, entries);

@@ -20,6 +20,12 @@ public class GalleryAdapter extends BaseAdapter{
     private List<Photo> photos;
     private DB database;
 
+    /**
+     * Creates a custom adapter that displays all photos
+     * saved.
+     * @param c Context in which we operate
+     * @param filter The temporal filter for displaying photos
+     */
     public GalleryAdapter(Context c, String filter) {
         mContext = c;
         database = new DB(c);
@@ -55,15 +61,17 @@ public class GalleryAdapter extends BaseAdapter{
         }
     }
 
+    @Override
     public int getCount() {
         return photos.size();
     }
 
+    @Override
     public Photo getItem(int position){
         return photos.get(position);
     }
 
-    // create a new ImageView for each item referenced by the Adapter
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView;
         if (convertView == null) {  // if it's not recycled, initialize some attributes

@@ -39,6 +39,10 @@
             android:label="@string/title_activity_photo" >
         </activity>
         <activity
+            android:name="com.github.groupENIGMA.journalEgocentrique.Preferences"
+            android:label="@string/PreferencesTitle" >
+        </activity>
+        <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.MoodActivity"
             android:label="@string/title_activity_mood" >
         </activity>
@@ -53,10 +57,6 @@
         <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.Filters"
             android:label="@string/title_activity_filters">
-        </activity>
-        <activity
-            android:name="com.github.groupENIGMA.journalEgocentrique.Preferences"
-            android:label="@string/PreferencesTitle" >
         </activity>
         <activity
             android:name="com.github.groupENIGMA.journalEgocentrique.ShareActivity"

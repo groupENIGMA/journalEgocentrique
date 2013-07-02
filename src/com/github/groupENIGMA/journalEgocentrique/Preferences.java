@@ -1,6 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
-import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
@@ -12,5 +12,10 @@ public class Preferences extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
     }
 
+    @Override
+    public void onBackPressed(){
+    	super.onBackPressed();
+    	startActivity(new Intent(this, MainActivity.class));
+    }
 
 }

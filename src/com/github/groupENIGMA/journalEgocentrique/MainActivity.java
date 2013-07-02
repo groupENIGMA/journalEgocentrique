@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
                         getString(R.string.PreferencesKeyFontTypeFace),
                         null
                 ),
-                Typeface.NORMAL
+                Typeface.ITALIC
         );
 
         // Display the last viewed Day (if any) and the text size and font

@@ -430,14 +430,6 @@ public class MainActivity extends Activity {
                 );
 	        	startActivity(gallery);
 	        	return true;
-	        case R.id.share:
-	        	Intent share = new Intent(
-                        getApplicationContext(),
-                        ShareActivity.class
-                );
-	        	share.putExtra("EntryId", selectedDay.getId());
-	        	startActivity(share);
-                return true;
 	    }
 		return false;
 	}

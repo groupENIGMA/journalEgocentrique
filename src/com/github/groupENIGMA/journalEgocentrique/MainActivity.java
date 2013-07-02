@@ -1,5 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -241,11 +242,24 @@ public class MainActivity extends Activity {
                     // updated.
                     final Entry selectedEntry = (Entry) adapter
                             .getItemAtPosition(position);
+                    // Create the Alert Dialog
+                    AlertDialog.Builder build = new AlertDialog.Builder(
+                            MainActivity.this
+                    );
+                    build.setMessage("Select the action");
+                    // Add the share button
+                    build.setNeutralButton("Share", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Intent share = new Intent(Intent.ACTION_SEND);
+                            share.setType("text/plain");
+                            share.putExtra(Intent.EXTRA_TEXT, selectedEntry.getNote());
+                            share.putExtra(Intent.EXTRA_SUBJECT, "Created by ENIGMA");
+                            startActivity(Intent.createChooser(share, "Share to..."));
+                        }
+                    });
                     if (selectedEntry.canBeUpdated(sharedPreferences)) {
-                        AlertDialog.Builder build = new AlertDialog.Builder(
-                                MainActivity.this
-                        );
-                        build.setMessage("Select the action");
+
                         build.setNegativeButton("Delete note", new DialogInterface.OnClickListener(){
 
                             @Override
@@ -282,17 +296,9 @@ public class MainActivity extends Activity {
                                 startActivity(intent);
                             }
                         });
-                        AlertDialog alert = build.create();
-                        alert.show();
                     }
-                    // The Entry can't be updated
-                    else {
-                        Toast.makeText(
-                                getApplicationContext(),
-                                "The entry can't be updated",
-                                Toast.LENGTH_SHORT
-                        ).show();
-                    }
+                    AlertDialog alert = build.create();
+                    alert.show();
                 }
             };
             entryListView.setOnItemClickListener(clickListener);

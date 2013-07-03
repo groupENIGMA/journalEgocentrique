@@ -15,6 +15,7 @@ import android.widget.ImageView;
 public class ImageZoomView extends ImageView implements OnTouchListener {
     private float MAX_SCALE = 2f;
 
+    // The matrix with the screen points
     private Matrix mMatrix;
     private final float[] mMatrixValues = new float[9];
 
@@ -25,20 +26,22 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
     private int mIntrinsicWidth;
     private int mIntrinsicHeight;
 
+    // Scale factors
     private float mScale;
     private float mMinScale;
 
     private float mPrevDistance;
     private boolean isScaling;
 
+    // Previous points
     private int mPrevMoveX;
     private int mPrevMoveY;
     private GestureDetector mDetector;
 
     /**
-     * {@inheritDoc}
-     * @param context
-     * @param attr
+     * Creates a zoom activity (with attributes)
+     * @param context Context in which we operate
+     * @param attr set of attributes
      */
     public ImageZoomView (Context context, AttributeSet attr) {
         super(context, attr);
@@ -46,8 +49,8 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
     }
 
     /**
-     * {@inheritDoc}
-     * @param context
+     * Creates a zoom activity
+     * @param context Context in which we operate
      */
     public ImageZoomView (Context context) {
         super(context);
@@ -60,15 +63,21 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         this.initialize();
     }
 
+    /**
+     * Initialize the matrix and listen to tap gesture
+     */
     private void initialize() {
+    	// Create the scaling matrix
         this.setScaleType(ScaleType.MATRIX);
         this.mMatrix = new Matrix();
         Drawable d = getDrawable();
+        // Set the intrinsic dimensions
         if (d != null) {
             mIntrinsicWidth = d.getIntrinsicWidth();
             mIntrinsicHeight = d.getIntrinsicHeight();
             setOnTouchListener(this);
         }
+        // Instantiate the gesture detector (Listen to double tap event)
         mDetector = new GestureDetector(new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onDoubleTap(MotionEvent e) {
@@ -82,6 +91,7 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
 
     @Override
     protected boolean setFrame(int l, int t, int r, int b) {
+    	// Manage matrix dimensioning
         mWidth = r - l;
         mHeight = b - t;
 
@@ -103,6 +113,7 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         }
         mMatrix.postTranslate(paddingWidth, paddingHeight);
 
+        // Set image dimensions on the matrix
         setImageMatrix(mMatrix);
         mMinScale = mScale;
         zoomTo(mScale, mWidth / 2, mHeight / 2);
@@ -110,23 +121,42 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         return super.setFrame(l, t, r, b);
     }
 
+    /**
+     * Get a matrix element value 
+     * @return float value of the matrix
+     */
     protected float getValue(Matrix matrix, int whichValue) {
         matrix.getValues(mMatrixValues);
         return mMatrixValues[whichValue];
     }
 
+    /**
+     * Get scale factor
+     * @return float scale value
+     */
     protected float getScale() {
         return getValue(mMatrix, Matrix.MSCALE_X);
     }
-
+    /**
+     * Get translated X value
+     * @return float X translated value
+     */
     public float getTranslateX() {
         return getValue(mMatrix, Matrix.MTRANS_X);
     }
-
+    /**
+     * Get translated Y value
+     * @return float Y translated value
+     */
     protected float getTranslateY() {
         return getValue(mMatrix, Matrix.MTRANS_Y);
     }
 
+    /**
+     * Sets the maximum and minimum zoom factor
+     * @param x value of x point
+     * @param y value of y point
+     */
     protected void maxZoomTo(int x, int y) {
         if (mMinScale != getScale() && (getScale() - mMinScale) > 0.1f) {
             float scale = mMinScale / getScale();
@@ -137,6 +167,12 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         }
     }
 
+    /**
+     * Zoom in the (x,y) point according to the scaling factor
+     * @param scale the scaling value
+     * @param x value of x point in which to zoom
+     * @param y value of y point in which to zoom
+     */
     public void zoomTo(float scale, int x, int y) {
         if (getScale() * scale < mMinScale) {
             return;
@@ -154,6 +190,9 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         setImageMatrix(mMatrix);
     }
 
+    /**
+     * Cut image parts that are outside the screen after zooming
+     */
     public void cutting() {
         int width = (int) (mIntrinsicWidth * getScale());
         int height = (int) (mIntrinsicHeight * getScale());
@@ -178,22 +217,37 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
         setImageMatrix(mMatrix);
     }
 
+    /**
+     * Calculate distance between two point
+     * @param x0 value of x0 point
+     * @param x1 value of x1 point
+     * @param y0 value of y0 point
+     * @param y1 value of y1 point
+     * 
+     * @return float value of the distance
+     */
     private float distance(float x0, float x1, float y0, float y1) {
         float x = x0 - x1;
         float y = y0 - y1;
         return FloatMath.sqrt(x * x + y * y);
     }
 
+    /**
+     * Calculate distance of the display
+     * @return float value of the distance
+     */
     private float dispDistance() {
         return FloatMath.sqrt(mWidth * mWidth + mHeight * mHeight);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+    	// Manage touch event
         if (mDetector.onTouchEvent(event)) {
             return true;
         }
         int touchCount = event.getPointerCount();
+        // Know if moving or the image or just touching (with one or two fingers)
         switch (event.getAction()) {
         case MotionEvent.ACTION_DOWN:
         case MotionEvent.ACTION_POINTER_1_DOWN:
@@ -206,6 +260,7 @@ public class ImageZoomView extends ImageView implements OnTouchListener {
                 mPrevMoveX = (int) event.getX();
                 mPrevMoveY = (int) event.getY();
             }
+            // Manage image move action
         case MotionEvent.ACTION_MOVE:
             if (touchCount >= 2 && isScaling) {
                 float dist = distance(event.getX(0), event.getX(1), event.getY(0), event.getY(1));

@@ -16,6 +16,10 @@ import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 
 public class WriteEntry extends Activity {
 
+    public static final String EXTRA_MOOD_ACTIVITY_DayId = "DayId";
+    public static final String EXTRA_MOOD_ACTIVITY_EntryId = "EntryId";
+    public static final String EXTRA_MOOD_ACTIVITY_EntryText = "EntryText";
+
     private DB dataBase;
     private boolean updating;
     private Day selectedDay;
@@ -29,15 +33,16 @@ public class WriteEntry extends Activity {
         // Open the connection to the database
         dataBase = new DB(getApplicationContext());
         dataBase.open();
+
         // Check if we are updating or creating a Entry
         Bundle intent = getIntent().getExtras();
+        selectedDay = dataBase.getDay(
+                intent.getLong(MainActivity.EXTRA_WRITE_NOTE_DayId)
+        );
         long noteId = intent.getLong(MainActivity.EXTRA_WRITE_NOTE_NoteId);
         if ( noteId == -1L) {
             // Creating a new note
             updating = false;
-            selectedDay = dataBase.getDay(
-                    intent.getLong(MainActivity.EXTRA_WRITE_NOTE_DayId)
-            );
         }
         else {
             // Updating an existing Entry
@@ -78,12 +83,16 @@ public class WriteEntry extends Activity {
         // Save the text
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
-    	Intent intent = new Intent(this, MoodActivity.class);
-    	if(updating)
-    		intent.putExtra("EntryId", selectedEntry.getId());
-    	intent.putExtra("EntryText", message);
-    	intent.putExtra("Updating", updating);
-    	startActivity(intent);
+        Intent intent = new Intent(this, MoodActivity.class);
+        intent.putExtra(EXTRA_MOOD_ACTIVITY_DayId, selectedDay.getId());
+        intent.putExtra(EXTRA_MOOD_ACTIVITY_EntryText, message);
+        if(updating) {
+            intent.putExtra(EXTRA_MOOD_ACTIVITY_EntryId, selectedEntry.getId());
+        }
+        else {
+            intent.putExtra(EXTRA_MOOD_ACTIVITY_EntryId, -1L);
+        }
+        startActivity(intent);
     }
 
     @Override

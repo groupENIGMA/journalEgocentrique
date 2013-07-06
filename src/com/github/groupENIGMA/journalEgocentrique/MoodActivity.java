@@ -12,39 +12,56 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
+import com.github.groupENIGMA.journalEgocentrique.model.Day;
 import com.github.groupENIGMA.journalEgocentrique.model.Entry;
 import com.github.groupENIGMA.journalEgocentrique.model.Mood;
 
 public class MoodActivity extends Activity {
 
 	private DB database;
-	private Entry myEntry;
+	private Entry entry;
+    private Day day;
     private SharedPreferences sharedPreferences;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mood);
-		Intent intent = getIntent();
-		long entryId = intent.getLongExtra("EntryId", -1L);
-		final String entryText = intent.getStringExtra("EntryText");
-		final boolean updating = intent.getBooleanExtra("Updating", false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-		database = new DB(getApplicationContext());
-		database.open();
-		myEntry = database.getEntry(entryId);
+        database = new DB(getApplicationContext());
+        database.open();
+
+        // Get the parameters passed with the Intent
+        Intent intent = getIntent();
+        long dayId = intent.getLongExtra(
+                WriteEntry.EXTRA_MOOD_ACTIVITY_DayId,
+                -1L
+        );
+        long entryId = intent.getLongExtra(
+                WriteEntry.EXTRA_MOOD_ACTIVITY_EntryId,
+                -1L
+        );
+        final String entryText = intent.getStringExtra(
+                WriteEntry.EXTRA_MOOD_ACTIVITY_EntryText
+        );
+
+        day = database.getDay(dayId);
+        entry = database.getEntry(entryId);
+
 		GridView grid = (GridView)findViewById(R.id.moodGrid);
 		final MoodAdapter imgAdapter = new MoodAdapter(this);
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 	        	Mood mood = (Mood)imgAdapter.getItem(position);
-	        	if(updating){
-	        		database.setEntryNote(myEntry, entryText);
-	        		database.setEntryMood(myEntry, mood);
+	        	if(entry != null) {
+                    // Updating an existing entry
+	        		database.setEntryNote(entry, entryText);
+	        		database.setEntryMood(entry, mood);
 	        	}
 	        	else{
-	        		database.insertEntry(database.getDay(), entryText, mood);
+                    // Creating a new one
+	        		database.insertEntry(day, entryText, mood);
 	        	}
 	            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 	            startActivity(intent);
@@ -60,9 +77,13 @@ public class MoodActivity extends Activity {
         if (!database.isOpen()) {
             database.open();
         }
-        // If the Entry "expired" when the Activity was suspended return to the
-        // main Activity
-        if (myEntry != null && !myEntry.canBeUpdated(sharedPreferences)) {
+        // If:
+        //  - updating an expired Entry
+        // or:
+        //  - adding a new Entry to an expired Day
+        // return to the MainActivity
+        if (entry != null && !entry.canBeUpdated(sharedPreferences) ||
+                entry == null && day != null && !day.canBeUpdated()) {
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
         }

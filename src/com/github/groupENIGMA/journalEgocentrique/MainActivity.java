@@ -290,6 +290,10 @@ public class MainActivity extends Activity {
                                         WriteEntry.class
                                 );
                                 intent.putExtra(
+                                        EXTRA_WRITE_NOTE_DayId,
+                                        selectedDay.getId()
+                                );
+                                intent.putExtra(
                                         EXTRA_WRITE_NOTE_NoteId,
                                         selectedEntry.getId()
                                 );

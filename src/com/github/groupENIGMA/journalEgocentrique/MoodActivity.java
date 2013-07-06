@@ -2,7 +2,9 @@ package com.github.groupENIGMA.journalEgocentrique;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -16,12 +18,15 @@ public class MoodActivity extends Activity {
 
 	private DB database;
 	private Entry myEntry;
+    private SharedPreferences sharedPreferences;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mood);
 		Intent intent = getIntent();
-		long entryId = intent.getLongExtra("EntryId", 0);
+		long entryId = intent.getLongExtra("EntryId", -1L);
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		database = new DB(getApplicationContext());
 		database.open();
 		myEntry = database.getEntry(entryId);
@@ -36,7 +41,22 @@ public class MoodActivity extends Activity {
 	        }
 	    });
 	}
-	
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Re-open database connection if it was closed by onPause()
+        if (!database.isOpen()) {
+            database.open();
+        }
+        // If the Entry "expired" when the Activity was suspended return to the
+        // main Activity
+        if (myEntry != null && !myEntry.canBeUpdated(sharedPreferences)) {
+            Intent main = new Intent(this, MainActivity.class);
+            startActivity(main);
+        }
+    }
+
 	/**
 	 * Close the database connection
 	 */

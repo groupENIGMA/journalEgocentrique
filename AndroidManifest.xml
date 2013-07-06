@@ -58,10 +58,6 @@
             android:name="com.github.groupENIGMA.journalEgocentrique.Filters"
             android:label="@string/title_activity_filters">
         </activity>
-        <activity
-            android:name="com.github.groupENIGMA.journalEgocentrique.ShareActivity"
-            android:label="@string/title_activity_share" >
-        </activity>
     </application>
 
 </manifest>

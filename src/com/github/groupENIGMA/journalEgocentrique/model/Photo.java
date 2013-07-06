@@ -1,11 +1,6 @@
 package com.github.groupENIGMA.journalEgocentrique.model;
 
 import java.io.File;
-import java.io.FileOutputStream;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 
 
@@ -24,7 +19,7 @@ public class Photo implements PhotoInterface {
      * @param thumb_path The absolute path to the thumb file
      */
     public Photo(String photo_path, String thumb_path) {
-        this.path = path;
+        this.path = photo_path;
         this.thumb_path = thumb_path;
     }
 

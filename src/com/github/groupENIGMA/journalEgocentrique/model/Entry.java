@@ -3,7 +3,6 @@ package com.github.groupENIGMA.journalEgocentrique.model;
 import java.util.Calendar;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.github.groupENIGMA.journalEgocentrique.AppConstants;
 

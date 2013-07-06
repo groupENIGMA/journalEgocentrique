@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 
@@ -26,6 +27,8 @@ public class MoodActivity extends Activity {
 		setContentView(R.layout.activity_mood);
 		Intent intent = getIntent();
 		long entryId = intent.getLongExtra("EntryId", -1L);
+		final String entryText = intent.getStringExtra("EntryText");
+		final boolean updating = intent.getBooleanExtra("Updating", false);
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		database = new DB(getApplicationContext());
 		database.open();
@@ -35,9 +38,17 @@ public class MoodActivity extends Activity {
 		grid.setAdapter(imgAdapter);
 		grid.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-	            database.setEntryMood(myEntry, (Mood)imgAdapter.getItem(position));
+	        	Mood mood = (Mood)imgAdapter.getItem(position);
+	        	if(updating){
+	        		database.setEntryNote(myEntry, entryText);
+	        		database.setEntryMood(myEntry, mood);
+	        	}
+	        	else{
+	        		database.insertEntry(database.getDay(), entryText, mood);
+	        	}
 	            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
 	            startActivity(intent);
+	            Toast.makeText(getApplicationContext(), "Entry saved", Toast.LENGTH_SHORT).show();
 	        }
 	    });
 	}

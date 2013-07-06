@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.github.groupENIGMA.journalEgocentrique.model.DB;
 import com.github.groupENIGMA.journalEgocentrique.model.Day;
@@ -65,6 +66,7 @@ public class WriteEntry extends Activity {
         }
         // Return to MainActivity
         startActivity(new Intent(this, MainActivity.class));
+        Toast.makeText(this, "Entry saved", Toast.LENGTH_SHORT).show();
     }
     
     /**
@@ -76,14 +78,11 @@ public class WriteEntry extends Activity {
         // Save the text
         EditText text = (EditText) findViewById(R.id.editNote);
         String message = text.getText().toString();
-        if(updating){
-            dataBase.setEntryNote(selectedEntry, message);
-        }
-        else{
-            selectedEntry = dataBase.insertEntry(selectedDay, message, null);
-        }
     	Intent intent = new Intent(this, MoodActivity.class);
-    	intent.putExtra("EntryId", selectedEntry.getId());
+    	if(updating)
+    		intent.putExtra("EntryId", selectedEntry.getId());
+    	intent.putExtra("EntryText", message);
+    	intent.putExtra("Updating", updating);
     	startActivity(intent);
     }
 

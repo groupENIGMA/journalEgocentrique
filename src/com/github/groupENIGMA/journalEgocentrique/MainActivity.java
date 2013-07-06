@@ -33,8 +33,8 @@ import com.github.groupENIGMA.journalEgocentrique.model.Photo;
 
 public class MainActivity extends Activity {
 
-    public final static String EXTRA_WRITE_NOTE_NoteId = "NoteId";
-    public final static String EXTRA_WRITE_NOTE_DayId = "EntryId";
+    public final static String EXTRA_WRITE_ENTRY_NoteId = "NoteId";
+    public final static String EXTRA_WRITE_ENTRY_DayId = "EntryId";
     public final static String EXTRA_PHOTO_ACTIVITY_DayId = "DayId";
 
     private final static String PREF_SELECTED_ENTRY = "selectedEntry_id";
@@ -288,11 +288,11 @@ public class MainActivity extends Activity {
                                         WriteEntry.class
                                 );
                                 intent.putExtra(
-                                        EXTRA_WRITE_NOTE_DayId,
+                                        EXTRA_WRITE_ENTRY_DayId,
                                         selectedDay.getId()
                                 );
                                 intent.putExtra(
-                                        EXTRA_WRITE_NOTE_NoteId,
+                                        EXTRA_WRITE_ENTRY_NoteId,
                                         selectedEntry.getId()
                                 );
                                 startActivity(intent);
@@ -378,8 +378,8 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(
                         getApplicationContext(), WriteEntry.class
                 );
-                intent.putExtra(EXTRA_WRITE_NOTE_NoteId, -1L);
-                intent.putExtra(EXTRA_WRITE_NOTE_DayId, selectedDay.getId());
+                intent.putExtra(EXTRA_WRITE_ENTRY_NoteId, -1L);
+                intent.putExtra(EXTRA_WRITE_ENTRY_DayId, selectedDay.getId());
                 startActivity(intent);
                 return true;
 	        case R.id.preferences:
